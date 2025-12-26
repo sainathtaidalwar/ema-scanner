@@ -171,97 +171,98 @@ export default function ScannerDashboard() {
                         </div>
                     </div>
                 </div>
-                <DebugFooter api={API_BASE} />
             </div>
-            );
+            <DebugFooter api={API_BASE} />
+        </div>
+    );
 }
 
-            // Helpers
-            function Toggle({enabled, onChange}) {
+// Helpers
+function Toggle({ enabled, onChange }) {
     return (
-            <button
-                onClick={() => onChange(!enabled)}
+        <button
+            onClick={() => onChange(!enabled)}
+            className={clsx(
+                "w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out",
+                enabled ? "bg-brand-glow" : "bg-gray-700"
+            )}
+        >
+            <div
                 className={clsx(
-                    "w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out",
-                    enabled ? "bg-brand-glow" : "bg-gray-700"
+                    "w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform duration-200",
+                    enabled ? "translate-x-6" : "translate-x-0"
                 )}
-            >
-                <div
-                    className={clsx(
-                        "w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform duration-200",
-                        enabled ? "translate-x-6" : "translate-x-0"
-                    )}
-                />
-            </button>
-            );
+            />
+        </button>
+    );
 }
 
-            function ResultCard({item, index}) {
+function ResultCard({ item, index }) {
     const isLong = item.Side === 'LONG';
 
-            return (
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: index * 0.05 }}
-                className="bg-dark-700/50 p-4 rounded-lg border border-white/5 hover:border-brand/30 transition-colors flex items-center justify-between group"
-            >
-                <div className="flex items-center gap-4">
-                    <div className={clsx(
-                        "w-10 h-10 rounded-full flex items-center justify-center bg-opacity-20",
-                        isLong ? "bg-green-500 text-green-400" : "bg-red-500 text-red-400"
-                    )}>
-                        {isLong ? <ArrowUp size={20} /> : <ArrowDown size={20} />}
-                    </div>
-                    <div>
-                        <h3 className="font-bold text-lg tracking-wide">{item.Symbol}</h3>
-                        <p className="text-xs text-gray-500">
-                            4H: <span className="text-green-400">PASS</span> •
-                            1H: <span className="text-green-400">PASS</span> •
-                            15m: <span className="text-green-400">PASS</span>
-                        </p>
-                    </div>
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ delay: index * 0.05 }}
+            className="bg-dark-700/50 p-4 rounded-lg border border-white/5 hover:border-brand/30 transition-colors flex items-center justify-between group"
+        >
+            <div className="flex items-center gap-4">
+                <div className={clsx(
+                    "w-10 h-10 rounded-full flex items-center justify-center bg-opacity-20",
+                    isLong ? "bg-green-500 text-green-400" : "bg-red-500 text-red-400"
+                )}>
+                    {isLong ? <ArrowUp size={20} /> : <ArrowDown size={20} />}
                 </div>
+                <div>
+                    <h3 className="font-bold text-lg tracking-wide">{item.Symbol}</h3>
+                    <p className="text-xs text-gray-500">
+                        4H: <span className="text-green-400">PASS</span> •
+                        1H: <span className="text-green-400">PASS</span> •
+                        15m: <span className="text-green-400">PASS</span>
+                    </p>
+                </div>
+            </div>
 
-                <div className="flex gap-8 text-sm">
-                    <div className="text-center">
-                        <p className="text-gray-500 text-xs uppercase">RSI (15m)</p>
-                        <p className={clsx(
-                            "font-mono font-bold",
-                            item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? "text-yellow-400" : "text-white"
-                        )}>
-                            {item['RSI (15m)'] ?? '--'}
-                        </p>
-                    </div>
-                    <div className="text-center">
-                        <p className="text-gray-500 text-xs uppercase">ADX (15m)</p>
-                        <p className={clsx(
-                            "font-mono font-bold",
-                            item['ADX (15m)'] > 25 ? "text-brand-glow" : "text-gray-400"
-                        )}>
-                            {item['ADX (15m)'] ?? '--'}
-                        </p>
-                    </div>
-                    <div className="text-right min-w-[100px]">
-                        <span className={clsx(
-                            "px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset",
-                            isLong
-                                ? "bg-green-500/10 text-green-400 ring-green-500/20"
-                                : "bg-red-500/10 text-red-400 ring-red-500/20"
-                        )}>
-                            {item.Side}
-                        </span>
-                    </div>
+            <div className="flex gap-8 text-sm">
+                <div className="text-center">
+                    <p className="text-gray-500 text-xs uppercase">RSI (15m)</p>
+                    <p className={clsx(
+                        "font-mono font-bold",
+                        item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? "text-yellow-400" : "text-white"
+                    )}>
+                        {item['RSI (15m)'] ?? '--'}
+                    </p>
                 </div>
-            </motion.div>
-            );
+                <div className="text-center">
+                    <p className="text-gray-500 text-xs uppercase">ADX (15m)</p>
+                    <p className={clsx(
+                        "font-mono font-bold",
+                        item['ADX (15m)'] > 25 ? "text-brand-glow" : "text-gray-400"
+                    )}>
+                        {item['ADX (15m)'] ?? '--'}
+                    </p>
+                </div>
+                <div className="text-right min-w-[100px]">
+                    <span className={clsx(
+                        "px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset",
+                        isLong
+                            ? "bg-green-500/10 text-green-400 ring-green-500/20"
+                            : "bg-red-500/10 text-red-400 ring-red-500/20"
+                    )}>
+                        {item.Side}
+                    </span>
+                </div>
+            </div>
+        </motion.div>
+    );
 }
 
-            function DebugFooter({api}) {
+function DebugFooter({ api }) {
     return (
-            <div className="text-center text-xs text-gray-600 mt-8 pb-4">
-                <p>Scanner v1.3 • Connected to: <span className="font-mono text-gray-500">{api}</span></p>
-            </div>
-            );
+        <div className="text-center text-xs text-gray-600 mt-8 pb-4">
+            <p>Scanner v1.3 • Connected to: <span className="font-mono text-gray-500">{api}</span></p>
+        </div>
+    );
 }
