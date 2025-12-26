@@ -39,8 +39,10 @@ def get_pairs():
         return jsonify({'pairs': pairs_cache['data'][:limit]})
 
     try:
-        print("Fetching fresh pairs from Binance...")
+        print("Fetching fresh pairs from Binance... (Step 1/2)")
+        t0 = time.time()
         pairs = scanner.fetch_top_volume_pairs(client_sync, limit=limit)
+        print(f"Fetched {len(pairs)} pairs in {time.time() - t0:.2f}s (Step 2/2)")
         if pairs:
             pairs_cache['data'] = pairs
             pairs_cache['timestamp'] = current_time
