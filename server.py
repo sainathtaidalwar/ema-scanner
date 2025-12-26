@@ -39,10 +39,8 @@ def get_pairs():
         return jsonify({'pairs': pairs_cache['data'][:limit]})
 
     try:
-        print("Fetching fresh pairs from Binance... (Step 1/2)")
-        t0 = time.time()
+        print("Fetching fresh pairs from Binance...")
         pairs = scanner.fetch_top_volume_pairs(client_sync, limit=limit)
-        print(f"Fetched {len(pairs)} pairs in {time.time() - t0:.2f}s (Step 2/2)")
         if pairs:
             pairs_cache['data'] = pairs
             pairs_cache['timestamp'] = current_time
@@ -53,22 +51,24 @@ def get_pairs():
     return jsonify({'pairs': pairs})
 
 @app.route('/api/scan', methods=['POST'])
-def scan():
+def scan_pairs():
+    """
+    Scan a list of pairs with provided configuration.
+    """
     data = request.json
     symbols = data.get('symbols', [])
-    # In V2, 'config' is now 'strategy' in internal logic, but frontend might send complex dict
-    strategy = data.get('config', {}) 
+    config = data.get('config', {})
     
-    if not symbols:
-        return jsonify({"error": "No symbols provided"}), 400
-
+    print(f"Scanning {len(symbols)} pairs with config: {config}")
+    
+    # Run async scanner
     try:
-        # Run async scan with new engine
-        results = asyncio.run(scanner.scan_market_async(symbols, strategy))
-        return jsonify({"results": results})
+        results = asyncio.run(scanner.scan_market_async(symbols, config))
     except Exception as e:
-        print(f"Scan Error: {e}")
-        return jsonify({"error": str(e)}), 500
+        print(f"Async Scan Error: {e}")
+        results = []
+        
+    return jsonify({'results': results})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
