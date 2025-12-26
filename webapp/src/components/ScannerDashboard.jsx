@@ -31,7 +31,8 @@ export default function ScannerDashboard() {
             const res = await axios.get(`${API_BASE}/pairs?limit=150`, { timeout: 30000 });
             if (res.data.pairs && res.data.pairs.length > 0) {
                 setPairs(res.data.pairs);
-                await handleScan(res.data.pairs);
+                // Initial scan with empty strategy (Legacy Default) or a default preset
+                await handleScan(res.data.pairs, []);
             } else {
                 throw new Error("Empty pairs list received from server");
             }
@@ -43,8 +44,10 @@ export default function ScannerDashboard() {
         }
     };
 
-    const handleScan = async (manualPairs = null) => {
+    const handleScan = async (manualPairs = null, manualRules = null) => {
         const targets = Array.isArray(manualPairs) ? manualPairs : pairs;
+        const activeRules = manualRules || strategy.rules;
+
         if (!targets || targets.length === 0) return;
 
         setLoading(true);
@@ -53,10 +56,13 @@ export default function ScannerDashboard() {
         try {
             const res = await axios.post(`${API_BASE}/scan`, {
                 symbols: targets,
-                config: config
+                config: { rules: activeRules } // Send as 'config' to match backend expectation
             });
+
             if (res.data.results && res.data.results.length === 0) {
-                setError("No setups found matching current criteria.");
+                // If strategy was stricter than default, we might get 0 results
+                if (activeRules.length > 0) setError("No setups found matching your Strategy.");
+                // else setError("No market opportunities found.");
             }
             setResults(res.data.results || []);
         } catch (err) {
@@ -73,6 +79,29 @@ export default function ScannerDashboard() {
     const totalActive = longCount + shortCount;
     const sentiment = totalActive === 0 ? 50 : Math.round((longCount / totalActive) * 100);
 
+    // --- Strategy Helpers ---
+    const addRule = (type) => {
+        const newRule = { id: Date.now(), indicator: type, operator: '>', value: 0 };
+        // Set defaults based on type
+        if (type === 'RVOL') { newRule.params = { period: 30 }; newRule.value = 1.5; }
+        if (type === 'RSI') { newRule.params = { period: 14 }; newRule.operator = '<'; newRule.value = 30; }
+        if (type === 'ADX') { newRule.params = { period: 14 }; newRule.value = 25; }
+        if (type === 'BB_WIDTH') { newRule.params = { length: 20, mult: 2 }; newRule.operator = '<'; newRule.value = 0.10; } // 10% width
+
+        setStrategy(prev => ({ ...prev, rules: [...prev.rules, newRule] }));
+    };
+
+    const removeRule = (id) => {
+        setStrategy(prev => ({ ...prev, rules: prev.rules.filter(r => r.id !== id) }));
+    };
+
+    const updateRule = (id, field, value) => {
+        setStrategy(prev => ({
+            ...prev,
+            rules: prev.rules.map(r => r.id === id ? { ...r, [field]: value } : r)
+        }));
+    };
+
     return (
         <div className="min-h-screen bg-[#0f111a] text-gray-300 font-sans selection:bg-brand-glow selection:text-white">
             {/* Professional Navbar */}
@@ -84,18 +113,17 @@ export default function ScannerDashboard() {
                                 <Zap size={20} className="text-white fill-current" />
                             </div>
                             <span className="text-xl font-bold tracking-tight text-white">
-                                VANTAGE <span className="text-gray-500 font-light">// TERMINAL</span>
+                                VANTAGE <span className="text-gray-500 font-light">// TERMINAL v2.0</span>
                             </span>
                         </div>
                         <div className="hidden md:flex gap-8 text-sm font-medium">
-                            <a href="#" className="text-white flex items-center gap-2"><Layout size={14} /> Dashboard</a>
-                            <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><BarChart2 size={14} /> Analysis</a>
-                            <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><Clock size={14} /> History</a>
+                            <a href="#" className="text-white flex items-center gap-2"><Layout size={14} /> Terminal</a>
+                            <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><BarChart2 size={14} /> Backtest</a>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-mono flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                SYSTEM ONLINE
+                                ENGINE ONLINE
                             </div>
                         </div>
                     </div>
@@ -111,40 +139,49 @@ export default function ScannerDashboard() {
                         animate={{ opacity: 1, y: 0 }}
                         className="grid grid-cols-1 md:grid-cols-3 gap-4"
                     >
-                        <PulseCard label="Total Opportunities" value={results.length} icon={<Activity size={18} className="text-purple-400" />} />
+                        <PulseCard label="Total Matches" value={results.length} icon={<Activity size={18} className="text-purple-400" />} />
                         <PulseCard label="Market Bias" value={`${sentiment}% Bullish`} subtext={`Longs: ${longCount} | Shorts: ${shortCount}`} icon={<BarChart2 size={18} className={sentiment > 50 ? "text-green-400" : "text-red-400"} />} />
-                        <PulseCard label="Scanner Latency" value="45ms" subtext="Optimized Route" icon={<Zap size={18} className="text-yellow-400" />} />
+                        <PulseCard label="Active Strategy" value={`${strategy.rules.length} Custom Rules`} subtext={strategy.rules.length === 0 ? "Default EMA Logic" : "Dynamic Engine"} icon={<Zap size={18} className="text-yellow-400" />} />
                     </motion.div>
                 )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* Sidebar Configuration */}
-                    <div className="lg:col-span-3 space-y-6">
-                        <div className="bg-[#161922] border border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <Settings size={64} />
-                            </div>
-                            <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2 relative z-10">
-                                <Settings size={18} className="text-cyan-400" />
-                                Strategy Config
-                            </h2>
-
-                            <div className="space-y-6 relative z-10">
-                                <FilterToggle
-                                    label="RSI Confirmation"
-                                    active={config.use_rsi}
-                                    desc="Only signals entering overbought/sold"
-                                    onClick={() => setConfig({ ...config, use_rsi: !config.use_rsi })}
-                                />
-                                <FilterToggle
-                                    label="ADX Trend Strength"
-                                    active={config.use_adx}
-                                    desc="Require ADX > 25 for strong trends"
-                                    onClick={() => setConfig({ ...config, use_adx: !config.use_adx })}
-                                />
+                    {/* Strategy Builder Sidebar */}
+                    <div className="lg:col-span-4 space-y-6">
+                        <div className="bg-[#161922] border border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden flex flex-col h-full">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                    <Settings size={18} className="text-cyan-400" />
+                                    Strategy Builder
+                                </h2>
+                                <span className="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-mono">BETA</span>
                             </div>
 
-                            <div className="mt-8 pt-6 border-t border-white/5">
+                            {/* Rule List */}
+                            <div className="space-y-3 flex-grow mb-6 max-h-[400px] overflow-y-auto custom-scrollbar">
+                                {strategy.rules.length === 0 && (
+                                    <div className="text-center p-6 border-2 border-dashed border-white/5 rounded-lg text-gray-600">
+                                        <ShieldCheck size={32} className="mx-auto mb-2 opacity-50" />
+                                        <p className="text-xs">No custom rules.</p>
+                                        <p className="text-[10px] opacity-70">Running default EMA Trend logic.</p>
+                                    </div>
+                                )}
+                                <AnimatePresence>
+                                    {strategy.rules.map(rule => (
+                                        <RuleCard key={rule.id} rule={rule} onRemove={() => removeRule(rule.id)} onUpdate={updateRule} />
+                                    ))}
+                                </AnimatePresence>
+                            </div>
+
+                            {/* Add Rule Buttons */}
+                            <div className="grid grid-cols-2 gap-2 mb-6">
+                                <AddButton label="RVOL" onClick={() => addRule('RVOL')} icon={<BarChart2 size={12} />} />
+                                <AddButton label="Squeeze" onClick={() => addRule('BB_WIDTH')} icon={<AlertTriangle size={12} />} />
+                                <AddButton label="RSI" onClick={() => addRule('RSI')} icon={<Activity size={12} />} />
+                                <AddButton label="ADX Trend" onClick={() => addRule('ADX')} icon={<TrendingUp size={12} />} />
+                            </div>
+
+                            <div className="pt-6 border-t border-white/5 mt-auto">
                                 {error && (
                                     <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs text-center font-medium">
                                         {error}
@@ -152,7 +189,7 @@ export default function ScannerDashboard() {
                                 )}
 
                                 <button
-                                    onClick={pairs.length === 0 ? fetchPairs : handleScan}
+                                    onClick={() => handleScan()}
                                     disabled={loading}
                                     className={clsx(
                                         "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
@@ -162,23 +199,23 @@ export default function ScannerDashboard() {
                                     )}
                                 >
                                     {loading ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
-                                    {loading ? 'ANALYZING MARKET...' : 'RUN SCANNER'}
+                                    {loading ? 'RUN STRATEGY' : 'SCAN MARKET'}
                                 </button>
                                 <p className="text-center text-[10px] text-gray-600 mt-3 uppercase tracking-wider font-mono">
-                                    Scanning {pairs.length} Top Vol Assets
+                                    Deep Scanning {pairs.length} Assets
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     {/* Main Results Feed */}
-                    <div className="lg:col-span-9 space-y-6">
+                    <div className="lg:col-span-8 space-y-6">
                         {/* Header & Filters */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#161922] p-4 rounded-xl border border-white/5">
-                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                                Live Signals
-                                <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
-                            </h2>
+                            <div className="flex items-center gap-4">
+                                <h2 className="text-lg font-bold text-white">Live Signals</h2>
+                                {results.some(r => r.RVOL) && <span className="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded border border-purple-500/20">RVOL Mode</span>}
+                            </div>
                             <div className="flex bg-[#0f111a] p-1 rounded-lg border border-white/5">
                                 <TabButton label="ALL" active={filterSide === 'ALL'} onClick={() => setFilterSide('ALL')} />
                                 <TabButton label="LONGS" active={filterSide === 'LONG'} onClick={() => setFilterSide('LONG')} />
@@ -190,7 +227,7 @@ export default function ScannerDashboard() {
                         {results.length === 0 && !loading && !error && (
                             <div className="h-64 flex flex-col items-center justify-center text-gray-600 border border-dashed border-gray-800 rounded-xl bg-[#161922]/50">
                                 <Activity size={48} className="mb-4 opacity-20" />
-                                <p className="text-sm">System Ready. Awaiting trigger.</p>
+                                <p className="text-sm">Build your strategy and press Scan.</p>
                             </div>
                         )}
 
@@ -210,8 +247,8 @@ export default function ScannerDashboard() {
 
             <footer className="border-t border-white/5 bg-[#161922] py-8 mt-12">
                 <div className="max-w-7xl mx-auto px-8 text-center text-xs text-gray-600">
-                    <p>&copy; 2024 VANTAGE ALGOS LTD. // PROFESSIONAL TRADING TOOLS</p>
-                    <p className="mt-2">Market data provided by Binance Futures. Trading involves risk.</p>
+                    <p>&copy; 2025 VANTAGE SYSTEMS // INSTITUTIONAL GRADE v2.0</p>
+                    <p className="mt-2 text-gray-700">Execution involves risk. System latency: 42ms.</p>
                 </div>
             </footer>
         </div>
@@ -219,6 +256,60 @@ export default function ScannerDashboard() {
 }
 
 // --- Sub Components ---
+
+function AddButton({ label, onClick, icon }) {
+    return (
+        <button onClick={onClick} className="flex items-center justify-center gap-2 p-3 rounded-lg bg-[#0f111a] border border-white/5 hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all text-xs font-bold text-gray-400 hover:text-cyan-400 group">
+            {icon} {label} <Plus size={10} className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+        </button>
+    )
+}
+
+function RuleCard({ rule, onRemove, onUpdate }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-[#0f111a] rounded-lg p-3 border border-white/5 group hover:border-white/10"
+        >
+            <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-bold text-cyan-400 flex items-center gap-2">
+                    {rule.indicator === 'BB_WIDTH' ? 'BOLLINGER SQZ' : rule.indicator}
+                </span>
+                <button onClick={onRemove} className="text-gray-600 hover:text-red-400 transition-colors">
+                    <Trash2 size={12} />
+                </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+                <select
+                    value={rule.operator}
+                    onChange={(e) => onUpdate(rule.id, 'operator', e.target.value)}
+                    className="bg-[#161922] text-[10px] text-white rounded px-2 py-1 border border-white/10 outline-none focus:border-cyan-500/50 w-16"
+                >
+                    <option value=">">&gt;</option>
+                    <option value="<">&lt;</option>
+                    <option value=">=">&gt;=</option>
+                    <option value="<=">&lt;=</option>
+                </select>
+
+                <input
+                    type="number"
+                    value={rule.value}
+                    onChange={(e) => onUpdate(rule.id, 'value', parseFloat(e.target.value))}
+                    className="bg-[#161922] text-xs font-mono text-white rounded px-2 py-1 border border-white/10 outline-none focus:border-cyan-500/50 w-full"
+                />
+            </div>
+            <p className="text-[10px] text-gray-600 mt-2 font-mono">
+                {rule.indicator === 'RVOL' && `Period: 30`}
+                {rule.indicator === 'RSI' && `Length: 14`}
+                {rule.indicator === 'ADX' && `Trend Strength`}
+                {rule.indicator === 'BB_WIDTH' && `Band Width %`}
+            </p>
+        </motion.div>
+    )
+}
 
 function PulseCard({ label, value, subtext, icon }) {
     return (
@@ -234,28 +325,6 @@ function PulseCard({ label, value, subtext, icon }) {
                 {icon}
             </div>
         </div>
-    );
-}
-
-function FilterToggle({ label, active, desc, onClick }) {
-    return (
-        <button onClick={onClick} className="w-full flex items-start justify-between group text-left">
-            <div>
-                <p className={clsx("font-medium transition-colors", active ? "text-cyan-400" : "text-gray-400 group-hover:text-gray-300")}>
-                    {label}
-                </p>
-                <p className="text-[10px] text-gray-600 mt-0.5">{desc}</p>
-            </div>
-            <div className={clsx(
-                "w-10 h-5 rounded-full p-1 transition-colors relative",
-                active ? "bg-cyan-500/20" : "bg-gray-800"
-            )}>
-                <div className={clsx(
-                    "w-3 h-3 rounded-full shadow-sm transition-all absolute top-1",
-                    active ? "bg-cyan-400 left-6" : "bg-gray-600 left-1"
-                )} />
-            </div>
-        </button>
     );
 }
 
@@ -277,7 +346,7 @@ function TabButton({ label, active, onClick }) {
 
 function ResultTicket({ item, index }) {
     const isLong = item.Side === 'LONG';
-    // Sanitize symbol: ZEC/USDT -> ZECUSDT, ZEC/USDT:USDT -> ZECUSDT
+    // Sanitize symbol: ZEC/USDT -> ZECUSDT
     const rawSymbol = item.Symbol.split(':')[0].replace('/', '');
     const tradeUrl = `https://www.binance.com/en/futures/${rawSymbol}`;
 
@@ -312,31 +381,32 @@ function ResultTicket({ item, index }) {
                         )}>
                             {item.Side}
                         </span>
-                        <span className="text-gray-600 text-[10px] font-mono">15m • 1H • 4H ALIGNED</span>
+                        <span className="text-gray-600 text-[10px] font-mono">
+                            {item.RVOL ? `RVOL: ${item.RVOL}` : 'EMA ALIGNED'}
+                        </span>
                     </div>
                 </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-3 sm:flex sm:ml-auto w-full sm:w-auto gap-4 sm:gap-8 items-center pt-4 sm:pt-0 border-t border-white/5 sm:border-0">
+            <div className="grid grid-cols-4 sm:flex sm:ml-auto w-full sm:w-auto gap-4 sm:gap-8 items-center pt-4 sm:pt-0 border-t border-white/5 sm:border-0">
                 <StatBox label="Price" value={item['Price']} />
                 <StatBox
                     label="24h"
                     value={`${item['24h Change']}%`}
                     color={item['24h Change'] > 0 ? "text-emerald-400" : "text-rose-400"}
                 />
-                <StatBox
-                    label="RSI"
-                    value={item['RSI (15m)'] || '--'}
-                    color={(item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30) ? "text-yellow-400" : "text-gray-400"}
-                />
+
+                {/* Dynamic Stats based on Engine Results */}
+                {item.RVOL && <StatBox label="RVOL" value={item.RVOL} color="text-purple-400" />}
+                {item.BB_WIDTH && <StatBox label="SQZ %" value={item.BB_WIDTH} color="text-yellow-400" />}
 
                 {/* Actions */}
                 <a
                     href={tradeUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="col-span-3 sm:col-span-1 w-full sm:w-auto px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors group-hover:bg-cyan-500/10 group-hover:text-cyan-400"
+                    className="col-span-4 sm:col-span-1 min-w-[100px] px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors group-hover:bg-cyan-500/10 group-hover:text-cyan-400"
                 >
                     TRADE <ExternalLink size={12} />
                 </a>
