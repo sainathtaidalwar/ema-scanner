@@ -106,8 +106,8 @@ async def check_conditions_async(client, symbol, config):
     
     curr_4h = df_4h.iloc[-1]
     
-    long_4h = (curr_4h['ema21'] > curr_4h['ema50'] > curr_4h['ema100']) and (curr_4h['close'] > curr_4h['ema50'])
-    short_4h = (curr_4h['ema21'] < curr_4h['ema50'] < curr_4h['ema100']) and (curr_4h['close'] < curr_4h['ema50'])
+    long_4h = (curr_4h['ema21'] > curr_4h['ema50'] > curr_4h['ema100']) and (curr_4h['close'] > curr_4h['ema21'])
+    short_4h = (curr_4h['ema21'] < curr_4h['ema50'] < curr_4h['ema100']) and (curr_4h['close'] < curr_4h['ema21'])
 
     if long_4h:
         result['Side'] = 'LONG'
