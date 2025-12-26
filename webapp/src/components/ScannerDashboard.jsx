@@ -276,7 +276,9 @@ function TabButton({ label, active, onClick }) {
 
 function ResultTicket({ item, index }) {
     const isLong = item.Side === 'LONG';
-    const tradeUrl = `https://www.binance.com/en/futures/${item.Symbol}`;
+    // Sanitize symbol: ZEC/USDT -> ZECUSDT, ZEC/USDT:USDT -> ZECUSDT
+    const rawSymbol = item.Symbol.split(':')[0].replace('/', '');
+    const tradeUrl = `https://www.binance.com/en/futures/${rawSymbol}`;
 
     return (
         <motion.div
