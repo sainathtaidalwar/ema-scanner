@@ -93,9 +93,6 @@ export default function ScannerDashboard() {
                                 <span className="text-xl font-bold tracking-tight text-white leading-none">
                                     Algo Signal Pulse
                                 </span>
-                                <span className="text-[10px] text-indigo-300 font-medium tracking-wide uppercase mt-0.5">
-                                    Multi-Indicator Algo Trading Signals
-                                </span>
                             </div>
                         </div>
                         <div className="hidden md:flex gap-8 text-sm font-medium">
@@ -220,9 +217,10 @@ export default function ScannerDashboard() {
             </main>
 
             <footer className="border-t border-white/5 bg-[#161922] py-8 mt-12">
-                <div className="max-w-7xl mx-auto px-8 text-center text-xs text-gray-600">
-                    <p>&copy; {new Date().getFullYear()} APEX ALGORITHMS. All rights reserved.</p>
-                    <p className="mt-2 text-[10px] text-gray-700">Market data provided by Binance Futures. Trading involves risk.</p>
+                <div className="max-w-7xl mx-auto px-8 text-center">
+                    <p className="text-xs text-indigo-400 font-medium tracking-wide mb-2 uppercase">Multi-Indicator Algo Trading Signals</p>
+                    <p className="text-[10px] text-gray-600">&copy; {new Date().getFullYear()} Algo Signal Pulse. All rights reserved.</p>
+                    <p className="mt-1 text-[10px] text-gray-700">Market data provided by Binance Futures. Trading involves risk.</p>
                 </div>
             </footer>
         </div>
