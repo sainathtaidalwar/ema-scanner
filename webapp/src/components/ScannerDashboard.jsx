@@ -84,221 +84,213 @@ export default function ScannerDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 {/* Controls Sidebar */}
                 <div className="lg:col-span-1 space-y-6">
-                    {/* ... sidebar ... */}
                     <div className="glass-panel p-6">
-                        {/* ... omitted for brevity in replace, targeting specific blocks ... */}
-                        {/* I will break this into smaller edits to be safe */}
+                        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                            <Settings size={20} className="text-cyber-cyan" />
+                            Configuration
+                        </h2>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                            {/* Controls Sidebar */}
-                            <div className="lg:col-span-1 space-y-6">
-                                <div className="glass-panel p-6">
-                                    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                                        <Settings size={20} className="text-cyber-cyan" />
-                                        Configuration
-                                    </h2>
-
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <label className="text-gray-300">RSI Filter</label>
-                                            <Toggle
-                                                enabled={config.use_rsi}
-                                                onChange={(v) => setConfig({ ...config, use_rsi: v })}
-                                            />
-                                        </div>
-                                        <p className="text-xs text-gray-500">
-                                            {config.use_rsi ? 'Req: Long > 50, Short < 50' : 'RSI ignored'}
-                                        </p>
-
-                                        <div className="flex items-center justify-between">
-                                            <label className="text-gray-300">ADX Filter</label>
-                                            <Toggle
-                                                enabled={config.use_adx}
-                                                onChange={(v) => setConfig({ ...config, use_adx: v })}
-                                            />
-                                        </div>
-                                        <p className="text-xs text-gray-500">
-                                            {config.use_adx ? 'Req: ADX > 20 & DI Confirmed' : 'ADX ignored'}
-                                        </p>
-                                    </div>
-
-                                    <div className="mt-8">
-                                        {error && (
-                                            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded text-red-200 text-xs text-center">
-                                                {error}
-                                            </div>
-                                        )}
-
-                                        <button
-                                            onClick={pairs.length === 0 ? fetchPairs : handleScan}
-                                            disabled={loading}
-                                            className={clsx(
-                                                "w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all",
-                                                loading
-                                                    ? "bg-gray-700 cursor-not-allowed text-gray-400"
-                                                    : pairs.length === 0
-                                                        ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/50" // Retry State
-                                                        : "bg-gradient-to-r from-brand to-cyan-500 hover:opacity-90 hover:shadow-lg hover:shadow-brand/20"
-                                            )}
-                                        >
-                                            {loading ? (
-                                                <RefreshCw className="animate-spin" />
-                                            ) : pairs.length === 0 ? (
-                                                <RefreshCw size={20} />
-                                            ) : (
-                                                <Play size={20} fill="currentColor" />
-                                            )}
-                                            {loading ? 'SCANNING...' : pairs.length > 0 ? 'RUN SCAN' : 'RETRY CONNECTION'}
-                                        </button>
-                                        <p className="text-center text-xs text-gray-500 mt-2">
-                                            Scanning Top {pairs.length} Vol Pairs
-                                        </p>
-                                    </div>
-                                </div>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <label className="text-gray-300">RSI Filter</label>
+                                <Toggle
+                                    enabled={config.use_rsi}
+                                    onChange={(v) => setConfig({ ...config, use_rsi: v })}
+                                />
                             </div>
+                            <p className="text-xs text-gray-500">
+                                {config.use_rsi ? 'Req: Long > 50, Short < 50' : 'RSI ignored'}
+                            </p>
 
-                            {/* Results Area */}
-                            <div className="lg:col-span-3">
-                                <div className="glass-panel min-h-[500px] p-6 overflow-hidden relative">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <h2 className="text-xl font-semibold flex items-center gap-2">
-                                            Results ({results.filter(r => filterSide === 'ALL' || r.Side === filterSide).length})
-                                            {results.length > 0 && <span className="text-xs font-normal text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">Live</span>}
-                                        </h2>
+                            <div className="flex items-center justify-between">
+                                <label className="text-gray-300">ADX Filter</label>
+                                <Toggle
+                                    enabled={config.use_adx}
+                                    onChange={(v) => setConfig({ ...config, use_adx: v })}
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500">
+                                {config.use_adx ? 'Req: ADX > 20 & DI Confirmed' : 'ADX ignored'}
+                            </p>
+                        </div>
 
-                                        {/* Filter Controls */}
-                                        <div className="flex bg-dark-800/50 p-1 rounded-lg border border-white/5">
-                                            {['ALL', 'LONG', 'SHORT'].map(side => (
-                                                <button
-                                                    key={side}
-                                                    onClick={() => setFilterSide(side)}
-                                                    className={clsx(
-                                                        "px-4 py-1.5 rounded-md text-xs font-bold transition-all",
-                                                        filterSide === side
-                                                            ? "bg-brand-glow text-white shadow-lg"
-                                                            : "text-gray-400 hover:text-white hover:bg-white/5"
-                                                    )}
-                                                >
-                                                    {side}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {results.length === 0 && !loading && !error && (
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600">
-                                            <Activity size={48} className="mb-4 opacity-20" />
-                                            <p>Ready to scan. Press Run.</p>
-                                        </div>
-                                    )}
-
-                                    <div className="grid gap-3">
-                                        <AnimatePresence>
-                                            {results
-                                                .filter(item => filterSide === 'ALL' || item.Side === filterSide)
-                                                .map((item, idx) => (
-                                                    <ResultCard key={item.Symbol} item={item} index={idx} />
-                                                ))}
-                                        </AnimatePresence>
-                                    </div>
+                        <div className="mt-8">
+                            {error && (
+                                <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded text-red-200 text-xs text-center">
+                                    {error}
                                 </div>
+                            )}
+
+                            <button
+                                onClick={pairs.length === 0 ? fetchPairs : handleScan}
+                                disabled={loading}
+                                className={clsx(
+                                    "w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all",
+                                    loading
+                                        ? "bg-gray-700 cursor-not-allowed text-gray-400"
+                                        : pairs.length === 0
+                                            ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/50" // Retry State
+                                            : "bg-gradient-to-r from-brand to-cyan-500 hover:opacity-90 hover:shadow-lg hover:shadow-brand/20"
+                                )}
+                            >
+                                {loading ? (
+                                    <RefreshCw className="animate-spin" />
+                                ) : pairs.length === 0 ? (
+                                    <RefreshCw size={20} />
+                                ) : (
+                                    <Play size={20} fill="currentColor" />
+                                )}
+                                {loading ? 'SCANNING...' : pairs.length > 0 ? 'RUN SCAN' : 'RETRY CONNECTION'}
+                            </button>
+                            <p className="text-center text-xs text-gray-500 mt-2">
+                                Scanning Top {pairs.length} Vol Pairs
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Results Area */}
+                <div className="lg:col-span-3">
+                    <div className="glass-panel min-h-[500px] p-6 overflow-hidden relative">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-semibold flex items-center gap-2">
+                                Results ({results.filter(r => filterSide === 'ALL' || r.Side === filterSide).length})
+                                {results.length > 0 && <span className="text-xs font-normal text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">Live</span>}
+                            </h2>
+
+                            {/* Filter Controls */}
+                            <div className="flex bg-dark-800/50 p-1 rounded-lg border border-white/5">
+                                {['ALL', 'LONG', 'SHORT'].map(side => (
+                                    <button
+                                        key={side}
+                                        onClick={() => setFilterSide(side)}
+                                        className={clsx(
+                                            "px-4 py-1.5 rounded-md text-xs font-bold transition-all",
+                                            filterSide === side
+                                                ? "bg-brand-glow text-white shadow-lg"
+                                                : "text-gray-400 hover:text-white hover:bg-white/5"
+                                        )}
+                                    >
+                                        {side}
+                                    </button>
+                                ))}
                             </div>
                         </div>
-                        <DebugFooter api={API_BASE} />
-                    </div>
-                    );
-}
 
-                    // Helpers
-                    function Toggle({enabled, onChange}) {
-    return (
-                    <button
-                        onClick={() => onChange(!enabled)}
-                        className={clsx(
-                            "w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out",
-                            enabled ? "bg-brand-glow" : "bg-gray-700"
+                        {results.length === 0 && !loading && !error && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600">
+                                <Activity size={48} className="mb-4 opacity-20" />
+                                <p>Ready to scan. Press Run.</p>
+                            </div>
                         )}
-                    >
-                        <div
-                            className={clsx(
-                                "w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform duration-200",
-                                enabled ? "translate-x-6" : "translate-x-0"
-                            )}
-                        />
-                    </button>
-                    );
+
+                        <div className="grid gap-3">
+                            <AnimatePresence>
+                                {results
+                                    .filter(item => filterSide === 'ALL' || item.Side === filterSide)
+                                    .map((item, idx) => (
+                                        <ResultCard key={item.Symbol} item={item} index={idx} />
+                                    ))}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <DebugFooter api={API_BASE} />
+        </div>
+    );
 }
 
-                    function ResultCard({item, index}) {
+// Helpers
+function Toggle({ enabled, onChange }) {
+    return (
+        <button
+            onClick={() => onChange(!enabled)}
+            className={clsx(
+                "w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out",
+                enabled ? "bg-brand-glow" : "bg-gray-700"
+            )}
+        >
+            <div
+                className={clsx(
+                    "w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform duration-200",
+                    enabled ? "translate-x-6" : "translate-x-0"
+                )}
+            />
+        </button>
+    );
+}
+
+function ResultCard({ item, index }) {
     const isLong = item.Side === 'LONG';
 
-                    return (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="bg-dark-700/50 p-4 rounded-lg border border-white/5 hover:border-brand/30 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between group gap-4 sm:gap-0"
-                    >
-                        <div className="flex items-center gap-4 w-full sm:w-auto">
-                            <div className={clsx(
-                                "w-10 h-10 rounded-full flex items-center justify-center bg-opacity-20 flex-shrink-0",
-                                isLong ? "bg-green-500 text-green-400" : "bg-red-500 text-red-400"
-                            )}>
-                                {isLong ? <ArrowUp size={20} /> : <ArrowDown size={20} />}
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg tracking-wide">{item.Symbol}</h3>
-                                <p className="text-xs text-gray-500">
-                                    4H: <span className="text-green-400">PASS</span> •
-                                    1H: <span className="text-green-400">PASS</span>
-                                </p>
-                            </div>
-                            {/* Mobile Side Badge */}
-                            <span className={clsx(
-                                "ml-auto sm:hidden px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset",
-                                isLong
-                                    ? "bg-green-500/10 text-green-400 ring-green-500/20"
-                                    : "bg-red-500/10 text-red-400 ring-red-500/20"
-                            )}>
-                                {item.Side}
-                            </span>
-                        </div>
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ delay: index * 0.05 }}
+            className="bg-dark-700/50 p-4 rounded-lg border border-white/5 hover:border-brand/30 transition-colors flex flex-col sm:flex-row items-start sm:items-center justify-between group gap-4 sm:gap-0"
+        >
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className={clsx(
+                    "w-10 h-10 rounded-full flex items-center justify-center bg-opacity-20 flex-shrink-0",
+                    isLong ? "bg-green-500 text-green-400" : "bg-red-500 text-red-400"
+                )}>
+                    {isLong ? <ArrowUp size={20} /> : <ArrowDown size={20} />}
+                </div>
+                <div>
+                    <h3 className="font-bold text-lg tracking-wide">{item.Symbol}</h3>
+                    <p className="text-xs text-gray-500">
+                        4H: <span className="text-green-400">PASS</span> •
+                        1H: <span className="text-green-400">PASS</span>
+                    </p>
+                </div>
+                {/* Mobile Side Badge */}
+                <span className={clsx(
+                    "ml-auto sm:hidden px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset",
+                    isLong
+                        ? "bg-green-500/10 text-green-400 ring-green-500/20"
+                        : "bg-red-500/10 text-red-400 ring-red-500/20"
+                )}>
+                    {item.Side}
+                </span>
+            </div>
 
-                        <div className="grid grid-cols-3 sm:flex gap-4 sm:gap-8 text-sm items-center w-full sm:w-auto border-t border-white/5 sm:border-0 pt-4 sm:pt-0">
-                            <div className="text-left sm:text-center">
-                                <p className="text-gray-500 text-xs uppercase">Price</p>
-                                <p className="font-mono text-white font-bold">{item['Price']}</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="text-gray-500 text-xs uppercase">24h</p>
-                                <p className={clsx(
-                                    "font-mono font-bold",
-                                    item['24h Change'] > 0 ? "text-green-400" : "text-red-400"
-                                )}>
-                                    {item['24h Change']}%
-                                </p>
-                            </div>
-                            {/* Desktop Badge */}
-                            <div className="hidden sm:block text-right min-w-[80px]">
-                                <span className={clsx(
-                                    "px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset",
-                                    isLong
-                                        ? "bg-green-500/10 text-green-400 ring-green-500/20"
-                                        : "bg-red-500/10 text-red-400 ring-red-500/20"
-                                )}>
-                                    {item.Side}
-                                </span>
-                            </div>
-                        </div>
-                    </motion.div>
-                    );
+            <div className="grid grid-cols-3 sm:flex gap-4 sm:gap-8 text-sm items-center w-full sm:w-auto border-t border-white/5 sm:border-0 pt-4 sm:pt-0">
+                <div className="text-left sm:text-center">
+                    <p className="text-gray-500 text-xs uppercase">Price</p>
+                    <p className="font-mono text-white font-bold">{item['Price']}</p>
+                </div>
+                <div className="text-center">
+                    <p className="text-gray-500 text-xs uppercase">24h</p>
+                    <p className={clsx(
+                        "font-mono font-bold",
+                        item['24h Change'] > 0 ? "text-green-400" : "text-red-400"
+                    )}>
+                        {item['24h Change']}%
+                    </p>
+                </div>
+                {/* Desktop Badge */}
+                <div className="hidden sm:block text-right min-w-[80px]">
+                    <span className={clsx(
+                        "px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset",
+                        isLong
+                            ? "bg-green-500/10 text-green-400 ring-green-500/20"
+                            : "bg-red-500/10 text-red-400 ring-red-500/20"
+                    )}>
+                        {item.Side}
+                    </span>
+                </div>
+            </div>
+        </motion.div>
+    );
 }
 
-                    function DebugFooter({api}) {
+function DebugFooter({ api }) {
     return (
-                    <div className="text-center text-xs text-gray-600 mt-8 pb-4">
-                        <p>Scanner v1.3 • Connected to: <span className="font-mono text-gray-500">{api}</span></p>
-                    </div>
-                    );
+        <div className="text-center text-xs text-gray-600 mt-8 pb-4">
+            <p>Scanner v1.3 • Connected to: <span className="font-mono text-gray-500">{api}</span></p>
+        </div>
+    );
 }
