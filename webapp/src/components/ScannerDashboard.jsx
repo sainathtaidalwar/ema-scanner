@@ -23,6 +23,13 @@ export default function ScannerDashboard() {
         fetchPairs();
     }, []);
 
+    // Auto-refresh when config changes (and pairs are loaded)
+    useEffect(() => {
+        if (pairs.length > 0) {
+            handleScan();
+        }
+    }, [config]);
+
     const fetchPairs = async () => {
         setLoading(true);
         setError(null);
