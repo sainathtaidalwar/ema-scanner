@@ -184,8 +184,9 @@ async def scan_market_async(symbols, config=None):
         config = {'use_rsi': False, 'use_adx': False}
     
     # Initialize Async Client
+    # DISABLE Rate Limit for speed (Burst mode). 150 pairs is well within 2400/min limit.
     client = ccxt.binance({
-        'enableRateLimit': True,
+        'enableRateLimit': False, 
         'options': {'defaultType': 'future'}
     })
     
