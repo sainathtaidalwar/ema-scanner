@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock, Plus, Trash2, ShieldCheck, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock, Plus, Trash2, ShieldCheck, TrendingUp, AlertTriangle, ChevronLeft, ChevronRight, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
 // Use environment variable for API URL in production, fallback to localhost for dev
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
+const ITEMS_PER_PAGE = 50;
 
 export default function ScannerDashboard() {
     const [loading, setLoading] = useState(false);

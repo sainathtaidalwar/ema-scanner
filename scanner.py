@@ -137,6 +137,15 @@ def evaluate_rule(df, rule):
         bb_width_series = calculate_squeeze(df, length, mult)
         measured_val = bb_width_series.iloc[-1]
 
+    elif indic == 'EMA_DIFF':
+        # Measures how far Price is above/below EMA in %
+        # > 0 means Price > EMA
+        period = int(params.get('period', 21))
+        ema_series = calculate_ema(df['close'], period)
+        ema_val = ema_series.iloc[-1]
+        price = df['close'].iloc[-1]
+        measured_val = ((price - ema_val) / ema_val) * 100
+
     # Evaluation
     # If operator is 'CROSS', it's harder, for now supports > < >= <=
     if operator == '>': return measured_val > val, measured_val
