@@ -164,6 +164,23 @@ async def check_conditions_async(client, symbol, config):
     # --- Optional Filters ---
     result['RSI (15m)'] = round(curr_15m['rsi'], 2)
     result['ADX (15m)'] = round(curr_15m['adx'], 2)
+    result['Price'] = curr_15m['close']
+    
+    # Calculate 24h Change (comparing current close to 4h candle 6 periods ago -> 24h close approx or use distinct call)
+    # For speed, we can approx 24h change using the 4h timeframe data we already have? 
+    # Or just fetch ticker data? Let's use the ticker data already if possible? 
+    # Actually, let's keep it simple and just use the 4H data for a "Trend Strength" or just fetch ticker batch?
+    # Simpler: The frontend logic expects "24h Change".
+    # Since we are in an async generic function, let's just calculate it from the daily close if we had it.
+    # But we only have 4h.
+    # Best correct way: Price vs Price 24h ago.
+    # 24h ago = 6 bars of 4h.
+    if len(df_4h) > 6:
+        price_24h_ago = df_4h['close'].iloc[-7] # 6 bars ago is start of 24h... roughly
+        change = ((curr_15m['close'] - price_24h_ago) / price_24h_ago) * 100
+        result['24h Change'] = round(change, 2)
+    else:
+        result['24h Change'] = 0.0
     
     # RSI
     if config.get('use_rsi'):
