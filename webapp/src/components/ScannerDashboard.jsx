@@ -7,19 +7,7 @@ import clsx from 'clsx';
 // Use environment variable for API URL in production, fallback to localhost for dev
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
-// Hardcoded fallback list (Top ~75 by volume) for robust scanning
-const FALLBACK_PAIRS = [
-    "BTC/USDT", "ETH/USDT", "SOL/USDT", "XRP/USDT", "BNB/USDT", "DOGE/USDT", "ADA/USDT", "AVAX/USDT",
-    "TRX/USDT", "DOT/USDT", "LINK/USDT", "MATIC/USDT", "LTC/USDT", "SHIB/USDT", "UNI/USDT", "ATOM/USDT",
-    "XLM/USDT", "ETC/USDT", "FIL/USDT", "HBAR/USDT", "NEAR/USDT", "APT/USDT", "VET/USDT", "QNT/USDT",
-    "ICP/USDT", "GRT/USDT", "ALGO/USDT", "STX/USDT", "AAVE/USDT", "FTM/USDT", "SAND/USDT", "THETA/USDT",
-    "XTZ/USDT", "EOS/USDT", "AXS/USDT", "MANA/USDT", "EGLD/USDT", "FLOW/USDT", "CHZ/USDT", "RUNE/USDT",
-    "CRV/USDT", "KAVA/USDT", "GALA/USDT", "MINA/USDT", "DYDX/USDT", "AR/USDT", "KLAY/USDT", "IOTA/USDT",
-    "ZEC/USDT", "SNX/USDT", "NEO/USDT", "MKR/USDT", "CAKE/USDT", "ENJ/USDT", "LDO/USDT", "CVX/USDT",
-    "KSM/USDT", "COMP/USDT", "ZIL/USDT", "BAT/USDT", "WAVES/USDT", "RVN/USDT", "HOT/USDT", "DASH/USDT",
-    "YFI/USDT", "GLMR/USDT", "ONE/USDT", "KDA/USDT", "1INCH/USDT", "IOTX/USDT", "RNDR/USDT", "LRC/USDT",
-    "SUSHI/USDT", "CELO/USDT", "ANKR/USDT"
-];
+import { FALLBACK_PAIRS } from '../constants';
 
 export default function ScannerDashboard() {
     const [loading, setLoading] = useState(false);
