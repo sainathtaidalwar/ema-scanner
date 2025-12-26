@@ -1,0 +1,20 @@
+Initializing Binance Client...
+Fetching Top Volume Pairs...
+Scanning 75 pairs...
+
+================================================================================
+EMA TREND SCANNER RESULTS (LONG & SHORT)
+================================================================================
+         Symbol  Side 4H EMA Stack 1H EMA Stack 15m EMA State
+  BCH/USDT:USDT  LONG         PASS         PASS          PASS
+ PAXG/USDT:USDT  LONG         PASS         PASS          PASS
+  ZEC/USDT:USDT  LONG         PASS         PASS          PASS
+  ZKP/USDT:USDT  LONG         PASS         PASS          PASS
+ DOGE/USDT:USDT SHORT         PASS         PASS          PASS
+  FIL/USDT:USDT SHORT         PASS         PASS          PASS
+   IR/USDT:USDT SHORT         PASS         PASS          PASS
+LIGHT/USDT:USDT SHORT         PASS         PASS          PASS
+  LIT/USDT:USDT SHORT         PASS         PASS          PASS
+ PUMP/USDT:USDT SHORT         PASS         PASS          PASS
+TRUTH/USDT:USDT SHORT         PASS         PASS          PASS
+================================================================================

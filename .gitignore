@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+venv/
+.env
+.vscode/
+# Node (just in case)
+node_modules/
+dist/
+webapp/node_modules/
+webapp/dist/
