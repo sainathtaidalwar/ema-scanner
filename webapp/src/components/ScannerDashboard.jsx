@@ -86,11 +86,11 @@ export default function ScannerDashboard() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <div className="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
                                 <Zap size={20} className="text-white fill-current" />
                             </div>
                             <span className="text-xl font-bold tracking-tight text-white">
-                                VANTAGE <span className="text-gray-500 font-light">// TERMINAL</span>
+                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">APEX</span> <span className="text-indigo-500 font-light">// TERMINAL</span>
                             </span>
                         </div>
                         <div className="hidden md:flex gap-8 text-sm font-medium">
@@ -99,8 +99,8 @@ export default function ScannerDashboard() {
                             <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><Clock size={14} /> History</a>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-mono flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                            <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                 SYSTEM ONLINE
                             </div>
                         </div>
@@ -118,7 +118,7 @@ export default function ScannerDashboard() {
                         className="grid grid-cols-1 md:grid-cols-3 gap-4"
                     >
                         <PulseCard label="Total Opportunities" value={results.length} icon={<Activity size={18} className="text-purple-400" />} />
-                        <PulseCard label="Market Bias" value={`${sentiment}% Bullish`} subtext={`Longs: ${longCount} | Shorts: ${shortCount}`} icon={<BarChart2 size={18} className={sentiment > 50 ? "text-green-400" : "text-red-400"} />} />
+                        <PulseCard label="Market Bias" value={`${sentiment}% Bullish`} subtext={`Longs: ${longCount} | Shorts: ${shortCount}`} icon={<BarChart2 size={18} className={sentiment > 50 ? "text-emerald-400" : "text-rose-400"} />} />
                         <PulseCard label="Scanner Latency" value="45ms" subtext="Optimized Route" icon={<Zap size={18} className="text-yellow-400" />} />
                     </motion.div>
                 )}
@@ -131,7 +131,7 @@ export default function ScannerDashboard() {
                                 <Settings size={64} />
                             </div>
                             <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2 relative z-10">
-                                <Settings size={18} className="text-cyan-400" />
+                                <Settings size={18} className="text-indigo-400" />
                                 Strategy Config
                             </h2>
 
@@ -164,7 +164,7 @@ export default function ScannerDashboard() {
                                         "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
                                         loading
                                             ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                                            : "bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-cyan-500/20 hover:shadow-cyan-500/30"
+                                            : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-indigo-500/20 hover:shadow-indigo-500/30"
                                     )}
                                 >
                                     {loading ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
@@ -216,8 +216,8 @@ export default function ScannerDashboard() {
 
             <footer className="border-t border-white/5 bg-[#161922] py-8 mt-12">
                 <div className="max-w-7xl mx-auto px-8 text-center text-xs text-gray-600">
-                    <p>&copy; 2024 VANTAGE ALGOS LTD. // PROFESSIONAL TRADING TOOLS</p>
-                    <p className="mt-2">Market data provided by Binance Futures. Trading involves risk.</p>
+                    <p>&copy; {new Date().getFullYear()} APEX ALGORITHMS. All rights reserved.</p>
+                    <p className="mt-2 text-[10px] text-gray-700">Market data provided by Binance Futures. Trading involves risk.</p>
                 </div>
             </footer>
         </div>
