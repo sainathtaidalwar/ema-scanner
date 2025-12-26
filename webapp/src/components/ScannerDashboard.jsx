@@ -12,6 +12,7 @@ export default function ScannerDashboard() {
     const [results, setResults] = useState([]);
     const [pairs, setPairs] = useState([]);
     const [error, setError] = useState(null);
+    const [filterSide, setFilterSide] = useState('ALL'); // ALL, LONG, SHORT
 
     // Config State
     const [config, setConfig] = useState({
@@ -154,10 +155,30 @@ export default function ScannerDashboard() {
                 {/* Results Area */}
                 <div className="lg:col-span-3">
                     <div className="glass-panel min-h-[500px] p-6 overflow-hidden relative">
-                        <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                            Results ({results.length})
-                            {results.length > 0 && <span className="text-xs font-normal text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">Live</span>}
-                        </h2>
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xl font-semibold flex items-center gap-2">
+                                Results ({results.filter(r => filterSide === 'ALL' || r.Side === filterSide).length})
+                                {results.length > 0 && <span className="text-xs font-normal text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">Live</span>}
+                            </h2>
+
+                            {/* Filter Controls */}
+                            <div className="flex bg-dark-800/50 p-1 rounded-lg border border-white/5">
+                                {['ALL', 'LONG', 'SHORT'].map(side => (
+                                    <button
+                                        key={side}
+                                        onClick={() => setFilterSide(side)}
+                                        className={clsx(
+                                            "px-4 py-1.5 rounded-md text-xs font-bold transition-all",
+                                            filterSide === side
+                                                ? "bg-brand-glow text-white shadow-lg"
+                                                : "text-gray-400 hover:text-white hover:bg-white/5"
+                                        )}
+                                    >
+                                        {side}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
                         {results.length === 0 && !loading && !error && (
                             <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-600">
@@ -168,9 +189,11 @@ export default function ScannerDashboard() {
 
                         <div className="grid gap-3">
                             <AnimatePresence>
-                                {results.map((item, idx) => (
-                                    <ResultCard key={item.Symbol} item={item} index={idx} />
-                                ))}
+                                {results
+                                    .filter(item => filterSide === 'ALL' || item.Side === filterSide)
+                                    .map((item, idx) => (
+                                        <ResultCard key={item.Symbol} item={item} index={idx} />
+                                    ))}
                             </AnimatePresence>
                         </div>
                     </div>
