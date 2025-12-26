@@ -29,18 +29,18 @@ export default function ScannerDashboard() {
         setLoading(true);
         setError(null);
         try {
-            // timeout 5s, if slow assume free tier cold start issue or fail
-            const res = await axios.get(`${API_BASE}/pairs?limit=75`, { timeout: 8000 });
+            // Increase timeout to 30s for dynamic fetch (Railway cold start)
+            const res = await axios.get(`${API_BASE}/pairs?limit=150`, { timeout: 30000 });
             if (res.data.pairs && res.data.pairs.length > 0) {
                 setPairs(res.data.pairs);
             } else {
-                throw new Error("Empty pairs list");
+                throw new Error("Empty pairs list received from server");
             }
         } catch (err) {
-            console.error("Failed to fetch pairs, using fallback", err);
-            // Don't show error to user, just ensure app is usable
-            setPairs(FALLBACK_PAIRS);
-            // Optionally set error toast or just proceed silently
+            console.error("Failed to fetch pairs", err);
+            setError("Failed to load pairs. Check Backend URL or Click Retry.");
+        } finally {
+            setLoading(false);
         }
     };
 
