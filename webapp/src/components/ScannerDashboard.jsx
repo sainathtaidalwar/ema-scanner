@@ -7,11 +7,18 @@ import clsx from 'clsx';
 // Use environment variable for API URL in production, fallback to localhost for dev
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
+// Hardcoded fallback list in case backend is slow/fails
+const FALLBACK_PAIRS = [
+    "BTC/USDT", "ETH/USDT", "SOL/USDT", "XRP/USDT", "BNB/USDT", "ADA/USDT", "DOGE/USDT",
+    "TRX/USDT", "LTC/USDT", "LINK/USDT", "MATIC/USDT", "DOT/USDT", "AVAX/USDT", "SHIB/USDT",
+    "ATOM/USDT", "UNI/USDT", "XLM/USDT", "ETC/USDT", "FIL/USDT", "HBAR/USDT"
+];
+
 export default function ScannerDashboard() {
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState([]);
     const [pairs, setPairs] = useState([]);
-    const [error, setError] = useState(null); // New error state
+    const [error, setError] = useState(null);
 
     // Config State
     const [config, setConfig] = useState({
@@ -27,11 +34,18 @@ export default function ScannerDashboard() {
     const fetchPairs = async () => {
         setError(null);
         try {
-            const res = await axios.get(`${API_BASE}/pairs?limit=75`);
-            setPairs(res.data.pairs);
+            // timeout 5s, if slow assume free tier cold start issue or fail
+            const res = await axios.get(`${API_BASE}/pairs?limit=75`, { timeout: 8000 });
+            if (res.data.pairs && res.data.pairs.length > 0) {
+                setPairs(res.data.pairs);
+            } else {
+                throw new Error("Empty pairs list");
+            }
         } catch (err) {
-            console.error("Failed to fetch pairs", err);
-            setError("Failed to load pairs from server.");
+            console.error("Failed to fetch pairs, using fallback", err);
+            // Don't show error to user, just ensure app is usable
+            setPairs(FALLBACK_PAIRS);
+            // Optionally set error toast or just proceed silently
         }
     };
 
