@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
+import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock, Plus, Trash2, ShieldCheck, TrendingUp, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
@@ -14,9 +14,10 @@ export default function ScannerDashboard() {
     const [error, setError] = useState(null);
     const [filterSide, setFilterSide] = useState('ALL'); // ALL, LONG, SHORT
 
-    const [config, setConfig] = useState({
-        use_rsi: false,
-        use_adx: false
+    // --- STRATEGY STATE ---
+    const [strategy, setStrategy] = useState({
+        name: "Custom Strategy",
+        rules: []
     });
 
     useEffect(() => {
