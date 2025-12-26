@@ -3,25 +3,21 @@ import pandas as pd
 import numpy as np
 import time
 import sys
-from datetime import datetime
 import asyncio
 
 # --- Configuration ---
-TOP_N_COINS = 75  # Scan top volume coins
+# Increased to 300 to support EMA 200 and Volume MA 30 accurately
+CANDLE_LIMIT = 300 
 TIMEFRAMES = {'4h': '4h', '1h': '1h', '15m': '15m'}
-EMA_PERIODS = [21, 50, 100]
-RSI_PERIOD = 14
-ADX_PERIOD = 14
 
 def get_binance_client_sync():
-    # Helper for synchronous tasks (like fetching pairs initially) if needed
     import ccxt as ccxt_sync
     return ccxt_sync.binance({
         'enableRateLimit': True,
         'options': {'defaultType': 'future'}
     })
 
-def fetch_top_volume_pairs(client_sync, limit=TOP_N_COINS):
+def fetch_top_volume_pairs(client_sync, limit=75):
     try:
         tickers = client_sync.fetch_tickers()
         usdt_pairs = {s: t for s, t in tickers.items() if '/USDT' in s and t['quoteVolume'] is not None}
@@ -31,7 +27,8 @@ def fetch_top_volume_pairs(client_sync, limit=TOP_N_COINS):
         print(f"Error fetching top pairs: {e}")
         return []
 
-# Optimized: Only calculate indicators if needed
+# --- Optimized Indicator Functions ---
+
 def calculate_ema(series, span):
     return series.ewm(span=span, adjust=False).mean()
 
@@ -60,7 +57,6 @@ def calculate_adx(df, period=14):
     tr3 = pd.DataFrame(abs(df['low'] - df['close'].shift(1)))
     frames = [tr1, tr2, tr3]
     tr = pd.concat(frames, axis=1, join='inner').max(axis=1)
-    
     atr = tr.ewm(alpha=1/period, adjust=False).mean()
     
     plus_di = 100 * (plus_dm.ewm(alpha=1/period, adjust=False).mean() / atr)
@@ -70,191 +66,186 @@ def calculate_adx(df, period=14):
     adx = dx.ewm(alpha=1/period, adjust=False).mean()
     return adx, plus_di, minus_di
 
-async def fetch_ohlcv_async(client, symbol, timeframe, limit=150):
+def calculate_rvol(df, period=30):
+    # RVOL = Current Volume / Average Volume of last 30 periods
+    avg_vol = df['volume'].rolling(window=period).mean()
+    rvol = df['volume'] / avg_vol
+    return rvol
+
+def calculate_bb(series, length=20, std=2):
+    sma = series.rolling(window=length).mean()
+    std_dev = series.rolling(window=length).std()
+    upper = sma + (std_dev * std)
+    lower = sma - (std_dev * std)
+    return upper, sma, lower
+
+def calculate_squeeze(df, length=20, std=2):
+    # Bollinger Bands
+    upper, middle, lower = calculate_bb(df['close'], length, std)
+    
+    # Keltner Channels (using ATR) - Simplified Squeeze: just use BB Width percentile or raw width
+    # Professional Squeeze often uses BB inside Keltner, but simple BB Width contraction is good proxy
+    # Width = (Upper - Lower) / Middle
+    bb_width = (upper - lower) / middle
+    
+    # Check if width is in the lowest X percentile (e.g., dynamic) or below a threshold
+    # For this scanner, we will return the width and let the rule decide, 
+    # OR we implement a basic "is_squeezing" if width < 0.05 (5% spread)
+    return bb_width
+
+# --- Core Async Logic ---
+
+async def fetch_ohlcv_async(client, symbol, timeframe, limit=CANDLE_LIMIT):
     try:
         ohlcv = await client.fetch_ohlcv(symbol, timeframe, limit=limit)
         df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
         return df
     except Exception as e:
-        print(f"Error fetching {timeframe} for {symbol}: {e}")
+        # print(f"Error {timeframe} {symbol}: {e}")
         return None
 
-async def check_conditions_async(client, symbol, config):
-    # print(f"Checking {symbol}...") # Debug
+def evaluate_rule(df, rule):
+    # rule = { "indicator": "RVOL", "params": {...}, "operator": ">", "value": 1.5 }
+    curr = df.iloc[-1]
     
-    result = {
-        'Symbol': symbol,
-        'Side': 'NEUTRAL',
-        '4H EMA Stack': 'FAIL',
-        '1H EMA Stack': 'FAIL',
-        '15m EMA Stack': 'FAIL',
-        'Pass': False
-    }
-
-    # --- STEP 1: 4H Timeframe (Fail Fast) ---
-    df_4h = await fetch_ohlcv_async(client, symbol, '4h')
-    if df_4h is None: 
-        # print(f"{symbol} 4H fetch failed")
-        return None
+    indic = rule.get('indicator')
+    params = rule.get('params', {})
+    operator = rule.get('operator')
+    val = float(rule.get('value', 0))
     
-    # ... rest of logic ...
-
-    df_4h['ema21'] = calculate_ema(df_4h['close'], 21)
-    df_4h['ema50'] = calculate_ema(df_4h['close'], 50)
-    df_4h['ema100'] = calculate_ema(df_4h['close'], 100)
+    measured_val = 0
     
-    curr_4h = df_4h.iloc[-1]
+    if indic == 'RVOL':
+        period = int(params.get('period', 30))
+        rvol_series = calculate_rvol(df, period)
+        measured_val = rvol_series.iloc[-1]
+        
+    elif indic == 'RSI':
+        period = int(params.get('period', 14))
+        rsi_series = calculate_rsi(df['close'], period)
+        measured_val = rsi_series.iloc[-1]
+        
+    elif indic == 'ADX':
+        period = int(params.get('period', 14))
+        adx, _, _ = calculate_adx(df, period)
+        measured_val = adx.iloc[-1]
+        
+    elif indic == 'BB_WIDTH': # Squeeze metric
+        length = int(params.get('length', 20))
+        mult = float(params.get('mult', 2.0))
+        bb_width_series = calculate_squeeze(df, length, mult)
+        measured_val = bb_width_series.iloc[-1]
+
+    # Evaluation
+    # If operator is 'CROSS', it's harder, for now supports > < >= <=
+    if operator == '>': return measured_val > val, measured_val
+    if operator == '<': return measured_val < val, measured_val
+    if operator == '>=': return measured_val >= val, measured_val
+    if operator == '<=': return measured_val <= val, measured_val
     
-    long_4h = (curr_4h['ema21'] > curr_4h['ema50'] > curr_4h['ema100']) and (curr_4h['close'] > curr_4h['ema21'])
-    short_4h = (curr_4h['ema21'] < curr_4h['ema50'] < curr_4h['ema100']) and (curr_4h['close'] < curr_4h['ema21'])
+    return False, measured_val
 
-    if long_4h:
-        result['Side'] = 'LONG'
-        result['4H EMA Stack'] = 'PASS'
-    elif short_4h:
-        result['Side'] = 'SHORT'
-        result['4H EMA Stack'] = 'PASS'
-    else:
-        # print(f"{symbol} 4H Trend Failed")
-        return None # FAIL FAST
-
-
-    # --- STEP 2: 1H Timeframe (Fail Fast) ---
-    df_1h = await fetch_ohlcv_async(client, symbol, '1h')
-    if df_1h is None: return None
-
-    df_1h['ema21'] = calculate_ema(df_1h['close'], 21)
-    df_1h['ema50'] = calculate_ema(df_1h['close'], 50)
-    curr_1h = df_1h.iloc[-1]
+async def check_dynamic_strategy(client, symbol, strategy):
+    # strategy = { "rules": [...] }
+    result = { 'Symbol': symbol, 'Pass': False, 'Side': 'NEUTRAL' }
     
-    if result['Side'] == 'LONG':
-        if not (curr_1h['ema21'] > curr_1h['ema50']): return None
-    elif result['Side'] == 'SHORT':
-        if not (curr_1h['ema21'] < curr_1h['ema50']): return None
+    # 1. Fetch Standard Data (15m is master for now, could act as Multi-TF later)
+    # For V2, we assume the user is scanning on 15m primarily, or we can make it dynamic
+    # To keep it simple: We scan 15m for the "Setup"
+    df = await fetch_ohlcv_async(client, symbol, '15m', limit=CANDLE_LIMIT)
+    if df is None or len(df) < 50: return None
+
+    # 4H Context (Optional, kept for the 'Change' calc and trends if needed)
+    df_4h = await fetch_ohlcv_async(client, symbol, '4h', limit=50)
+
+    # 2. Basic Stats
+    curr = df.iloc[-1]
+    result['Price'] = curr['close']
     
-    result['1H EMA Stack'] = 'PASS'
-
-
-    # --- STEP 3: 15m Timeframe (Final Check) ---
-    df_15m = await fetch_ohlcv_async(client, symbol, '15m')
-    if df_15m is None: return None
-
-    df_15m['ema21'] = calculate_ema(df_15m['close'], 21)
-    df_15m['ema50'] = calculate_ema(df_15m['close'], 50)
-    
-    # Calc indicators only if we made it this far
-    df_15m['rsi'] = calculate_rsi(df_15m['close'], RSI_PERIOD)
-    adx, plus_di, minus_di = calculate_adx(df_15m, ADX_PERIOD)
-    df_15m['adx'] = adx
-    df_15m['plus_di'] = plus_di
-    df_15m['minus_di'] = minus_di
-    
-    curr_15m = df_15m.iloc[-1]
-
-    if result['Side'] == 'LONG':
-        if not ((curr_15m['ema21'] > curr_15m['ema50']) and (curr_15m['close'] > curr_15m['ema50'])):
-            return None
-    elif result['Side'] == 'SHORT':
-        if not ((curr_15m['ema21'] < curr_15m['ema50']) and (curr_15m['close'] < curr_15m['ema50'])):
-            return None
-
-    result['15m EMA Stack'] = 'PASS'
-
-    # --- Optional Filters ---
-    result['RSI (15m)'] = round(curr_15m['rsi'], 2)
-    result['ADX (15m)'] = round(curr_15m['adx'], 2)
-    
-    # RSI
-    if config.get('use_rsi'):
-        if result['Side'] == 'LONG' and result['RSI (15m)'] <= 50: return None
-        if result['Side'] == 'SHORT' and result['RSI (15m)'] >= 50: return None
-
-    # ADX
-    if config.get('use_adx'):
-        if result['ADX (15m)'] <= 20: return None
-        if result['Side'] == 'LONG' and not (curr_15m['plus_di'] > curr_15m['minus_di']): return None
-        if result['Side'] == 'SHORT' and not (curr_15m['minus_di'] > curr_15m['plus_di']): return None
-
-    # --- Price & 24h Change ---
-    # Use 15m close for current price (most recent)
-    result['Price'] = curr_15m['close']
-    
-    # Calculate 24h Change using 4H candles (6 candles = 24h)
-    # We need at least 7 candles to compare current with 24h ago
-    if len(df_4h) >= 7:
-        price_24h_ago = df_4h.iloc[-7]['close']
-        change_pct = ((result['Price'] - price_24h_ago) / price_24h_ago) * 100
-        result['24h Change'] = round(change_pct, 2)
+    if df_4h is not None and len(df_4h) >= 7:
+        start_price = df_4h.iloc[-7]['close']
+        result['24h Change'] = round(((curr['close'] - start_price) / start_price) * 100, 2)
     else:
         result['24h Change'] = 0.0
 
-    result['Pass'] = True
-    return result
+    # 3. Evaluate Rules
+    # If NO rules, we return the default "EMA Stack" logic? 
+    # Or we assume the Strategy Builder sent specific rules.
+    # Let's support a "Legacy Mode" if 'rules' is empty
+    
+    rules = strategy.get('rules', [])
+    
+    if not rules:
+        # LEGACY MODE (The strict EMA logic)
+        # We can re-implement or just say "No Rules"
+        # For safety, let's just return price info if no rules, or implement a default
+        result['Pass'] = True
+        return result
 
-async def scan_market_async(symbols, config=None):
-    if config is None:
-        config = {'use_rsi': False, 'use_adx': False}
+    # Dynamic Evaluation
+    # Default Side inference (naive): if we have a > rule on Price vs EMA, likely Long
+    # We will just mark Side as 'SIGNAL' unless rule specifies
     
-    # Initialize Async Client
-    # DISABLE Rate Limit for speed (Burst mode). 150 pairs is well within 2400/min limit.
-    client = ccxt.binance({
-        'enableRateLimit': False, 
-        'options': {'defaultType': 'future'}
-    })
+    all_passed = True
+    details = []
     
-    tasks = []
-    # Create tasks for all symbols
-    for sym in symbols:
-        tasks.append(check_conditions_async(client, sym, config))
-        
-    print(f"Scanning {len(symbols)} pairs asynchronously...")
+    for rule in rules:
+        passed, val = evaluate_rule(df, rule)
+        result[f"{rule['indicator']}"] = round(val, 2)
+        if not passed:
+            all_passed = False
+            # Don't break immediately if we want debug info, but for speed: break?
+            # break 
+    
+    # Heuristic for Side:
+    # If 24h change is pos, assume Long bias? 
+    # Or let the UI handle "Long/Short" logic?
+    # Let's deduce Side from Price vs EMA 50 if present, else 24h change
+    ema50 = calculate_ema(df['close'], 50).iloc[-1]
+    result['Side'] = 'LONG' if curr['close'] > ema50 else 'SHORT'
+    
+    if all_passed:
+        result['Pass'] = True
+        return result
+    else:
+        return None
+
+async def scan_market_async(symbols, strategy=None):
+    if strategy is None: strategy = {}
+    
+    client = ccxt.binance({'enableRateLimit': False, 'options': {'defaultType': 'future'}})
+    
+    tasks = [check_dynamic_strategy(client, sym, strategy) for sym in symbols]
+    print(f"Scanning {len(symbols)} pairs with Dynamic Engine...")
+    
+    responses = await asyncio.gather(*tasks, return_exceptions=True)
+    await client.close()
     
     results = []
-    # Gather results concurrently
-    # return_exceptions=True prevents one error from killing others
-    responses = await asyncio.gather(*tasks, return_exceptions=True)
-    
     for res in responses:
         if isinstance(res, dict) and res.get('Pass'):
             results.append(res)
-        # We silently ignore Nones (failed checks) and Exceptions (errors)
             
-    await client.close()
     return results
 
 def main():
-    # Fix for Windows AsyncIO Loop
     if sys.platform == 'win32':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-    print("Initializing Binance Client (Sync for Setup)...")
     client_sync = get_binance_client_sync()
     pairs = fetch_top_volume_pairs(client_sync)
-    print(f"Fetched {len(pairs)} pairs.")
     
-    config = {'use_rsi': False, 'use_adx': False}
+    # Test Payload
+    test_strat = {
+        "rules": [
+            { "indicator": "RVOL", "operator": ">", "value": 1.0 },
+            { "indicator": "RSI", "operator": "<", "value": 70 } # Broad filter test
+        ]
+    }
     
-    start = time.time()
-    # Run Async Loop
-    results = asyncio.run(scan_market_async(pairs, config))
-    end = time.time()
-    
-    print(f"Scan completed in {end - start:.2f} seconds.")
-    
-    if not results:
-        print("No pairs found.")
-        return
-
-    df_res = pd.DataFrame(results)
-    df_res = df_res.sort_values(by=['Side', 'Symbol'], ascending=[True, True])
-    final_cols = ['Symbol', 'Side', '4H EMA Stack', '1H EMA Stack', '15m EMA Stack', 'RSI (15m)', 'ADX (15m)']
-    
-    print("\n" + "="*80)
-    print("EMA TREND SCANNER RESULTS")
-    print("="*80)
-    print(df_res[final_cols].to_string(index=False))
-    print("="*80)
+    results = asyncio.run(scan_market_async(pairs, test_strat))
+    print(results)
 
 if __name__ == "__main__":
     main()

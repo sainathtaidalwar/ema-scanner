@@ -53,24 +53,23 @@ def get_pairs():
     return jsonify({'pairs': pairs})
 
 @app.route('/api/scan', methods=['POST'])
-def scan_pairs():
-    """
-    Scan a list of pairs with provided configuration.
-    """
+def scan():
     data = request.json
     symbols = data.get('symbols', [])
-    config = data.get('config', {})
+    # In V2, 'config' is now 'strategy' in internal logic, but frontend might send complex dict
+    strategy = data.get('config', {}) 
     
-    print(f"Scanning {len(symbols)} pairs with config: {config}")
-    
-    # Run async scanner
+    if not symbols:
+        return jsonify({"error": "No symbols provided"}), 400
+
     try:
-        results = asyncio.run(scanner.scan_market_async(symbols, config))
+        # Run async scan with new engine
+        results = asyncio.run(scanner.scan_market_async(symbols, strategy))
+        return jsonify({"results": results})
     except Exception as e:
-        print(f"Async Scan Error: {e}")
-        results = []
-        
-    return jsonify({'results': results})
+        print(f"Scan Error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+```
