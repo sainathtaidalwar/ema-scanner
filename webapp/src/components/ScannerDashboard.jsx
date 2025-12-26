@@ -125,21 +125,25 @@ export default function ScannerDashboard() {
                             )}
 
                             <button
-                                onClick={handleScan}
-                                disabled={loading || pairs.length === 0}
+                                onClick={pairs.length === 0 ? fetchPairs : handleScan}
+                                disabled={loading}
                                 className={clsx(
                                     "w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all",
-                                    loading || pairs.length === 0
+                                    loading
                                         ? "bg-gray-700 cursor-not-allowed text-gray-400"
-                                        : "bg-gradient-to-r from-brand to-cyan-500 hover:opacity-90 hover:shadow-lg hover:shadow-brand/20"
+                                        : pairs.length === 0
+                                            ? "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/50" // Retry State
+                                            : "bg-gradient-to-r from-brand to-cyan-500 hover:opacity-90 hover:shadow-lg hover:shadow-brand/20"
                                 )}
                             >
                                 {loading ? (
                                     <RefreshCw className="animate-spin" />
+                                ) : pairs.length === 0 ? (
+                                    <RefreshCw size={20} />
                                 ) : (
                                     <Play size={20} fill="currentColor" />
                                 )}
-                                {loading ? 'SCANNING...' : pairs.length > 0 ? 'RUN SCAN' : 'LOADING PAIRS...'}
+                                {loading ? 'SCANNING...' : pairs.length > 0 ? 'RUN SCAN' : 'RETRY CONNECTION'}
                             </button>
                             <p className="text-center text-xs text-gray-500 mt-2">
                                 Scanning Top {pairs.length} Vol Pairs
