@@ -26,6 +26,7 @@ export default function ScannerDashboard() {
     }, []);
 
     const fetchPairs = async () => {
+        setLoading(true);
         setError(null);
         try {
             // timeout 5s, if slow assume free tier cold start issue or fail
