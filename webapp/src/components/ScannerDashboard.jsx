@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play } from 'lucide-react';
+import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
@@ -14,7 +14,6 @@ export default function ScannerDashboard() {
     const [error, setError] = useState(null);
     const [filterSide, setFilterSide] = useState('ALL'); // ALL, LONG, SHORT
 
-    // Config State
     const [config, setConfig] = useState({
         use_rsi: false,
         use_adx: false
