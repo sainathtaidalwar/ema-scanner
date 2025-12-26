@@ -33,6 +33,8 @@ export default function ScannerDashboard() {
             const res = await axios.get(`${API_BASE}/pairs?limit=150`, { timeout: 30000 });
             if (res.data.pairs && res.data.pairs.length > 0) {
                 setPairs(res.data.pairs);
+                // Trigger scan immediately with the fresh data
+                await handleScan(res.data.pairs);
             } else {
                 throw new Error("Empty pairs list received from server");
             }
@@ -44,13 +46,21 @@ export default function ScannerDashboard() {
         }
     };
 
-    const handleScan = async () => {
+    const handleScan = async (manualPairs = null) => {
+        // Use passed pairs (initial load) or state pairs (manual click)
+        const targets = Array.isArray(manualPairs) ? manualPairs : pairs;
+
+        if (!targets || targets.length === 0) {
+            console.warn("No pairs to scan");
+            return;
+        }
+
         setLoading(true);
         setResults([]); // Clear previous to show fresh animation
         setError(null);
         try {
             const res = await axios.post(`${API_BASE}/scan`, {
-                symbols: pairs,
+                symbols: targets,
                 config: config
             });
             console.log("Scan results:", res.data);
