@@ -21,6 +21,10 @@ pairs_cache = {
     'timestamp': 0
 }
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'ok', 'message': 'Server is running'})
+
 @app.route('/api/pairs', methods=['GET'])
 def get_pairs():
     """Fetch top volume pairs (cached every 1 hour)"""
