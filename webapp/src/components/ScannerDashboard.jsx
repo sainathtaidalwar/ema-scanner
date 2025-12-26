@@ -7,6 +7,7 @@ import clsx from 'clsx';
 // Use environment variable for API URL in production, fallback to localhost for dev
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
+import { FALLBACK_PAIRS } from '../constants';
 
 export default function ScannerDashboard() {
     const [loading, setLoading] = useState(false);
@@ -37,8 +38,14 @@ export default function ScannerDashboard() {
                 throw new Error("Empty pairs list received from server");
             }
         } catch (err) {
-            console.error("Failed to fetch pairs", err);
-            setError("Failed to load pairs. Check Backend URL or Click Retry.");
+            console.error("Failed to fetch pairs, using fallback", err);
+            // RAILWAY/RENDER are often US-based and blocked by Binance (Error 451).
+            // We fallback to a hardcoded list so the app still functions if /scan isn't blocked.
+            if (window.confirm("Server failed to load pairs (likely Geoblocked). Use offline fallback list?")) {
+                setPairs(FALLBACK_PAIRS);
+            } else {
+                setError("Failed to load pairs. Backend blocked by Binance? Click Retry.");
+            }
         } finally {
             setLoading(false);
         }
