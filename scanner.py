@@ -176,6 +176,19 @@ async def check_conditions_async(client, symbol, config):
         if result['Side'] == 'LONG' and not (curr_15m['plus_di'] > curr_15m['minus_di']): return None
         if result['Side'] == 'SHORT' and not (curr_15m['minus_di'] > curr_15m['plus_di']): return None
 
+    # --- Price & 24h Change ---
+    # Use 15m close for current price (most recent)
+    result['Price'] = curr_15m['close']
+    
+    # Calculate 24h Change using 4H candles (6 candles = 24h)
+    # We need at least 7 candles to compare current with 24h ago
+    if len(df_4h) >= 7:
+        price_24h_ago = df_4h.iloc[-7]['close']
+        change_pct = ((result['Price'] - price_24h_ago) / price_24h_ago) * 100
+        result['24h Change'] = round(change_pct, 2)
+    else:
+        result['24h Change'] = 0.0
+
     result['Pass'] = True
     return result
 

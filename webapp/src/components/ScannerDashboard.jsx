@@ -252,7 +252,20 @@ function ResultCard({ item, index }) {
                 </div>
             </div>
 
-            <div className="flex gap-8 text-sm">
+            <div className="flex gap-8 text-sm items-center">
+                <div className="text-center">
+                    <p className="text-gray-500 text-xs uppercase">Price</p>
+                    <p className="font-mono text-white font-bold">{item['Price']}</p>
+                </div>
+                <div className="text-center">
+                    <p className="text-gray-500 text-xs uppercase">24h Change</p>
+                    <p className={clsx(
+                        "font-mono font-bold",
+                        item['24h Change'] > 0 ? "text-green-400" : "text-red-400"
+                    )}>
+                        {item['24h Change']}%
+                    </p>
+                </div>
                 <div className="text-center">
                     <p className="text-gray-500 text-xs uppercase">RSI (15m)</p>
                     <p className={clsx(
@@ -262,7 +275,7 @@ function ResultCard({ item, index }) {
                         {item['RSI (15m)'] ?? '--'}
                     </p>
                 </div>
-                <div className="text-center">
+                <div className="text-center hidden sm:block">
                     <p className="text-gray-500 text-xs uppercase">ADX (15m)</p>
                     <p className={clsx(
                         "font-mono font-bold",
@@ -271,7 +284,7 @@ function ResultCard({ item, index }) {
                         {item['ADX (15m)'] ?? '--'}
                     </p>
                 </div>
-                <div className="text-right min-w-[100px]">
+                <div className="text-right min-w-[80px]">
                     <span className={clsx(
                         "px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset",
                         isLong
