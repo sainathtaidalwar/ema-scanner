@@ -86,12 +86,17 @@ export default function ScannerDashboard() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                                <Zap size={20} className="text-white fill-current" />
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                                <Zap size={24} className="text-white fill-current" />
                             </div>
-                            <span className="text-xl font-bold tracking-tight text-white">
-                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">APEX</span> <span className="text-indigo-500 font-light">// TERMINAL</span>
-                            </span>
+                            <div className="flex flex-col">
+                                <span className="text-xl font-bold tracking-tight text-white leading-none">
+                                    Algo Signal Pulse
+                                </span>
+                                <span className="text-[10px] text-indigo-300 font-medium tracking-wide uppercase mt-0.5">
+                                    Multi-Indicator Algo Trading Signals
+                                </span>
+                            </div>
                         </div>
                         <div className="hidden md:flex gap-8 text-sm font-medium">
                             <a href="#" className="text-white flex items-center gap-2"><Layout size={14} /> Dashboard</a>
