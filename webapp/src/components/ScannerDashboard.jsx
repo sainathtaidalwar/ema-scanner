@@ -378,14 +378,14 @@ function ResultTicket({ item, index }) {
                     </div>
                 </div>
 
-                {/* External Link */}
+                {/* External Link - Always Visible for Referrals */}
                 <a
                     href={tradeUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="p-2 bg-white/5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100"
+                    className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-xs font-bold hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2"
                 >
-                    <ExternalLink size={16} />
+                    TRADE <ExternalLink size={14} />
                 </a>
             </div>
 
