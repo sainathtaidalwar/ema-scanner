@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, TrendingDown, Layers, AlertTriangle } from 'lucide-react';
 
-const LearnStrategy = ({ onBack }) => {
+const LearnStrategy = () => {
+    const navigate = useNavigate();
+
     return (
         <div className="min-h-screen bg-dark-900 text-white selection:bg-indigo-500/30">
             <div className="fixed inset-0 z-0 pointer-events-none">
@@ -13,7 +16,7 @@ const LearnStrategy = ({ onBack }) => {
                 {/* Header */}
                 <div className="mb-12">
                     <button
-                        onClick={onBack}
+                        onClick={() => navigate('/')}
                         className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6 group"
                     >
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -86,7 +89,7 @@ const LearnStrategy = ({ onBack }) => {
                 {/* Footer */}
                 <div className="mt-12 text-center">
                     <button
-                        onClick={onBack}
+                        onClick={() => navigate('/')}
                         className="px-8 py-3 bg-white/10 hover:bg-white/20 border border-white/10 rounded-full font-medium transition-all"
                     >
                         Ready? Go to Home
@@ -124,10 +127,6 @@ const EmaCard = ({ value, label, color }) => (
         <div className="text-xs text-gray-500 uppercase tracking-wider">{label}</div>
     </div>
 );
-
-LearnStrategy.propTypes = {
-    onBack: PropTypes.func.isRequired,
-};
 
 Section.propTypes = {
     title: PropTypes.string.isRequired,

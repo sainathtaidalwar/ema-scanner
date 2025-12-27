@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
@@ -8,7 +9,8 @@ import clsx from 'clsx';
 // Use environment variable for API URL in production, fallback to localhost for dev
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
-export default function ScannerDashboard({ onBack }) {
+export default function ScannerDashboard() {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState([]);
     const [pairs, setPairs] = useState([]);
@@ -98,7 +100,7 @@ export default function ScannerDashboard({ onBack }) {
                         </div>
                         <div className="hidden md:flex gap-8 text-sm font-medium">
                             <button
-                                onClick={onBack}
+                                onClick={() => navigate('/')}
                                 className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"
                             >
                                 <Layout size={14} /> Back to Home
