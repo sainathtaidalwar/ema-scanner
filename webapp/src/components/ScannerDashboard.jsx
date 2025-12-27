@@ -19,7 +19,8 @@ export default function ScannerDashboard() {
 
     const [config, setConfig] = useState({
         use_rsi: false,
-        use_adx: false
+        use_adx: false,
+        only_pulse: false // New Filter: Only Sniper/Pulse entries
     });
 
     useEffect(() => {
@@ -160,6 +161,12 @@ export default function ScannerDashboard() {
                                     desc="Require ADX > 25 for strong trends"
                                     onClick={() => setConfig({ ...config, use_adx: !config.use_adx })}
                                 />
+                                <FilterToggle
+                                    label="Sniper Mode (Pullback)"
+                                    active={config.only_pulse}
+                                    desc="Only show 21-50 EMA zone entries"
+                                    onClick={() => setConfig({ ...config, only_pulse: !config.only_pulse })}
+                                />
                             </div>
 
                             <div className="mt-8 pt-6 border-t border-white/5">
@@ -216,7 +223,11 @@ export default function ScannerDashboard() {
                         <div className="grid gap-3">
                             <AnimatePresence>
                                 {results
-                                    .filter(item => filterSide === 'ALL' || item.Side === filterSide)
+                                    .filter(item => {
+                                        const sideMatch = filterSide === 'ALL' || item.Side === filterSide;
+                                        const typeMatch = !config.only_pulse || item.Type === 'PULSE';
+                                        return sideMatch && typeMatch;
+                                    })
                                     .map((item, idx) => (
                                         <ResultTicket key={item.Symbol} item={item} index={idx} />
                                     ))}
@@ -326,90 +337,91 @@ function ResultTicket({ item, index }) {
 
     return (
         <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, height: 0 }}
+            layout
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{ delay: index * 0.03 }}
-            className="bg-[#161922] hover:bg-[#1c202b] rounded-xl p-4 border border-white/5 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 group transition-all hover:border-white/10 relative overflow-hidden"
+            className={`
+                p-4 rounded-xl border border-white/5 relative group overflow-hidden
+                ${item.Side === 'LONG' ? 'bg-emerald-500/5 hover:bg-emerald-500/10' : 'bg-red-500/5 hover:bg-red-500/10'}
+            `}
         >
-            {/* Left Accent Bar */}
-            <div className={clsx(
-                "absolute left-0 top-0 bottom-0 w-1",
-                isLong ? "bg-emerald-500" : "bg-rose-500"
-            )} />
-
-            {/* Symbol Info */}
-            <div className="flex items-center gap-4 w-full sm:w-auto z-10">
-                <div className={clsx(
-                    "w-10 h-10 rounded-lg flex items-center justify-center font-bold",
-                    isLong ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"
-                )}>
-                    {isLong ? <ArrowUp size={20} /> : <ArrowDown size={20} />}
-                </div>
+            <div className="flex justify-between items-start mb-2">
                 <div>
-                    <h3 className="font-bold text-white text-lg">{item.Symbol}</h3>
-                    <div className="flex items-center gap-2">
-                        <span className={clsx(
-                            "text-[10px] font-bold px-1.5 py-0.5 rounded",
-                            isLong ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"
-                        )}>
-                            {item.Side}
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-lg font-bold ${item.Side === 'LONG' ? 'text-emerald-400' : 'text-red-400'}`}>
+                            {item.Symbol}
                         </span>
-                        <span className="text-gray-600 text-[10px] font-mono">15m • 1H • 4H ALIGNED</span>
+                        <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${item.Side === 'LONG' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'
+                            }`}>
+                            {item.Side}
+                        </div>
+                        {/* Setup Type Badge */}
+                        <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${item.Type === 'PULSE'
+                            ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                            : 'bg-gray-700/30 text-gray-400 border-transparent'
+                            }`}>
+                            {item.Type === 'PULSE' ? 'SNIPER' : 'MOMENTUM'}
+                        </div>
+                    </div>
+                    <div className="text-xl font-mono text-white">
+                        {item.Price}
+                    </div>
+                </div>
+
+                {/* External Link */}
+                <a
+                    href={`https://www.binance.com/en/futures/${item.Symbol}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-2 bg-white/5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100"
+                >
+                    <ExternalLink size={16} />
+                </a>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 mt-4 text-xs">
+                <div className="p-2 bg-[#0f111a] rounded-lg border border-white/5">
+                    <div className="text-gray-500 mb-1">RSI (15m)</div>
+                    <div className={item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? 'text-yellow-400 font-bold' : 'text-gray-300'}>
+                        {item['RSI (15m)']}
+                    </div>
+                </div>
+                <div className="p-2 bg-[#0f111a] rounded-lg border border-white/5">
+                    <div className="text-gray-500 mb-1">ADX Strength</div>
+                    <div className={item['ADX (15m)'] > 25 ? 'text-emerald-400 font-bold' : 'text-gray-300'}>
+                        {item['ADX (15m)']}
                     </div>
                 </div>
             </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-3 sm:flex sm:ml-auto w-full sm:w-auto gap-4 sm:gap-8 items-center pt-4 sm:pt-0 border-t border-white/5 sm:border-0">
-                <StatBox label="Price" value={item['Price']} />
-                <StatBox
-                    label="24h"
-                    value={`${item['24h Change']}%`}
-                    color={item['24h Change'] > 0 ? "text-emerald-400" : "text-rose-400"}
-                />
-                <StatBox
-                    label="RSI"
-                    value={item['RSI (15m)'] || '--'}
-                    color={(item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30) ? "text-yellow-400" : "text-gray-400"}
-                />
-
-                {/* Actions */}
-                <a
-                    href={tradeUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="col-span-3 sm:col-span-1 w-full sm:w-auto px-4 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-bold text-white flex items-center justify-center gap-2 transition-colors group-hover:bg-cyan-500/10 group-hover:text-cyan-400"
-                >
-                    TRADE <ExternalLink size={12} />
-                </a>
-            </div>
         </motion.div>
     );
-}
+};
 
 ResultTicket.propTypes = {
     item: PropTypes.shape({
         Symbol: PropTypes.string.isRequired,
         Side: PropTypes.string.isRequired,
-        Price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        '24h Change': PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        'RSI (15m)': PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        Type: PropTypes.string,
+        Price: PropTypes.number.isRequired,
+        'RSI (15m)': PropTypes.number,
+        'ADX (15m)': PropTypes.number,
     }).isRequired,
     index: PropTypes.number.isRequired,
 };
 
-function StatBox({ label, value, color = "text-white" }) {
-    return (
-        <div className="text-center sm:text-right">
-            <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">{label}</p>
-            <p className={clsx("font-mono font-bold text-sm", color)}>{value}</p>
+export const StatBox = ({ label, value, isPositive }) => (
+    <div className="bg-[#161922] p-4 rounded-xl border border-white/5">
+        <div className="text-gray-500 text-xs mb-1 uppercase tracking-wider">{label}</div>
+        <div className={`text-xl font-bold ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {value}
         </div>
-    );
-}
+    </div>
+);
 
 StatBox.propTypes = {
     label: PropTypes.string.isRequired,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-    color: PropTypes.string,
+    value: PropTypes.string.isRequired,
+    isPositive: PropTypes.bool.isRequired,
 };
