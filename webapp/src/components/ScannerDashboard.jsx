@@ -219,7 +219,7 @@ export default function ScannerDashboard() {
                             </div>
                         </div>
                 </div>
-                    </main >
+                </main >
 
         <footer className="border-t border-white/5 bg-[#161922] py-8 mt-12">
             <div className="max-w-7xl mx-auto px-8 text-center">
