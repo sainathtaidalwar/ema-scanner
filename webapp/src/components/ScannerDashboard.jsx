@@ -119,25 +119,58 @@ export default function ScannerDashboard() {
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                             {/* Sidebar Configuration */}
                             <div className="lg:col-span-3 space-y-6">
-                                <div className="bg-[#161922] border border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                        <Settings size={64} />
+                                {/* Exchange Selector */}
+                                <div className="bg-[#161922] border border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden">
+                                    <div className="bg-[#0f111a] rounded-xl border border-white/5 p-6 space-y-6">
+                                        <div>
+                                            <h2 className="text-lg font-bold text-gray-200 flex items-center gap-2 mb-4">
+                                                <Settings size={20} className="text-indigo-400" />
+                                                Exchange
+                                            </h2>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {EXCHANGES.map(ex => (
+                                                    <button
+                                                        key={ex.id}
+                                                        onClick={() => setSelectedExchange(ex.id)}
+                                                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all border ${selectedExchange === ex.id
+                                                                ? 'bg-indigo-500/20 border-indigo-500 text-white'
+                                                                : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'
+                                                            }`}
+                                                    >
+                                                        {ex.name}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <h2 className="text-lg font-bold text-gray-200 flex items-center gap-2 mb-4">
+                                                <Settings size={20} className="text-indigo-400" />
+                                                Strategy Config
+                                            </h2>
+
+                                            <div className="space-y-4">
+                                                <FilterToggle
+                                                    label="RSI Confirmation"
+                                                    active={config.use_rsi}
+                                                    desc="Only signals entering overbought/sold"
+                                                    onClick={() => setConfig({ ...config, use_rsi: !config.use_rsi })}
+                                                />
+                                                <FilterToggle
+                                                    label="ADX Trend Strength"
+                                                    active={config.use_adx}
+                                                    desc="Require ADX > 25 (Strong Trend)"
+                                                    onClick={() => setConfig({ ...config, use_adx: !config.use_adx })}
+                                                />
+                                                <FilterToggle
+                                                    label="Sniper Mode"
+                                                    active={config.only_pulse}
+                                                    desc="Show only High-Probability Pulse entries"
+                                                    onClick={() => setConfig({ ...config, only_pulse: !config.only_pulse })}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
-                                    desc="Only signals entering overbought/sold"
-                                    onClick={() => setConfig({ ...config, use_rsi: !config.use_rsi })}
-                                        />
-                                    <FilterToggle
-                                        label="ADX Trend Strength"
-                                        active={config.use_adx}
-                                        desc="Require ADX > 25 for strong trends"
-                                        onClick={() => setConfig({ ...config, use_adx: !config.use_adx })}
-                                    />
-                                    <FilterToggle
-                                        label="Sniper Mode (Pullback)"
-                                        active={config.only_pulse}
-                                        desc="Only show 21-50 EMA zone entries"
-                                        onClick={() => setConfig({ ...config, only_pulse: !config.only_pulse })}
-                                    />
                                 </div>
 
                                 <div className="mt-8 pt-6 border-t border-white/5">
