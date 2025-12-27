@@ -277,20 +277,33 @@ async def scan_market_async(exchange_id, symbols, config=None):
     })
     
     # Concurrency Control
-    # 12 is good for Binance, but others might be stricter. 
-    # Coinbase is strict. MEXC is loose. 
-    # Let's keep 12 for now, but be ready to tune.
-    sem = asyncio.Semaphore(12)
+    # Binance is robust (12), but MEXC/Bybit can be strict.
+    concurrency_limit = 10
+    if exchange_id == 'mexc':
+        concurrency_limit = 3 # Strict limit for MEXC
+    elif exchange_id == 'bybit':
+        concurrency_limit = 5
+        
+    sem = asyncio.Semaphore(concurrency_limit) 
 
     async def protected_check(sym):
         async with sem:
+            # Add small sleep for MEXC to be safe
+            if exchange_id == 'mexc':
+                await asyncio.sleep(0.5)
             return await check_conditions_async(client, sym, config, exchange_id)
 
     tasks = []
-    for sym in symbols:
+    # Hard cap limit for MEXC to prevent timeouts
+    scan_targets = symbols
+    if exchange_id == 'mexc' and len(symbols) > 40:
+        print(f"Capping MEXC scan to 40 pairs to prevent timeout...")
+        scan_targets = symbols[:40]
+        
+    for sym in scan_targets:
         tasks.append(protected_check(sym))
         
-    print(f"Scanning {len(symbols)} pairs on {exchange_id}...")
+    print(f"Scanning {len(scan_targets)} pairs on {exchange_id} with concurrency {concurrency_limit}...")
     
     results = []
     responses = await asyncio.gather(*tasks, return_exceptions=True)
@@ -299,6 +312,7 @@ async def scan_market_async(exchange_id, symbols, config=None):
         if isinstance(res, dict) and res.get('Pass'):
             results.append(res)
             
+    # Explicit close for MEXC
     await client.close()
     return results
 
