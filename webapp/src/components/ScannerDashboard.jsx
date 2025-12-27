@@ -326,7 +326,7 @@ const ResultTicket = ({ item, index, exchange }) => {
     } else if (exchange === 'bybit') {
         tradeUrl = `https://www.bybit.com/trade/usdt/${rawSymbol}`;
     } else if (exchange === 'mexc') {
-        tradeUrl = `https://www.mexc.com/exchange/${rawSymbol}?type=linear_swap`;
+        tradeUrl = `https://www.mexc.com/exchange/${rawSymbol}?type=linear_swap&inviteCode=FVh62Bzi`;
     } else if (exchange === 'coinbase') {
         tradeUrl = `https://www.coinbase.com/advanced-trade/spot/${baseAsset}-USD`;
     }
