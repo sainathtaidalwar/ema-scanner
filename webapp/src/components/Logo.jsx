@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const Logo = ({ className = "w-8 h-8", calm = false }) => {
+export const Logo = ({ className = "", calm = false }) => {
     return (
         <div className={`flex items-center gap-3 select-none ${className}`}>
             <div className="relative w-10 h-10 flex items-center justify-center">
