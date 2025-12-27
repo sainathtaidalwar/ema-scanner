@@ -12,14 +12,12 @@ CORS(app) # Enable CORS for all domains
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-# Use Sync client for fetching pairs initially
-client_sync = scanner.get_binance_client_sync()
+# Client is now dynamic in scanner.py
+# No global client needed
 
-# Simple In-Memory Cache
-pairs_cache = {
-    'data': [],
-    'timestamp': 0
-}
+# Segmented Cache by Exchange
+pairs_cache = {}
+# Structure: {'binance': {'data': [], 'timestamp': 0}, 'bybit': ...}
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -27,77 +25,81 @@ def health_check():
 
 @app.route('/api/pairs', methods=['GET'])
 def get_pairs():
-    """Fetch top volume pairs (cached every 1 hour)"""
+    """Fetch top volume pairs (cached every 1 hour per exchange)"""
     global pairs_cache
     
     current_time = time.time()
     limit = request.args.get('limit', default=75, type=int)
+    exchange_id = request.args.get('exchange', default='binance', type=str).lower()
     
-    # Check cache (only valid if limit matches or cache is larger, simplified to 1 hour expiry)
-    if pairs_cache['data'] and (current_time - pairs_cache['timestamp'] < 3600):
-        # Optimization: Just return cached data sice limit is usually static
-        return jsonify({'pairs': pairs_cache['data'][:limit]})
+    # Initialize cache scope if needed
+    if exchange_id not in pairs_cache:
+        pairs_cache[exchange_id] = {'data': [], 'timestamp': 0}
+    
+    # Check cache
+    cache_scope = pairs_cache[exchange_id]
+    if cache_scope['data'] and (current_time - cache_scope['timestamp'] < 3600):
+        return jsonify({'pairs': cache_scope['data'][:limit]})
 
     try:
-        print("Fetching fresh pairs from Binance...")
-        pairs = scanner.fetch_top_volume_pairs(client_sync, limit=limit)
+        print(f"Fetching fresh pairs from {exchange_id}...")
+        # Note: We need to update scanner.fetch_top_volume_pairs to accept exchange_id
+        pairs = scanner.fetch_top_volume_pairs_sync(exchange_id, limit=limit)
         if pairs:
-            pairs_cache['data'] = pairs
-            pairs_cache['timestamp'] = current_time
+            cache_scope['data'] = pairs
+            cache_scope['timestamp'] = current_time
     except Exception as e:
-        print(f"Error fetching pairs: {e}")
+        print(f"Error fetching pairs for {exchange_id}: {e}")
         pairs = []
         
     return jsonify({'pairs': pairs})
 
-# Scan Results Cache (Global)
-# This prevents 1000 users from triggering 1000 concurrent scans.
-# Instead, the first user triggers a scan, and the next 999 get the cached result.
-scan_cache = {
-    'results': [],
-    'timestamp': 0,
-    'config_hash': ''
-}
+# Segmented Result Cache
+scan_cache = {}
+# Structure: {'binance': {'results': [], 'timestamp': 0, 'config_hash': ''}, ...}
 
 @app.route('/api/scan', methods=['POST'])
 def scan_pairs():
     """
-    Scan a list of pairs with provided configuration.
-    Uses global caching to serve high traffic.
+    Scan with multi-exchange support and caching.
     """
     global scan_cache
     
     data = request.json
     symbols = data.get('symbols', [])
     config = data.get('config', {})
+    exchange_id = data.get('exchange', 'binance').lower()
     
-    # Create simple hash of config to ensure cache validity
+    # Initialize cache scope
+    if exchange_id not in scan_cache:
+        scan_cache[exchange_id] = {'results': [], 'timestamp': 0, 'config_hash': ''}
+        
+    cache_scope = scan_cache[exchange_id]
+
     current_config_hash = str(sorted(config.items()))
     current_time = time.time()
     
-    # 1. Check Cache (Expiry: 60 seconds)
-    # If we have results, they are fresh (<60s), and the config hasn't changed... return cache.
-    if (scan_cache['results'] and 
-        (current_time - scan_cache['timestamp'] < 60) and 
-        scan_cache['config_hash'] == current_config_hash):
+    # 1. Check Cache
+    if (cache_scope['results'] and 
+        (current_time - cache_scope['timestamp'] < 60) and 
+        cache_scope['config_hash'] == current_config_hash):
         
-        print("Serving cached scan results...")
-        return jsonify({'results': scan_cache['results']})
+        print(f"Serving cached scan results for {exchange_id}...")
+        return jsonify({'results': cache_scope['results']})
     
-    # 2. If Cache Miss, Run Scanner
-    print(f"Cache miss or stale. Scanning {len(symbols)} pairs...")
+    # 2. Cache Miss
+    print(f"Scanning {len(symbols)} pairs on {exchange_id}...")
     
     try:
-        results = asyncio.run(scanner.scan_market_async(symbols, config))
+        results = asyncio.run(scanner.scan_market_async(exchange_id, symbols, config))
         
-        # Update Cache
         if results:
-            scan_cache['results'] = results
-            scan_cache['timestamp'] = current_time
-            scan_cache['config_hash'] = current_config_hash
+            cache_scope['results'] = results
+            cache_scope['timestamp'] = current_time
+            cache_scope['config_hash'] = current_config_hash
             
     except Exception as e:
-        print(f"Async Scan Error: {e}")
+        print(f"Scan Error ({exchange_id}): {e}")
         results = []
         
     return jsonify({'results': results})
