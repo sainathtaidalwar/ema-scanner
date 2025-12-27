@@ -47,10 +47,18 @@ export default function ScannerDashboard() {
         let mounted = true;
         const init = async () => {
             setLoading(true);
+            setResults([]); // Clear old results to avoid confusion
+
             const fetchedPairs = await fetchTopPairs();
-            if (mounted && fetchedPairs) {
-                setPairs(fetchedPairs);
-                setLoading(false);
+
+            if (mounted) {
+                if (fetchedPairs && fetchedPairs.length > 0) {
+                    setPairs(fetchedPairs);
+                    // Auto-trigger scan with fresh pairs
+                    await handleScan(fetchedPairs);
+                } else {
+                    setLoading(false);
+                }
             }
         };
         init();
@@ -59,7 +67,10 @@ export default function ScannerDashboard() {
 
     const handleScan = async (manualPairs = null) => {
         const targets = Array.isArray(manualPairs) ? manualPairs : pairs;
-        if (!targets || targets.length === 0) return;
+        if (!targets || targets.length === 0) {
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
         setResults([]);
@@ -67,7 +78,8 @@ export default function ScannerDashboard() {
         try {
             const res = await axios.post(`${API_BASE}/scan`, {
                 symbols: targets,
-                config: config
+                config: config,
+                exchange: selectedExchange // Critical Fix: Pass selected exchange
             });
             if (res.data.results && res.data.results.length === 0) {
                 setError("No setups found matching current criteria.");
