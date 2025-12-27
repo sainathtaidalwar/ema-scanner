@@ -189,8 +189,15 @@ function LandingPage() {
                 </div>
 
                 {/* Footer */}
-                <footer className="text-center text-gray-500 text-sm border-t border-white/5 pt-8">
-                    <p>© {new Date().getFullYear()} Algo Signal Pulse. Trading involves risk.</p>
+                <footer className="text-center text-gray-600 py-12 border-t border-white/5">
+                    <p className="text-xl font-bold text-white mb-2">Algo Signal Pulse</p>
+                    <p className="mb-4">&copy; {new Date().getFullYear()} Educational Tool. All rights reserved.</p>
+                    <div className="max-w-2xl mx-auto p-4 bg-red-500/5 border border-red-500/10 rounded-lg text-[10px] leading-relaxed">
+                        <span className="font-bold text-red-400">DISCLAIMER:</span> This website is for <strong>EDUCATIONAL PURPOSES ONLY</strong>.
+                        It provides technical analysis based on algorithms, which cannot predict the future.
+                        Trading cryptocurrencies involves significant risk and can result in the loss of your capital.
+                        We are not financial advisors. Trade at your own risk.
+                    </div>
                 </footer>
 
             </div>

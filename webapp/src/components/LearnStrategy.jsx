@@ -97,7 +97,15 @@ const LearnStrategy = () => {
             </div>
 
             <footer className="text-center text-gray-500 text-sm border-t border-white/5 py-8 mt-12">
-                <p>© {new Date().getFullYear()} Algo Signal Pulse. Trading involves risk.</p>
+                <p className="mb-4">© {new Date().getFullYear()} Algo Signal Pulse. Educational Tool.</p>
+                <div className="max-w-2xl mx-auto p-4 bg-red-500/5 border border-red-500/10 rounded-lg text-[10px] leading-relaxed">
+                    <p className="font-bold text-red-400 mb-1">EDUCATIONAL PURPOSE ONLY</p>
+                    <p>
+                        The strategies explained here are for theoretical understanding of technical analysis.
+                        They represent model behaviors, not financial advice.
+                        Trading involves real financial risk. You are solely responsible for your trades.
+                    </p>
+                </div>
             </footer>
         </div>
     );

@@ -359,8 +359,8 @@ function ResultTicket({ item, index }) {
                         </div>
                         {/* Setup Type Badge */}
                         <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${item.Type === 'PULSE'
-                            ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-                            : 'bg-gray-700/30 text-gray-400 border-transparent'
+                                ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                                : 'bg-gray-700/30 text-gray-400 border-transparent'
                             }`}>
                             {item.Type === 'PULSE' ? 'SNIPER' : 'MOMENTUM'}
                         </div>
@@ -381,7 +381,14 @@ function ResultTicket({ item, index }) {
                 </a>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 mt-4 text-xs">
+            <div className="grid grid-cols-3 gap-2 mt-4 text-xs">
+                {/* Restored 24h Change */}
+                <div className="p-2 bg-[#0f111a] rounded-lg border border-white/5">
+                    <div className="text-gray-500 mb-1">24h Change</div>
+                    <div className={`${item['24h Change'] >= 0 ? 'text-emerald-400' : 'text-rose-400'} font-bold`}>
+                        {item['24h Change'] > 0 ? '+' : ''}{item['24h Change']}%
+                    </div>
+                </div>
                 <div className="p-2 bg-[#0f111a] rounded-lg border border-white/5">
                     <div className="text-gray-500 mb-1">RSI (15m)</div>
                     <div className={item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? 'text-yellow-400 font-bold' : 'text-gray-300'}>
