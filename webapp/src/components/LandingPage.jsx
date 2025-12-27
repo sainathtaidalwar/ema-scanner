@@ -62,12 +62,7 @@ function LandingPage() {
                     <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
                         Algo Signal Pulse
                     </div>
-                    <button
-                        onClick={() => navigate('/scanner')}
-                        className="px-6 py-2 rounded-full border border-white/10 hover:bg-white/5 transition-all text-sm font-medium"
-                    >
-                        Launch App
-                    </button>
+                    {/* Redundant button removed as per user request */}
                 </nav>
 
                 {/* Hero Section */}
