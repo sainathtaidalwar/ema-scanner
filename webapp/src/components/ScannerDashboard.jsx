@@ -17,237 +17,219 @@ export default function ScannerDashboard() {
     const [pairs, setPairs] = useState([]);
     const [error, setError] = useState(null);
     const [filterSide, setFilterSide] = useState('ALL'); // ALL, LONG, SHORT
-
+    const [selectedExchange, setSelectedExchange] = useState('binance');
+    const [lastUpdated, setLastUpdated] = useState(null);
     const [config, setConfig] = useState({
         use_rsi: false,
-        use_adx: false,
+        use_adx: true,
         only_pulse: false // New Filter: Only Sniper/Pulse entries
     });
 
-    useEffect(() => {
-        fetchPairs();
-    }, []);
+    const EXCHANGES = [
+        { id: 'binance', name: 'Binance', color: 'text-yellow-400', url: 'https://www.binance.com/en/futures/' },
+        { id: 'bybit', name: 'Bybit', color: 'text-orange-400', url: 'https://www.bybit.com/trade/' },
+        { id: 'mexc', name: 'MEXC', color: 'text-green-400', url: 'https://www.mexc.com/exchange/' },
+        { id: 'coinbase', name: 'Coinbase', color: 'text-blue-500', url: ' https://www.coinbase.com/advanced-trade/' }
+    ];
 
-    // Auto-refresh when config changes (and pairs are loaded)
-    useEffect(() => {
-        if (pairs.length > 0) {
-            handleScan();
-        }
-    }, [config]);
-
-    const fetchPairs = async () => {
-        setLoading(true);
-        setError(null);
+    const fetchTopPairs = async () => {
         try {
-            const res = await axios.get(`${API_BASE}/pairs?limit=150`, { timeout: 30000 });
-            if (res.data.pairs && res.data.pairs.length > 0) {
-                setPairs(res.data.pairs);
-                await handleScan(res.data.pairs);
-            } else {
-                throw new Error("Empty pairs list received from server");
-            }
+            // Updated to pass exchange
+            const res = await axios.get(`${API_BASE}/pairs?limit=150&exchange=${selectedExchange}`);
+            return res.data.pairs;
         } catch (err) {
             console.error("Failed to fetch pairs", err);
-            setError("Connection Error. Please check backend.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
-    const handleScan = async (manualPairs = null) => {
-        const targets = Array.isArray(manualPairs) ? manualPairs : pairs;
-        if (!targets || targets.length === 0) return;
+            const handleScan = async (manualPairs = null) => {
+                const targets = Array.isArray(manualPairs) ? manualPairs : pairs;
+                if (!targets || targets.length === 0) return;
 
-        setLoading(true);
-        setResults([]);
-        setError(null);
-        try {
-            const res = await axios.post(`${API_BASE}/scan`, {
-                symbols: targets,
-                config: config
-            });
-            if (res.data.results && res.data.results.length === 0) {
-                setError("No setups found matching current criteria.");
-            }
-            setResults(res.data.results || []);
-        } catch (err) {
-            console.error("Scan failed", err);
-            setError("Scan execution failed.");
-        } finally {
-            setLoading(false);
-        }
-    };
+                setLoading(true);
+                setResults([]);
+                setError(null);
+                try {
+                    const res = await axios.post(`${API_BASE}/scan`, {
+                        symbols: targets,
+                        config: config
+                    });
+                    if (res.data.results && res.data.results.length === 0) {
+                        setError("No setups found matching current criteria.");
+                    }
+                    setResults(res.data.results || []);
+                } catch (err) {
+                    console.error("Scan failed", err);
+                    setError("Scan execution failed.");
+                } finally {
+                    setLoading(false);
+                }
+            };
 
-    // Calculate Market Sentiment
-    const longCount = results.filter(r => r.Side === 'LONG').length;
-    const shortCount = results.filter(r => r.Side === 'SHORT').length;
-    const totalActive = longCount + shortCount;
-    const sentiment = totalActive === 0 ? 50 : Math.round((longCount / totalActive) * 100);
+            // Calculate Market Sentiment
+            const longCount = results.filter(r => r.Side === 'LONG').length;
+            const shortCount = results.filter(r => r.Side === 'SHORT').length;
+            const totalActive = longCount + shortCount;
+            const sentiment = totalActive === 0 ? 50 : Math.round((longCount / totalActive) * 100);
 
-    return (
-        <div className="min-h-screen bg-[#0f111a] text-gray-300 font-sans selection:bg-brand-glow selection:text-white">
-            {/* Professional Navbar */}
-            <nav className="border-b border-white/5 bg-[#0f111a]/80 backdrop-blur-md sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div onClick={() => navigate('/')} className="cursor-pointer">
-                            <Logo />
-                        </div>
-                        <div className="hidden md:flex gap-8 text-sm font-medium">
-                            <button
-                                onClick={() => navigate('/')}
-                                className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"
-                            >
-                                <Layout size={14} /> Back to Home
-                            </button>
-                            <a href="#" className="text-white flex items-center gap-2"><BarChart2 size={14} /> Dashboard</a>
-                            <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><BarChart2 size={14} /> Analysis</a>
-                            <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><Clock size={14} /> History</a>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                                SYSTEM ONLINE
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
-                {/* Market Pulse Bar */}
-                {results.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="grid grid-cols-1 md:grid-cols-3 gap-4"
-                    >
-                        <PulseCard label="Total Opportunities" value={results.length} icon={<Activity size={18} className="text-purple-400" />} />
-                        <PulseCard label="Market Bias" value={`${sentiment}% Bullish`} subtext={`Longs: ${longCount} | Shorts: ${shortCount}`} icon={<BarChart2 size={18} className={sentiment > 50 ? "text-emerald-400" : "text-rose-400"} />} />
-                        <PulseCard label="Scanner Latency" value="45ms" subtext="Optimized Route" icon={<Zap size={18} className="text-yellow-400" />} />
-                    </motion.div>
-                )}
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* Sidebar Configuration */}
-                    <div className="lg:col-span-3 space-y-6">
-                        <div className="bg-[#161922] border border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <Settings size={64} />
-                            </div>
-                            <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2 relative z-10">
-                                <Settings size={18} className="text-indigo-400" />
-                                Strategy Config
-                            </h2>
-
-                            <div className="space-y-6 relative z-10">
-                                <FilterToggle
-                                    label="RSI Confirmation"
-                                    active={config.use_rsi}
-                                    desc="Only signals entering overbought/sold"
-                                    onClick={() => setConfig({ ...config, use_rsi: !config.use_rsi })}
-                                />
-                                <FilterToggle
-                                    label="ADX Trend Strength"
-                                    active={config.use_adx}
-                                    desc="Require ADX > 25 for strong trends"
-                                    onClick={() => setConfig({ ...config, use_adx: !config.use_adx })}
-                                />
-                                <FilterToggle
-                                    label="Sniper Mode (Pullback)"
-                                    active={config.only_pulse}
-                                    desc="Only show 21-50 EMA zone entries"
-                                    onClick={() => setConfig({ ...config, only_pulse: !config.only_pulse })}
-                                />
-                            </div>
-
-                            <div className="mt-8 pt-6 border-t border-white/5">
-                                {error && (
-                                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs text-center font-medium">
-                                        {error}
+            return (
+                <div className="min-h-screen bg-[#0f111a] text-gray-300 font-sans selection:bg-brand-glow selection:text-white">
+                    {/* Professional Navbar */}
+                    <nav className="border-b border-white/5 bg-[#0f111a]/80 backdrop-blur-md sticky top-0 z-50">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex items-center justify-between h-16">
+                                <div onClick={() => navigate('/')} className="cursor-pointer">
+                                    <Logo />
+                                </div>
+                                <div className="hidden md:flex gap-8 text-sm font-medium">
+                                    <button
+                                        onClick={() => navigate('/')}
+                                        className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"
+                                    >
+                                        <Layout size={14} /> Back to Home
+                                    </button>
+                                    <a href="#" className="text-white flex items-center gap-2"><BarChart2 size={14} /> Dashboard</a>
+                                    <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><BarChart2 size={14} /> Analysis</a>
+                                    <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><Clock size={14} /> History</a>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                        SYSTEM ONLINE
                                     </div>
-                                )}
-
-                                <button
-                                    onClick={pairs.length === 0 ? fetchPairs : handleScan}
-                                    disabled={loading}
-                                    className={clsx(
-                                        "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
-                                        loading
-                                            ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                                            : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-indigo-500/20 hover:shadow-indigo-500/30"
-                                    )}
-                                >
-                                    {loading ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
-                                    {loading ? 'ANALYZING MARKET...' : 'RUN SCANNER'}
-                                </button>
-                                <p className="text-center text-[10px] text-gray-600 mt-3 uppercase tracking-wider font-mono">
-                                    Scanning {pairs.length} Top Vol Assets
-                                </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </nav>
 
-                    {/* Main Results Feed */}
-                    <div className="lg:col-span-9 space-y-6">
-                        {/* Header & Filters */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#161922] p-4 rounded-xl border border-white/5">
-                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                                Live Signals
-                                <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
-                            </h2>
-                            <div className="flex bg-[#0f111a] p-1 rounded-lg border border-white/5">
-                                <TabButton label="ALL" active={filterSide === 'ALL'} onClick={() => setFilterSide('ALL')} />
-                                <TabButton label="LONGS" active={filterSide === 'LONG'} onClick={() => setFilterSide('LONG')} />
-                                <TabButton label="SHORTS" active={filterSide === 'SHORT'} onClick={() => setFilterSide('SHORT')} />
-                            </div>
-                        </div>
 
-                        {/* Empty State */}
-                        {results.length === 0 && !loading && !error && (
-                            <div className="h-64 flex flex-col items-center justify-center text-gray-600 border border-dashed border-gray-800 rounded-xl bg-[#161922]/50">
-                                <Activity size={48} className="mb-4 opacity-20" />
-                                <p className="text-sm">System Ready. Awaiting trigger.</p>
-                            </div>
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+                        {/* Market Pulse Bar */}
+                        {results.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                            >
+                                <PulseCard label="Total Opportunities" value={results.length} icon={<Activity size={18} className="text-purple-400" />} />
+                                <PulseCard label="Market Bias" value={`${sentiment}% Bullish`} subtext={`Longs: ${longCount} | Shorts: ${shortCount}`} icon={<BarChart2 size={18} className={sentiment > 50 ? "text-emerald-400" : "text-rose-400"} />} />
+                                <PulseCard label="Scanner Latency" value="45ms" subtext="Optimized Route" icon={<Zap size={18} className="text-yellow-400" />} />
+                            </motion.div>
                         )}
 
-                        {/* Results Grid */}
-                        <div className="grid gap-3">
-                            <AnimatePresence>
-                                {results
-                                    .filter(item => {
-                                        const sideMatch = filterSide === 'ALL' || item.Side === filterSide;
-                                        const typeMatch = !config.only_pulse || item.Type === 'PULSE';
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            {/* Sidebar Configuration */}
+                            <div className="lg:col-span-3 space-y-6">
+                                <div className="bg-[#161922] border border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                        <Settings size={64} />
+                                    </div>
+                                    desc="Only signals entering overbought/sold"
+                                    onClick={() => setConfig({ ...config, use_rsi: !config.use_rsi })}
+                                        />
+                                    <FilterToggle
+                                        label="ADX Trend Strength"
+                                        active={config.use_adx}
+                                        desc="Require ADX > 25 for strong trends"
+                                        onClick={() => setConfig({ ...config, use_adx: !config.use_adx })}
+                                    />
+                                    <FilterToggle
+                                        label="Sniper Mode (Pullback)"
+                                        active={config.only_pulse}
+                                        desc="Only show 21-50 EMA zone entries"
+                                        onClick={() => setConfig({ ...config, only_pulse: !config.only_pulse })}
+                                    />
+                                </div>
 
-                                        // ADX Filter: If enabled, require ADX > 25
-                                        const adxMatch = !config.use_adx || (item['ADX (15m)'] > 25);
+                                <div className="mt-8 pt-6 border-t border-white/5">
+                                    {error && (
+                                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs text-center font-medium">
+                                            {error}
+                                        </div>
+                                    )}
 
-                                        // RSI Filter: If enabled, require RSI > 70 or RSI < 30
-                                        // "Entering overbought/sold" usually means extreme values
-                                        const rsiMatch = !config.use_rsi || (item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30);
-
-                                        return sideMatch && typeMatch && adxMatch && rsiMatch;
-                                    })
-                                    .map((item, idx) => (
-                                        <ResultTicket key={item.Symbol} item={item} index={idx} />
-                                    ))}
-                            </AnimatePresence>
+                                    <button
+                                        onClick={pairs.length === 0 ? fetchPairs : handleScan}
+                                        disabled={loading}
+                                        className={clsx(
+                                            "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
+                                            loading
+                                                ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                                                : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-indigo-500/20 hover:shadow-indigo-500/30"
+                                        )}
+                                    >
+                                        {loading ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
+                                        {loading ? 'ANALYZING MARKET...' : 'RUN SCANNER'}
+                                    </button>
+                                    <p className="text-center text-[10px] text-gray-600 mt-3 uppercase tracking-wider font-mono">
+                                        Scanning {pairs.length} Top Vol Assets
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </main>
 
-            <footer className="border-t border-white/5 bg-[#161922] py-8 mt-12">
-                <div className="max-w-7xl mx-auto px-8 text-center">
-                    <p className="text-xs text-indigo-400 font-medium tracking-wide mb-2 uppercase">Multi-Indicator Algo Trading Signals</p>
-                    <p className="text-[10px] text-gray-600">&copy; {new Date().getFullYear()} Algo Signal Pulse. All rights reserved.</p>
-                    <p className="mt-1 text-[10px] text-gray-700">Market data provided by Binance Futures. Trading involves risk.</p>
+                        {/* Main Results Feed */}
+                        <div className="lg:col-span-9 space-y-6">
+                            {/* Header & Filters */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#161922] p-4 rounded-xl border border-white/5">
+                                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                    Live Signals
+                                    <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
+                                </h2>
+                                <div className="flex bg-[#0f111a] p-1 rounded-lg border border-white/5">
+                                    <TabButton label="ALL" active={filterSide === 'ALL'} onClick={() => setFilterSide('ALL')} />
+                                    <TabButton label="LONGS" active={filterSide === 'LONG'} onClick={() => setFilterSide('LONG')} />
+                                    <TabButton label="SHORTS" active={filterSide === 'SHORT'} onClick={() => setFilterSide('SHORT')} />
+                                </div>
+                            </div>
+
+                            {/* Empty State */}
+                            {results.length === 0 && !loading && !error && (
+                                <div className="h-64 flex flex-col items-center justify-center text-gray-600 border border-dashed border-gray-800 rounded-xl bg-[#161922]/50">
+                                    <Activity size={48} className="mb-4 opacity-20" />
+                                    <p className="text-sm">System Ready. Awaiting trigger.</p>
+                                </div>
+                            )}
+
+                            {/* Results Grid */}
+                            <div className="grid gap-3">
+                                <AnimatePresence>
+                                    {results
+                                        .filter(item => {
+                                            const sideMatch = filterSide === 'ALL' || item.Side === filterSide;
+                                            const typeMatch = !config.only_pulse || item.Type === 'PULSE';
+
+                                            // ADX Filter: If enabled, require ADX > 25
+                                            const adxMatch = !config.use_adx || (item['ADX (15m)'] > 25);
+
+                                            // RSI Filter: If enabled, require RSI > 70 or RSI < 30
+                                            // "Entering overbought/sold" usually means extreme values
+                                            const rsiMatch = !config.use_rsi || (item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30);
+
+                                            return sideMatch && typeMatch && adxMatch && rsiMatch;
+                                        })
+                                        .map((item, idx) => (
+                                            <ResultTicket
+                                                key={item.Symbol}
+                                                item={item}
+                                                index={idx}
+                                                exchange={selectedExchange}
+                                            />
+                                        ))}
+                                </AnimatePresence>
+                            </div>
+                        </div>
                 </div>
-            </footer>
-        </div >
-    );
+                    </main >
+
+        <footer className="border-t border-white/5 bg-[#161922] py-8 mt-12">
+            <div className="max-w-7xl mx-auto px-8 text-center">
+                <p className="text-xs text-indigo-400 font-medium tracking-wide mb-2 uppercase">Multi-Indicator Algo Trading Signals</p>
+                <p className="text-[10px] text-gray-600">&copy; {new Date().getFullYear()} Algo Signal Pulse. All rights reserved.</p>
+                <p className="mt-1 text-[10px] text-gray-700">Market data provided by Binance Futures. Trading involves risk.</p>
+            </div>
+        </footer>
+                </div >
+            );
 }
 
 ScannerDashboard.propTypes = {
@@ -331,11 +313,23 @@ TabButton.propTypes = {
     onClick: PropTypes.func.isRequired,
 };
 
-function ResultTicket({ item, index }) {
+const ResultTicket = ({ item, index, exchange }) => {
     const isLong = item.Side === 'LONG';
     // Sanitize symbol: ZEC/USDT -> ZECUSDT, ZEC/USDT:USDT -> ZECUSDT
     const rawSymbol = item.Symbol.split(':')[0].replace('/', '');
-    const tradeUrl = `https://www.binance.com/en/futures/${rawSymbol}?ref=L0Q2H2MC`;
+    const baseAsset = item.Symbol.split('/')[0];
+
+    let tradeUrl = '#';
+    // Generate Exchange Specific URLs
+    if (exchange === 'binance') {
+        tradeUrl = `https://www.binance.com/en/futures/${rawSymbol}?ref=L0Q2H2MC`;
+    } else if (exchange === 'bybit') {
+        tradeUrl = `https://www.bybit.com/trade/usdt/${rawSymbol}`;
+    } else if (exchange === 'mexc') {
+        tradeUrl = `https://www.mexc.com/exchange/${rawSymbol}?type=linear_swap`;
+    } else if (exchange === 'coinbase') {
+        tradeUrl = `https://www.coinbase.com/advanced-trade/spot/${baseAsset}-USD`;
+    }
 
     return (
         <motion.div
@@ -409,15 +403,9 @@ function ResultTicket({ item, index }) {
 };
 
 ResultTicket.propTypes = {
-    item: PropTypes.shape({
-        Symbol: PropTypes.string.isRequired,
-        Side: PropTypes.string.isRequired,
-        Type: PropTypes.string,
-        Price: PropTypes.number.isRequired,
-        'RSI (15m)': PropTypes.number,
-        'ADX (15m)': PropTypes.number,
-    }).isRequired,
+    item: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired,
+    exchange: PropTypes.string.isRequired
 };
 
 export const StatBox = ({ label, value, isPositive }) => (
