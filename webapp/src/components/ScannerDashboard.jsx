@@ -44,24 +44,12 @@ export default function ScannerDashboard() {
         }
     };
 
+    // Auto-fetch removed completely as requested.
+    // Pairs will only be fetched when the user clicks 'Run Scanner'.
     useEffect(() => {
-        let mounted = true;
-        const init = async () => {
-            setLoading(true);
-            setResults([]); // Clear old results to avoid confusion
-
-            const fetchedPairs = await fetchTopPairs();
-
-            if (mounted) {
-                if (fetchedPairs && fetchedPairs.length > 0) {
-                    setPairs(fetchedPairs);
-                    // Removed auto-scan call
-                }
-                setLoading(false);
-            }
-        };
-        init();
-        return () => { mounted = false; };
+        setResults([]); // Just clear results on exchange switch
+        setPairs([]);   // Clear pairs to force re-fetch on next scan
+        setError(null);
     }, [selectedExchange]);
 
     const handleScan = async (manualPairs = null) => {
@@ -232,7 +220,7 @@ export default function ScannerDashboard() {
                                 {isScanning ? 'ANALYZING MARKET...' : loading ? 'FETCHING ASSETS...' : 'RUN SCANNER'}
                             </button>
                             <p className="text-center text-[10px] text-gray-600 mt-3 uppercase tracking-wider font-mono">
-                                {pairs.length > 0 ? `Ready to Scan ${pairs.length} Assets` : 'Initializing...'}
+                                {pairs.length > 0 ? `Ready to Scan ${pairs.length} Assets` : 'System Standby'}
                             </p>
                         </div>
                     </div>
