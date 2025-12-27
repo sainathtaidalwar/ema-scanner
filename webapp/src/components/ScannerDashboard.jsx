@@ -197,7 +197,7 @@ export default function ScannerDashboard() {
                             )}
 
                             <button
-                                onClick={pairs.length === 0 ? fetchPairs : handleScan}
+                                onClick={pairs.length === 0 ? fetchTopPairs : handleScan}
                                 disabled={loading}
                                 className={clsx(
                                     "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
