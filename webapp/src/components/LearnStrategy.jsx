@@ -33,13 +33,12 @@ const LearnStrategy = () => {
                 {/* Section 1: Core Concept */}
                 <Section title="The Philosophy" icon={<Layers className="w-6 h-6 text-indigo-400" />}>
                     <p className="text-gray-300 mb-4 leading-relaxed">
-                        Markets trend. We don't predict; we react. By aligning Exponential Moving Averages (EMAs) across multiple timeframes, we identify where the "smart money" is pushing the price. Our strategy relies on the confluence of four specific EMAs:
+                        Markets trend. We don't predict; we react. By aligning Exponential Moving Averages (EMAs) across multiple timeframes, we identify where the "smart money" is pushing the price. Our strategy relies on the confluence of three specific institutional EMAs:
                     </p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                        <EmaCard value="9" label="Fast Momentum" color="text-cyan-400" />
-                        <EmaCard value="21" label="Short-term Trend" color="text-emerald-400" />
-                        <EmaCard value="55" label="Medium Trend" color="text-yellow-400" />
-                        <EmaCard value="200" label="Long-term Bias" color="text-rose-400" />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <EmaCard value="21" label="Fast Pullback Support" color="text-cyan-400" />
+                        <EmaCard value="50" label="Institutional Trend" color="text-indigo-400" />
+                        <EmaCard value="100" label="Major Bias" color="text-purple-400" />
                     </div>
                 </Section>
 
@@ -51,10 +50,10 @@ const LearnStrategy = () => {
                                 <TrendingUp className="w-5 h-5" /> Bullish (Long)
                             </h3>
                             <ul className="space-y-3 text-sm text-gray-300">
-                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">1.</span> Price is ABOVE the 200 EMA (Trend is Up).</li>
-                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">2.</span> EMA 9 {'>'} EMA 21 {'>'} EMA 55 (Fan Shape).</li>
-                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">3.</span> Pullback: Price dips into the 21-55 EMA zone.</li>
-                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">4.</span> Trigger: Price closes back above the 9 EMA.</li>
+                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">1.</span> Price is ABOVE the 21 EMA (Momentum is Up).</li>
+                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">2.</span> EMA 21 {'>'} EMA 50 {'>'} EMA 100 (Fan Shape).</li>
+                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bullish stack.</li>
+                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">4.</span> Trigger: 15m Price holds above EMA 50 support.</li>
                             </ul>
                         </div>
                         <div className="bg-white/5 border border-white/5 rounded-xl p-6">
@@ -62,10 +61,10 @@ const LearnStrategy = () => {
                                 <TrendingDown className="w-5 h-5" /> Bearish (Short)
                             </h3>
                             <ul className="space-y-3 text-sm text-gray-300">
-                                <li className="flex gap-2"><span className="text-rose-500 font-bold">1.</span> Price is BELOW the 200 EMA (Trend is Down).</li>
-                                <li className="flex gap-2"><span className="text-rose-500 font-bold">2.</span> EMA 9 {'<'} EMA 21 {'<'} EMA 55 (Fan Shape).</li>
-                                <li className="flex gap-2"><span className="text-rose-500 font-bold">3.</span> Pullback: Price rallies into the 21-55 EMA zone.</li>
-                                <li className="flex gap-2"><span className="text-rose-500 font-bold">4.</span> Trigger: Price closes back below the 9 EMA.</li>
+                                <li className="flex gap-2"><span className="text-rose-500 font-bold">1.</span> Price is BELOW the 21 EMA (Momentum is Down).</li>
+                                <li className="flex gap-2"><span className="text-rose-500 font-bold">2.</span> EMA 21 {'<'} EMA 50 {'<'} EMA 100 (Fan Shape).</li>
+                                <li className="flex gap-2"><span className="text-rose-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bearish stack.</li>
+                                <li className="flex gap-2"><span className="text-rose-500 font-bold">4.</span> Trigger: 15m Price held below EMA 50 resistance.</li>
                             </ul>
                         </div>
                     </div>

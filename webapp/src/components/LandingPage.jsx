@@ -120,7 +120,7 @@ function LandingPage() {
                     <StepCard
                         icon={<Activity className="w-8 h-8 text-blue-400" />}
                         title="The EMA Ribbon"
-                        description="We track the 9, 21, 55, and 200 EMAs. When they fan out in perfect order, it signals a powerful trend is underway."
+                        description="We track the 21, 50, and 100 EMAs. When they fan out in perfect order, it signals a powerful trend is underway."
                         delay={0.2}
                     />
                     <StepCard
