@@ -161,6 +161,20 @@ async def check_conditions_async(client, symbol, config):
 
     result['15m EMA Stack'] = 'PASS'
 
+    # --- Setup Type Classification ---
+    # "PULSE" (Sniper/Pullback) = Price is inside the 21-50 EMA Zone
+    # "MOMENTUM" (Breakout) = Price is leading the 21 EMA
+    
+    setup_type = 'MOMENTUM'
+    if result['Side'] == 'LONG':
+        if curr_15m['close'] < curr_15m['ema21']:
+            setup_type = 'PULSE' # Deep pullback into the zone
+    elif result['Side'] == 'SHORT':
+        if curr_15m['close'] > curr_15m['ema21']:
+            setup_type = 'PULSE' # Deep pullback into the zone
+            
+    result['Type'] = setup_type
+
     # --- Optional Filters ---
     result['RSI (15m)'] = round(curr_15m['rsi'], 2)
     result['ADX (15m)'] = round(curr_15m['adx'], 2)
@@ -201,28 +215,36 @@ async def scan_market_async(symbols, config=None):
         config = {'use_rsi': False, 'use_adx': False}
     
     # Initialize Async Client
-    # DISABLE Rate Limit for speed (Burst mode). 150 pairs is well within 2400/min limit.
+    # ENABLE Rate Limit to prevent 418 IP Bans
     client = ccxt.binance({
-        'enableRateLimit': False, 
+        'enableRateLimit': True, 
         'options': {'defaultType': 'future'}
     })
     
+    # Concurrency Control: Limit to 5 parallel symbol processors to respect weight limits
+    # Each symbol does ~3 API calls (4h, 1h, 15m), so 5 * 3 = 15 concurrent requests max
+    sem = asyncio.Semaphore(5)
+
+    async def protected_check(sym):
+        async with sem:
+            # Optional: Add small jitter to prevent thundering herd
+            await asyncio.sleep(0.1) 
+            return await check_conditions_async(client, sym, config)
+
     tasks = []
     # Create tasks for all symbols
     for sym in symbols:
-        tasks.append(check_conditions_async(client, sym, config))
+        tasks.append(protected_check(sym))
         
-    print(f"Scanning {len(symbols)} pairs asynchronously...")
+    print(f"Scanning {len(symbols)} pairs asynchronously (Rate Limited)...")
     
     results = []
     # Gather results concurrently
-    # return_exceptions=True prevents one error from killing others
     responses = await asyncio.gather(*tasks, return_exceptions=True)
     
     for res in responses:
         if isinstance(res, dict) and res.get('Pass'):
             results.append(res)
-        # We silently ignore Nones (failed checks) and Exceptions (errors)
             
     await client.close()
     return results
