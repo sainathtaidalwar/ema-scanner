@@ -333,7 +333,7 @@ function ResultTicket({ item, index }) {
     const isLong = item.Side === 'LONG';
     // Sanitize symbol: ZEC/USDT -> ZECUSDT, ZEC/USDT:USDT -> ZECUSDT
     const rawSymbol = item.Symbol.split(':')[0].replace('/', '');
-    const tradeUrl = `https://www.binance.com/en/futures/${rawSymbol}`;
+    const tradeUrl = `https://www.binance.com/en/futures/${rawSymbol}?ref=L0Q2H2MC`;
 
     return (
         <motion.div
@@ -359,8 +359,8 @@ function ResultTicket({ item, index }) {
                         </div>
                         {/* Setup Type Badge */}
                         <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${item.Type === 'PULSE'
-                                ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-                                : 'bg-gray-700/30 text-gray-400 border-transparent'
+                            ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                            : 'bg-gray-700/30 text-gray-400 border-transparent'
                             }`}>
                             {item.Type === 'PULSE' ? 'SNIPER' : 'MOMENTUM'}
                         </div>
@@ -372,7 +372,7 @@ function ResultTicket({ item, index }) {
 
                 {/* External Link */}
                 <a
-                    href={`https://www.binance.com/en/futures/${item.Symbol}`}
+                    href={tradeUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="p-2 bg-white/5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100"
