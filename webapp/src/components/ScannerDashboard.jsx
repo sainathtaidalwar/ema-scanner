@@ -29,8 +29,7 @@ export default function ScannerDashboard() {
     const EXCHANGES = [
         { id: 'binance', name: 'Binance', color: 'text-yellow-400', url: 'https://www.binance.com/en/futures/' },
         { id: 'bybit', name: 'Bybit', color: 'text-orange-400', url: 'https://www.bybit.com/trade/' },
-        { id: 'mexc', name: 'MEXC', color: 'text-green-400', url: 'https://www.mexc.com/exchange/' },
-        { id: 'coinbase', name: 'Coinbase', color: 'text-blue-500', url: ' https://www.coinbase.com/advanced-trade/' }
+        { id: 'mexc', name: 'MEXC', color: 'text-green-400', url: 'https://www.mexc.com/exchange/' }
     ];
 
     const fetchTopPairs = async () => {
