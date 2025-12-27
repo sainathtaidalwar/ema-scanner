@@ -26,10 +26,6 @@ EXCHANGE_CONFIG = {
     'mexc': {
         'type': 'future',
         'options': {'defaultType': 'future'} 
-    },
-    'coinbase': {
-        'type': 'spot',
-        'options': {'defaultType': 'spot'} 
     }
 }
 
@@ -52,19 +48,23 @@ def fetch_top_volume_pairs_sync(exchange_id='binance', limit=TOP_N_COINS):
     """Fetches top pairs for specific exchange"""
     try:
         client = get_exchange_client_sync(exchange_id)
+        
+        # Critical for MEXC: specific markets must be loaded first
+        client.load_markets() 
+        
         tickers = client.fetch_tickers()
         
         # Filtering logic needs to be robust across exchanges
         # Binance/Bybit/MEXC Futures usually have /USDT
-        # Coinbase Spot has /USD or /USDT
         
         quote_currency = 'USDT'
-        if exchange_id == 'coinbase':
-            quote_currency = 'USD' # Coinbase uses USD mostly
             
         pairs = []
         for symbol, ticker in tickers.items():
-            if f'/{quote_currency}' in symbol and ticker.get('quoteVolume'):
+            # Robust check: allow 'BTC/USDT' or 'BTCUSDT'
+            is_valid_symbol = (f'/{quote_currency}' in symbol or symbol.endswith(quote_currency))
+            
+            if is_valid_symbol and ticker.get('quoteVolume'):
                 pairs.append({'symbol': symbol, 'volume': ticker['quoteVolume']})
                 
         # Sort by volume
