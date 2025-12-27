@@ -221,14 +221,14 @@ async def scan_market_async(symbols, config=None):
         'options': {'defaultType': 'future'}
     })
     
-    # Concurrency Control: Limit to 5 parallel symbol processors to respect weight limits
-    # Each symbol does ~3 API calls (4h, 1h, 15m), so 5 * 3 = 15 concurrent requests max
-    sem = asyncio.Semaphore(5)
+    # Concurrency Control: Increased to 12.
+    # Most pairs fail the 4H check immediately (1 call), so effective weight is lower.
+    # 12 concurrent workers x 4 requests/sec = ~48 req/sec max (burst safe).
+    sem = asyncio.Semaphore(12)
 
     async def protected_check(sym):
         async with sem:
-            # Optional: Add small jitter to prevent thundering herd
-            await asyncio.sleep(0.1) 
+            # Removed sleep for max safe speed
             return await check_conditions_async(client, sym, config)
 
     tasks = []
