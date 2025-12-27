@@ -226,7 +226,15 @@ export default function ScannerDashboard() {
                                     .filter(item => {
                                         const sideMatch = filterSide === 'ALL' || item.Side === filterSide;
                                         const typeMatch = !config.only_pulse || item.Type === 'PULSE';
-                                        return sideMatch && typeMatch;
+
+                                        // ADX Filter: If enabled, require ADX > 25
+                                        const adxMatch = !config.use_adx || (item['ADX (15m)'] > 25);
+
+                                        // RSI Filter: If enabled, require RSI > 70 or RSI < 30
+                                        // "Entering overbought/sold" usually means extreme values
+                                        const rsiMatch = !config.use_rsi || (item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30);
+
+                                        return sideMatch && typeMatch && adxMatch && rsiMatch;
                                     })
                                     .map((item, idx) => (
                                         <ResultTicket key={item.Symbol} item={item} index={idx} />
