@@ -251,7 +251,7 @@ export default function ScannerDashboard() {
                                     transition={{ duration: 0.5 }}
                                     className="scale-150 mb-8"
                                 >
-                                    <Logo />
+                                    <Logo showText={false} />
                                 </motion.div>
                                 <p className="text-indigo-400 font-mono text-sm animate-pulse tracking-widest">ANALYZING MARKET...</p>
                                 <p className="text-gray-600 text-xs mt-2 font-mono">Scanning {pairs.length} assets on {EXCHANGES.find(e => e.id === selectedExchange)?.name}</p>

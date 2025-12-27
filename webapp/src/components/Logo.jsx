@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const Logo = ({ className = "", calm = false }) => {
+export const Logo = ({ className = "", calm = false, showText = true }) => {
     return (
         <div className={`flex items-center gap-3 select-none ${className}`}>
             <div className="relative w-10 h-10 flex items-center justify-center">
@@ -53,11 +53,13 @@ export const Logo = ({ className = "", calm = false }) => {
             </div>
 
             {/* Text */}
-            <div className="flex flex-col">
-                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 tracking-tight">
-                    Algo Signal Pulse
-                </span>
-            </div>
+            {showText && (
+                <div className="flex flex-col">
+                    <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 tracking-tight">
+                        Algo Signal Pulse
+                    </span>
+                </div>
+            )}
         </div>
     );
 };
