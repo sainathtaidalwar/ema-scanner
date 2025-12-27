@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { MousePointer2, TrendingUp, ShieldCheck, Activity, ArrowRight } from 'lucide-react';
 
-const LandingPage = ({ onEnter }) => {
+const LandingPage = ({ onEnter, onLearn }) => {
     const fadeInUp = {
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0 },
