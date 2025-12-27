@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { Logo } from './Logo';
 import { useNavigate } from 'react-router-dom';
 import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -89,15 +90,8 @@ export default function ScannerDashboard() {
             <nav className="border-b border-white/5 bg-[#0f111a]/80 backdrop-blur-md sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                                <Zap size={24} className="text-white fill-current" />
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-xl font-bold tracking-tight text-white leading-none">
-                                    Algo Signal Pulse
-                                </span>
-                            </div>
+                        <div onClick={() => navigate('/')} className="cursor-pointer">
+                            <Logo />
                         </div>
                         <div className="hidden md:flex gap-8 text-sm font-medium">
                             <button

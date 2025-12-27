@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { Logo } from './Logo';
 import { MousePointer2, TrendingUp, ShieldCheck, Activity, ArrowRight } from 'lucide-react';
 
 // ... animations ...
@@ -59,9 +60,7 @@ function LandingPage() {
 
                 {/* Navbar Placeholder */}
                 <nav className="flex justify-between items-center mb-20">
-                    <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-                        Algo Signal Pulse
-                    </div>
+                    <Logo />
                     {/* Redundant button removed as per user request */}
                 </nav>
 
