@@ -50,20 +50,52 @@ def get_pairs():
         
     return jsonify({'pairs': pairs})
 
+# Scan Results Cache (Global)
+# This prevents 1000 users from triggering 1000 concurrent scans.
+# Instead, the first user triggers a scan, and the next 999 get the cached result.
+scan_cache = {
+    'results': [],
+    'timestamp': 0,
+    'config_hash': ''
+}
+
 @app.route('/api/scan', methods=['POST'])
 def scan_pairs():
     """
     Scan a list of pairs with provided configuration.
+    Uses global caching to serve high traffic.
     """
+    global scan_cache
+    
     data = request.json
     symbols = data.get('symbols', [])
     config = data.get('config', {})
     
-    print(f"Scanning {len(symbols)} pairs with config: {config}")
+    # Create simple hash of config to ensure cache validity
+    current_config_hash = str(sorted(config.items()))
+    current_time = time.time()
     
-    # Run async scanner
+    # 1. Check Cache (Expiry: 60 seconds)
+    # If we have results, they are fresh (<60s), and the config hasn't changed... return cache.
+    if (scan_cache['results'] and 
+        (current_time - scan_cache['timestamp'] < 60) and 
+        scan_cache['config_hash'] == current_config_hash):
+        
+        print("Serving cached scan results...")
+        return jsonify({'results': scan_cache['results']})
+    
+    # 2. If Cache Miss, Run Scanner
+    print(f"Cache miss or stale. Scanning {len(symbols)} pairs...")
+    
     try:
         results = asyncio.run(scanner.scan_market_async(symbols, config))
+        
+        # Update Cache
+        if results:
+            scan_cache['results'] = results
+            scan_cache['timestamp'] = current_time
+            scan_cache['config_hash'] = current_config_hash
+            
     except Exception as e:
         print(f"Async Scan Error: {e}")
         results = []
