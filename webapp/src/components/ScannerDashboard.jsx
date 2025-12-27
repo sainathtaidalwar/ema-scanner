@@ -39,35 +39,23 @@ export default function ScannerDashboard() {
             return res.data.pairs;
         } catch (err) {
             console.error("Failed to fetch pairs", err);
-
-            const handleScan = async (manualPairs = null) => {
-                const targets = Array.isArray(manualPairs) ? manualPairs : pairs;
-                if (!targets || targets.length === 0) return;
-
-                setLoading(true);
-                setResults([]);
-                setError(null);
-                try {
-                    const res = await axios.post(`${API_BASE}/scan`, {
-                        symbols: targets,
-                        config: config
-                    });
-                    if (res.data.results && res.data.results.length === 0) {
-                        setError("No setups found matching current criteria.");
-                    }
-                    setResults(res.data.results || []);
-                } catch (err) {
-                    console.error("Scan failed", err);
-                    setError("Scan execution failed.");
-                } finally {
-                    setLoading(false);
-                }
-            };
-
-            // It's important to return an empty array or re-throw the error if pairs are critical
             return [];
         }
     };
+
+    useEffect(() => {
+        let mounted = true;
+        const init = async () => {
+            setLoading(true);
+            const fetchedPairs = await fetchTopPairs();
+            if (mounted && fetchedPairs) {
+                setPairs(fetchedPairs);
+                setLoading(false);
+            }
+        };
+        init();
+        return () => { mounted = false; };
+    }, [selectedExchange]);
 
     const handleScan = async (manualPairs = null) => {
         const targets = Array.isArray(manualPairs) ? manualPairs : pairs;
@@ -160,8 +148,8 @@ export default function ScannerDashboard() {
                                                 key={ex.id}
                                                 onClick={() => setSelectedExchange(ex.id)}
                                                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all border ${selectedExchange === ex.id
-                                                        ? 'bg-indigo-500/20 border-indigo-500 text-white'
-                                                        : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'
+                                                    ? 'bg-indigo-500/20 border-indigo-500 text-white'
+                                                    : 'bg-white/5 border-transparent text-gray-400 hover:bg-white/10'
                                                     }`}
                                             >
                                                 {ex.name}
