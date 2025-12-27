@@ -430,6 +430,10 @@ const ResultTicket = ({ item, index, exchange }) => {
                             }`}>
                             {item.Type === 'PULSE' ? 'SNIPER' : 'MOMENTUM'}
                         </div>
+                        {/* Source Verification Badge */}
+                        <div className="px-2 py-0.5 rounded text-[10px] font-mono text-gray-500 bg-gray-800/50 border border-gray-700">
+                            {item.Exchange || exchange}
+                        </div>
                     </div>
                     <div className="text-xl font-mono text-white">
                         {item.Price}
