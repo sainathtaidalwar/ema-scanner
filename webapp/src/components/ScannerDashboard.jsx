@@ -21,7 +21,7 @@ export default function ScannerDashboard() {
     const [lastUpdated, setLastUpdated] = useState(null);
     const [config, setConfig] = useState({
         use_rsi: false,
-        use_adx: true,
+        use_adx: false, // Default disabled as requested
         only_pulse: false // New Filter: Only Sniper/Pulse entries
     });
 
@@ -54,8 +54,8 @@ export default function ScannerDashboard() {
             if (mounted) {
                 if (fetchedPairs && fetchedPairs.length > 0) {
                     setPairs(fetchedPairs);
-                    // Auto-trigger scan with fresh pairs
-                    await handleScan(fetchedPairs);
+                    setLoading(false);
+                    // Removed auto-scan call
                 } else {
                     setLoading(false);
                 }
