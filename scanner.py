@@ -13,22 +13,80 @@ EMA_PERIODS = [21, 50, 100]
 RSI_PERIOD = 14
 ADX_PERIOD = 14
 
-def get_binance_client_sync():
-    # Helper for synchronous tasks (like fetching pairs initially) if needed
-    import ccxt as ccxt_sync
-    return ccxt_sync.binance({
-        'enableRateLimit': True,
+# --- Exchange Configuration ---
+EXCHANGE_CONFIG = {
+    'binance': {
+        'type': 'future',
         'options': {'defaultType': 'future'}
+    },
+    'bybit': {
+        'type': 'linear',
+        'options': {'defaultType': 'linear'} 
+    },
+    'mexc': {
+        'type': 'spot',
+        'options': {'defaultType': 'spot'} 
+    },
+    'coinbase': {
+        'type': 'spot',
+        'options': {'defaultType': 'spot'} 
+    }
+}
+
+def get_exchange_client_sync(exchange_id):
+    """Factory for sync clients"""
+    import ccxt
+    
+    if exchange_id not in EXCHANGE_CONFIG:
+        raise ValueError(f"Unsupported exchange: {exchange_id}")
+        
+    config = EXCHANGE_CONFIG[exchange_id]
+    exchange_class = getattr(ccxt, exchange_id)
+    
+    return exchange_class({
+        'enableRateLimit': True,
+        'options': config['options']
     })
 
-def fetch_top_volume_pairs(client_sync, limit=TOP_N_COINS):
+def fetch_top_volume_pairs_sync(exchange_id='binance', limit=TOP_N_COINS):
+    """Fetches top pairs for specific exchange"""
     try:
-        tickers = client_sync.fetch_tickers()
-        usdt_pairs = {s: t for s, t in tickers.items() if '/USDT' in s and t['quoteVolume'] is not None}
-        sorted_pairs = sorted(usdt_pairs.values(), key=lambda x: x['quoteVolume'], reverse=True)
+        # Increase scan depth for MEXC Spot to capture hidden gems
+        if exchange_id == 'mexc':
+            limit = 500 
+
+        client = get_exchange_client_sync(exchange_id)
+        tickers = client.fetch_tickers()
+        
+        # Filtering logic needs to be robust across exchanges
+        # Binance/Bybit Futures usually have /USDT
+        # MEXC Spot often uses just SymbolUSDT or Symbol/USDT
+        # Coinbase Spot has /USD or /USDT
+        
+        quote_currency = 'USDT'
+        if exchange_id == 'coinbase':
+            quote_currency = 'USD' # Coinbase uses USD mostly
+            
+        pairs = []
+        for symbol, ticker in tickers.items():
+            # MEXC Spot check logic
+            valid_pair = False
+            if exchange_id == 'mexc':
+                 # MEXC Spot usually lists as 'BTC/USDT' or 'BTCUSDT'
+                 if symbol.endswith('USDT') and ticker.get('quoteVolume'):
+                     valid_pair = True
+            elif f'/{quote_currency}' in symbol and ticker.get('quoteVolume'):
+                valid_pair = True
+
+            if valid_pair:
+                pairs.append({'symbol': symbol, 'volume': ticker['quoteVolume']})
+                
+        # Sort by volume
+        sorted_pairs = sorted(pairs, key=lambda x: x['volume'], reverse=True)
         return [p['symbol'] for p in sorted_pairs[:limit]]
+        
     except Exception as e:
-        print(f"Error fetching top pairs: {e}")
+        print(f"Error fetching top pairs for {exchange_id}: {e}")
         return []
 
 # Optimized: Only calculate indicators if needed
@@ -80,11 +138,12 @@ async def fetch_ohlcv_async(client, symbol, timeframe, limit=150):
         print(f"Error fetching {timeframe} for {symbol}: {e}")
         return None
 
-async def check_conditions_async(client, symbol, config):
+async def check_conditions_async(client, symbol, config, exchange_id='binance'):
     # print(f"Checking {symbol}...") # Debug
     
     result = {
         'Symbol': symbol,
+        'Exchange': exchange_id, # Source Verification
         'Side': 'NEUTRAL',
         '4H EMA Stack': 'FAIL',
         '1H EMA Stack': 'FAIL',
@@ -210,36 +269,40 @@ async def check_conditions_async(client, symbol, config):
     result['Pass'] = True
     return result
 
-async def scan_market_async(symbols, config=None):
+async def scan_market_async(exchange_id, symbols, config=None):
     if config is None:
         config = {'use_rsi': False, 'use_adx': False}
     
-    # Initialize Async Client
-    # ENABLE Rate Limit to prevent 418 IP Bans
-    client = ccxt.binance({
+    if exchange_id not in EXCHANGE_CONFIG:
+        print(f"Invalid exchange: {exchange_id}")
+        return []
+
+    ex_config = EXCHANGE_CONFIG[exchange_id]
+    
+    # Initialize Async Client Dynamically
+    exchange_class = getattr(ccxt, exchange_id)
+    client = exchange_class({
         'enableRateLimit': True, 
-        'options': {'defaultType': 'future'}
+        'options': ex_config['options']
     })
     
-    # Concurrency Control: Increased to 12.
-    # Most pairs fail the 4H check immediately (1 call), so effective weight is lower.
-    # 12 concurrent workers x 4 requests/sec = ~48 req/sec max (burst safe).
+    # Concurrency Control
+    # 12 is good for Binance, but others might be stricter. 
+    # Coinbase is strict. MEXC is loose. 
+    # Let's keep 12 for now, but be ready to tune.
     sem = asyncio.Semaphore(12)
 
     async def protected_check(sym):
         async with sem:
-            # Removed sleep for max safe speed
-            return await check_conditions_async(client, sym, config)
+            return await check_conditions_async(client, sym, config, exchange_id)
 
     tasks = []
-    # Create tasks for all symbols
     for sym in symbols:
         tasks.append(protected_check(sym))
         
-    print(f"Scanning {len(symbols)} pairs asynchronously (Rate Limited)...")
+    print(f"Scanning {len(symbols)} pairs on {exchange_id}...")
     
     results = []
-    # Gather results concurrently
     responses = await asyncio.gather(*tasks, return_exceptions=True)
     
     for res in responses:
@@ -254,16 +317,19 @@ def main():
     if sys.platform == 'win32':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-    print("Initializing Binance Client (Sync for Setup)...")
-    client_sync = get_binance_client_sync()
-    pairs = fetch_top_volume_pairs(client_sync)
-    print(f"Fetched {len(pairs)} pairs.")
-    
-    config = {'use_rsi': False, 'use_adx': False}
-    
-    start = time.time()
-    # Run Async Loop
-    results = asyncio.run(scan_market_async(pairs, config))
+    print("Initializing Client (Test Mode)...")
+    try:
+        pairs = fetch_top_volume_pairs_sync('binance')
+        print(f"Fetched {len(pairs)} pairs.")
+        
+        config = {'use_rsi': False, 'use_adx': False}
+        
+        start = time.time()
+        # Run Async Loop
+        results = asyncio.run(scan_market_async('binance', pairs, config))
+    except Exception as e:
+        print(e)
+        return
     end = time.time()
     
     print(f"Scan completed in {end - start:.2f} seconds.")
