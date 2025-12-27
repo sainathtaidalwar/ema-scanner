@@ -378,12 +378,12 @@ function ResultTicket({ item, index }) {
                     </div>
                 </div>
 
-                {/* External Link - Always Visible for Referrals */}
+                {/* External Link - Always Visible but Calm by default */}
                 <a
                     href={tradeUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-xs font-bold hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2"
+                    className="px-4 py-2 bg-white/5 text-gray-400 border border-white/10 rounded-lg text-xs font-bold transition-all flex items-center gap-2 group-hover:bg-indigo-500 group-hover:text-white group-hover:border-transparent group-hover:shadow-lg group-hover:shadow-indigo-500/20"
                 >
                     TRADE <ExternalLink size={14} />
                 </a>
