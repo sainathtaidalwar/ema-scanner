@@ -12,7 +12,8 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
 export default function ScannerDashboard() {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false); // General loading (fetching pairs)
+    const [isScanning, setIsScanning] = useState(false); // Specific to analysis
     const [results, setResults] = useState([]);
     const [pairs, setPairs] = useState([]);
     const [error, setError] = useState(null);
@@ -54,11 +55,9 @@ export default function ScannerDashboard() {
             if (mounted) {
                 if (fetchedPairs && fetchedPairs.length > 0) {
                     setPairs(fetchedPairs);
-                    setLoading(false);
                     // Removed auto-scan call
-                } else {
-                    setLoading(false);
                 }
+                setLoading(false);
             }
         };
         init();
@@ -66,13 +65,24 @@ export default function ScannerDashboard() {
     }, [selectedExchange]);
 
     const handleScan = async (manualPairs = null) => {
-        const targets = Array.isArray(manualPairs) ? manualPairs : pairs;
+        let targets = Array.isArray(manualPairs) ? manualPairs : pairs;
+
+        // If no pairs loaded, try to fetch them first
         if (!targets || targets.length === 0) {
+            setLoading(true);
+            const freshPairs = await fetchTopPairs();
+            if (freshPairs && freshPairs.length > 0) {
+                setPairs(freshPairs);
+                targets = freshPairs;
+            } else {
+                setLoading(false);
+                setError("Could not fetch assets to scan. Please try again.");
+                return;
+            }
             setLoading(false);
-            return;
         }
 
-        setLoading(true);
+        setIsScanning(true);
         setResults([]);
         setError(null);
         try {
@@ -89,7 +99,7 @@ export default function ScannerDashboard() {
             console.error("Scan failed", err);
             setError("Scan execution failed.");
         } finally {
-            setLoading(false);
+            setIsScanning(false);
         }
     };
 
@@ -209,20 +219,20 @@ export default function ScannerDashboard() {
                             )}
 
                             <button
-                                onClick={pairs.length === 0 ? fetchTopPairs : handleScan}
-                                disabled={loading}
+                                onClick={() => handleScan()}
+                                disabled={loading || isScanning}
                                 className={clsx(
                                     "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
-                                    loading
+                                    (loading || isScanning)
                                         ? "bg-gray-800 text-gray-500 cursor-not-allowed"
                                         : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-indigo-500/20 hover:shadow-indigo-500/30"
                                 )}
                             >
-                                {loading ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
-                                {loading ? 'ANALYZING MARKET...' : 'RUN SCANNER'}
+                                {(loading || isScanning) ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
+                                {isScanning ? 'ANALYZING MARKET...' : loading ? 'FETCHING ASSETS...' : 'RUN SCANNER'}
                             </button>
                             <p className="text-center text-[10px] text-gray-600 mt-3 uppercase tracking-wider font-mono">
-                                Scanning {pairs.length} Top Vol Assets
+                                {pairs.length > 0 ? `Ready to Scan ${pairs.length} Assets` : 'Initializing...'}
                             </p>
                         </div>
                     </div>
@@ -243,7 +253,7 @@ export default function ScannerDashboard() {
                         </div>
 
                         {/* Loading State - Centered Logo */}
-                        {loading && (
+                        {isScanning && (
                             <div className="h-96 flex flex-col items-center justify-center">
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.8 }}
@@ -259,7 +269,7 @@ export default function ScannerDashboard() {
                         )}
 
                         {/* Empty State */}
-                        {results.length === 0 && !loading && !error && (
+                        {results.length === 0 && !isScanning && !loading && !error && (
                             <div className="h-64 flex flex-col items-center justify-center text-gray-600 border border-dashed border-gray-800 rounded-xl bg-[#161922]/50">
                                 <Activity size={48} className="mb-4 opacity-20" />
                                 <p className="text-sm">System Ready. Awaiting trigger.</p>
