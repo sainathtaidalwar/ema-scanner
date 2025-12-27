@@ -30,7 +30,7 @@ const LandingPage = ({ onEnter }) => {
                 {/* Navbar Placeholder */}
                 <nav className="flex justify-between items-center mb-20">
                     <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
-                        EMA.Scanner
+                        Algo Signal Pulse
                     </div>
                     <button
                         onClick={onEnter}
@@ -165,7 +165,7 @@ const LandingPage = ({ onEnter }) => {
 
                 {/* Footer */}
                 <footer className="text-center text-gray-500 text-sm border-t border-white/5 pt-8">
-                    <p>© {new Date().getFullYear()} EMA Strategy Scanner. Trading involves risk.</p>
+                    <p>© {new Date().getFullYear()} Algo Signal Pulse. Trading involves risk.</p>
                 </footer>
 
             </div>

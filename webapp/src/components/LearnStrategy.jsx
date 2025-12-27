@@ -20,7 +20,7 @@ const LearnStrategy = ({ onBack }) => {
                         Back to Home
                     </button>
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        The <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">EMA Strategy</span> Guide
+                        The <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Algo Signal Pulse</span> Strategy
                     </h1>
                     <p className="text-xl text-gray-400">
                         A systematic approach to capturing high-probability trend moves.
@@ -93,6 +93,10 @@ const LearnStrategy = ({ onBack }) => {
                     </button>
                 </div>
             </div>
+
+            <footer className="text-center text-gray-500 text-sm border-t border-white/5 py-8 mt-12">
+                <p>© {new Date().getFullYear()} Algo Signal Pulse. Trading involves risk.</p>
+            </footer>
         </div>
     );
 };
