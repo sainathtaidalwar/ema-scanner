@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
@@ -7,7 +8,7 @@ import clsx from 'clsx';
 // Use environment variable for API URL in production, fallback to localhost for dev
 const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
 
-export default function ScannerDashboard() {
+export default function ScannerDashboard({ onBack }) {
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState([]);
     const [pairs, setPairs] = useState([]);
@@ -96,7 +97,13 @@ export default function ScannerDashboard() {
                             </div>
                         </div>
                         <div className="hidden md:flex gap-8 text-sm font-medium">
-                            <a href="#" className="text-white flex items-center gap-2"><Layout size={14} /> Dashboard</a>
+                            <button
+                                onClick={onBack}
+                                className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"
+                            >
+                                <Layout size={14} /> Back to Home
+                            </button>
+                            <a href="#" className="text-white flex items-center gap-2"><BarChart2 size={14} /> Dashboard</a>
                             <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><BarChart2 size={14} /> Analysis</a>
                             <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><Clock size={14} /> History</a>
                         </div>
@@ -109,6 +116,7 @@ export default function ScannerDashboard() {
                     </div>
                 </div>
             </nav>
+
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
@@ -223,9 +231,13 @@ export default function ScannerDashboard() {
                     <p className="mt-1 text-[10px] text-gray-700">Market data provided by Binance Futures. Trading involves risk.</p>
                 </div>
             </footer>
-        </div>
+        </div >
     );
 }
+
+ScannerDashboard.propTypes = {
+    onBack: PropTypes.func.isRequired
+};
 
 // --- Sub Components ---
 
@@ -245,6 +257,13 @@ function PulseCard({ label, value, subtext, icon }) {
         </div>
     );
 }
+
+PulseCard.propTypes = {
+    label: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    subtext: PropTypes.string,
+    icon: PropTypes.element.isRequired,
+};
 
 function FilterToggle({ label, active, desc, onClick }) {
     return (
@@ -268,6 +287,13 @@ function FilterToggle({ label, active, desc, onClick }) {
     );
 }
 
+FilterToggle.propTypes = {
+    label: PropTypes.string.isRequired,
+    active: PropTypes.bool.isRequired,
+    desc: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+};
+
 function TabButton({ label, active, onClick }) {
     return (
         <button
@@ -283,6 +309,12 @@ function TabButton({ label, active, onClick }) {
         </button>
     );
 }
+
+TabButton.propTypes = {
+    label: PropTypes.string.isRequired,
+    active: PropTypes.bool.isRequired,
+    onClick: PropTypes.func.isRequired,
+};
 
 function ResultTicket({ item, index }) {
     const isLong = item.Side === 'LONG';
@@ -354,6 +386,17 @@ function ResultTicket({ item, index }) {
     );
 }
 
+ResultTicket.propTypes = {
+    item: PropTypes.shape({
+        Symbol: PropTypes.string.isRequired,
+        Side: PropTypes.string.isRequired,
+        Price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        '24h Change': PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        'RSI (15m)': PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }).isRequired,
+    index: PropTypes.number.isRequired,
+};
+
 function StatBox({ label, value, color = "text-white" }) {
     return (
         <div className="text-center sm:text-right">
@@ -362,3 +405,9 @@ function StatBox({ label, value, color = "text-white" }) {
         </div>
     );
 }
+
+StatBox.propTypes = {
+    label: PropTypes.string.isRequired,
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    color: PropTypes.string,
+};

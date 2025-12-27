@@ -1,18 +1,28 @@
 import { useState } from 'react';
 import ScannerDashboard from './components/ScannerDashboard';
 import LandingPage from './components/LandingPage';
+import LearnStrategy from './components/LearnStrategy';
 
 function App() {
-  const [showScanner, setShowScanner] = useState(false);
+  const [view, setView] = useState('home'); // 'home', 'scanner', 'learn'
 
   return (
     <div className="min-h-screen bg-dark-900 text-white">
-      {showScanner ? (
+      {view === 'scanner' && (
         <div className="p-6">
-          <ScannerDashboard />
+          <ScannerDashboard onBack={() => setView('home')} />
         </div>
-      ) : (
-        <LandingPage onEnter={() => setShowScanner(true)} />
+      )}
+
+      {view === 'learn' && (
+        <LearnStrategy onBack={() => setView('home')} />
+      )}
+
+      {view === 'home' && (
+        <LandingPage
+          onEnter={() => setView('scanner')}
+          onLearn={() => setView('learn')}
+        />
       )}
     </div>
   );

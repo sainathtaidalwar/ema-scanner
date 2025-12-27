@@ -76,7 +76,10 @@ const LandingPage = ({ onEnter }) => {
                             Start Scanning Now
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </button>
-                        <button className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-lg transition-all">
+                        <button
+                            onClick={onLearn}
+                            className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-lg transition-all"
+                        >
                             Learn the Strategy
                         </button>
                     </motion.div>
@@ -162,7 +165,7 @@ const LandingPage = ({ onEnter }) => {
 
                 {/* Footer */}
                 <footer className="text-center text-gray-500 text-sm border-t border-white/5 pt-8">
-                    <p>© 2024 EMA Strategy Scanner. Trading involves risk.</p>
+                    <p>© {new Date().getFullYear()} EMA Strategy Scanner. Trading involves risk.</p>
                 </footer>
 
             </div>
@@ -195,6 +198,7 @@ StepCard.propTypes = {
 
 LandingPage.propTypes = {
     onEnter: PropTypes.func.isRequired,
+    onLearn: PropTypes.func.isRequired,
 };
 
 export default LandingPage;
