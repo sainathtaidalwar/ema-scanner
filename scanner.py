@@ -24,8 +24,8 @@ EXCHANGE_CONFIG = {
         'options': {'defaultType': 'linear'} 
     },
     'mexc': {
-        'type': 'spot',
-        'options': {'defaultType': 'spot'} 
+        'type': 'future',
+        'options': {'defaultType': 'future'} 
     },
     'coinbase': {
         'type': 'spot',
@@ -51,16 +51,11 @@ def get_exchange_client_sync(exchange_id):
 def fetch_top_volume_pairs_sync(exchange_id='binance', limit=TOP_N_COINS):
     """Fetches top pairs for specific exchange"""
     try:
-        # Increase scan depth for MEXC Spot to capture hidden gems
-        if exchange_id == 'mexc':
-            limit = 500 
-
         client = get_exchange_client_sync(exchange_id)
         tickers = client.fetch_tickers()
         
         # Filtering logic needs to be robust across exchanges
-        # Binance/Bybit Futures usually have /USDT
-        # MEXC Spot often uses just SymbolUSDT or Symbol/USDT
+        # Binance/Bybit/MEXC Futures usually have /USDT
         # Coinbase Spot has /USD or /USDT
         
         quote_currency = 'USDT'
@@ -69,16 +64,7 @@ def fetch_top_volume_pairs_sync(exchange_id='binance', limit=TOP_N_COINS):
             
         pairs = []
         for symbol, ticker in tickers.items():
-            # MEXC Spot check logic
-            valid_pair = False
-            if exchange_id == 'mexc':
-                 # MEXC Spot usually lists as 'BTC/USDT' or 'BTCUSDT'
-                 if symbol.endswith('USDT') and ticker.get('quoteVolume'):
-                     valid_pair = True
-            elif f'/{quote_currency}' in symbol and ticker.get('quoteVolume'):
-                valid_pair = True
-
-            if valid_pair:
+            if f'/{quote_currency}' in symbol and ticker.get('quoteVolume'):
                 pairs.append({'symbol': symbol, 'volume': ticker['quoteVolume']})
                 
         # Sort by volume
