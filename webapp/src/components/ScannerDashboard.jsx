@@ -242,6 +242,22 @@ export default function ScannerDashboard() {
                             </div>
                         </div>
 
+                        {/* Loading State - Centered Logo */}
+                        {loading && (
+                            <div className="h-96 flex flex-col items-center justify-center">
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.5 }}
+                                    className="scale-150 mb-8"
+                                >
+                                    <Logo />
+                                </motion.div>
+                                <p className="text-indigo-400 font-mono text-sm animate-pulse tracking-widest">ANALYZING MARKET...</p>
+                                <p className="text-gray-600 text-xs mt-2 font-mono">Scanning {pairs.length} assets on {EXCHANGES.find(e => e.id === selectedExchange)?.name}</p>
+                            </div>
+                        )}
+
                         {/* Empty State */}
                         {results.length === 0 && !loading && !error && (
                             <div className="h-64 flex flex-col items-center justify-center text-gray-600 border border-dashed border-gray-800 rounded-xl bg-[#161922]/50">
