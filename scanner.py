@@ -24,8 +24,8 @@ EXCHANGE_CONFIG = {
         'options': {'defaultType': 'linear'} 
     },
     'mexc': {
-        'type': 'future',
-        'options': {'defaultType': 'future'} 
+        'type': 'swap',
+        'options': {'defaultType': 'swap'} 
     }
 }
 
@@ -46,13 +46,17 @@ def get_exchange_client_sync(exchange_id):
 
 def fetch_top_volume_pairs_sync(exchange_id='binance', limit=TOP_N_COINS):
     """Fetches top pairs for specific exchange"""
+    print(f"DEBUG: Starting fetch_top_volume_pairs_sync for {exchange_id}") # DEBUG
     try:
         client = get_exchange_client_sync(exchange_id)
         
+        print(f"DEBUG: Loading markets for {exchange_id}...") # DEBUG
         # Critical for MEXC: specific markets must be loaded first
         client.load_markets() 
+        print(f"DEBUG: Markets loaded. Fetching tickers...") # DEBUG
         
         tickers = client.fetch_tickers()
+        print(f"DEBUG: Tickers fetched. Count: {len(tickers) if tickers else 'None'}") # DEBUG
         
         # Filtering logic needs to be robust across exchanges
         # Binance/Bybit/MEXC Futures usually have /USDT
