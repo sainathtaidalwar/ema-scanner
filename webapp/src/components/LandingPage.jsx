@@ -2,21 +2,48 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { MousePointer2, TrendingUp, ShieldCheck, Activity, ArrowRight } from 'lucide-react';
 
-const LandingPage = ({ onEnter, onLearn }) => {
-    const fadeInUp = {
-        initial: { opacity: 0, y: 20 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6 }
-    };
 
-    const staggerContainer = {
-        animate: {
-            transition: {
-                staggerChildren: 0.1
-            }
+const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+};
+
+const staggerContainer = {
+    initial: {},
+    animate: {
+        transition: {
+            staggerChildren: 0.1
         }
-    };
+    }
+};
 
+function StepCard({ icon, title, description, delay }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay, duration: 0.5 }}
+            className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-6 transition-all hover:scale-[1.02] hover:shadow-2xl hover:shadow-indigo-500/10"
+        >
+            <div className="mb-4 bg-dark-800 w-14 h-14 rounded-xl flex items-center justify-center border border-white/10 shadow-inner">
+                {icon}
+            </div>
+            <h3 className="text-xl font-bold mb-3">{title}</h3>
+            <p className="text-gray-400 leading-relaxed">{description}</p>
+        </motion.div>
+    );
+}
+
+StepCard.propTypes = {
+    icon: PropTypes.element.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    delay: PropTypes.number.isRequired,
+};
+
+function LandingPage({ onEnter, onLearn }) {
     return (
         <div className="min-h-screen bg-dark-900 text-white overflow-hidden selection:bg-indigo-500/30">
             {/* Background Gradients */}
@@ -171,30 +198,7 @@ const LandingPage = ({ onEnter, onLearn }) => {
             </div>
         </div>
     );
-};
-
-const StepCard = ({ icon, title, description, delay }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay, duration: 0.5 }}
-        className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-6 transition-all hover:scale-[1.02] hover:shadow-2xl hover:shadow-indigo-500/10"
-    >
-        <div className="mb-4 bg-dark-800 w-14 h-14 rounded-xl flex items-center justify-center border border-white/10 shadow-inner">
-            {icon}
-        </div>
-        <h3 className="text-xl font-bold mb-3">{title}</h3>
-        <p className="text-gray-400 leading-relaxed">{description}</p>
-    </motion.div>
-);
-
-StepCard.propTypes = {
-    icon: PropTypes.element.isRequired,
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    delay: PropTypes.number.isRequired,
-};
+}
 
 LandingPage.propTypes = {
     onEnter: PropTypes.func.isRequired,
