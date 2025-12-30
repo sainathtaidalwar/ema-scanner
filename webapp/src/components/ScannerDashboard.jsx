@@ -34,11 +34,20 @@ export default function ScannerDashboard() {
 
     const fetchTopPairs = async () => {
         try {
-            // Updated to pass exchange
             const res = await axios.get(`${API_BASE}/pairs?limit=150&exchange=${selectedExchange}`);
+            if (res.data.error) {
+                console.error("Backend Error:", res.data.error);
+                // Propagate specific error to UI
+                throw new Error(res.data.error);
+            }
             return res.data.pairs;
         } catch (err) {
             console.error("Failed to fetch pairs", err);
+            // If it's a simple Error object from above, use its message
+            if (err.message && !err.response) {
+                // return null or let handleScan handle it
+                throw err;
+            }
             return [];
         }
     };
@@ -57,13 +66,22 @@ export default function ScannerDashboard() {
         // If no pairs loaded, try to fetch them first
         if (!targets || targets.length === 0) {
             setLoading(true);
-            const freshPairs = await fetchTopPairs();
+            let freshPairs = [];
+            try {
+                freshPairs = await fetchTopPairs();
+            } catch (e) {
+                // Display the specific backend error (e.g. IP Ban)
+                setLoading(false);
+                setError(`Fetch Error: ${e.message}`);
+                return;
+            }
+
             if (freshPairs && freshPairs.length > 0) {
                 setPairs(freshPairs);
                 targets = freshPairs;
             } else {
                 setLoading(false);
-                setError(`Could not fetch assets from ${API_BASE}. Please check connection.`);
+                setError(`Could not fetch assets from ${API_BASE}. Empty response.`);
                 return;
             }
             setLoading(false);

@@ -50,9 +50,10 @@ def get_pairs():
             cache_scope['timestamp'] = current_time
     except Exception as e:
         print(f"Error fetching pairs for {exchange_id}: {e}")
-        pairs = []
+        # Return the error to the frontend for debugging
+        return jsonify({'pairs': [], 'error': str(e), 'status': 'error'})
         
-    return jsonify({'pairs': pairs})
+    return jsonify({'pairs': pairs, 'status': 'success'})
 
 # Segmented Result Cache
 scan_cache = {}
