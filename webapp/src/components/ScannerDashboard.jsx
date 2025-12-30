@@ -63,7 +63,7 @@ export default function ScannerDashboard() {
                 targets = freshPairs;
             } else {
                 setLoading(false);
-                setError("Could not fetch assets to scan. Please try again.");
+                setError(`Could not fetch assets from ${API_BASE}. Please check connection.`);
                 return;
             }
             setLoading(false);
