@@ -278,7 +278,7 @@ async def scan_market_async(exchange_id, symbols, config=None):
     
     # Concurrency Control
     # Binance is robust (12), but MEXC/Bybit can be strict.
-    concurrency_limit = 10
+    concurrency_limit = 20 # Boosted for Binance
     if exchange_id == 'mexc':
         concurrency_limit = 6 # Tuned by user request
     elif exchange_id == 'bybit':
@@ -296,7 +296,12 @@ async def scan_market_async(exchange_id, symbols, config=None):
     tasks = []
     # Hard cap limit for MEXC to prevent timeouts
     scan_targets = symbols
-    if exchange_id == 'mexc' and len(symbols) > 75:
+    
+    # Cap Binance to 100 to prevent 30s timeout issues if Procfile is ignored
+    if exchange_id == 'binance' and len(symbols) > 100:
+        print(f"Capping Binance scan to 100 pairs for safety...")
+        scan_targets = symbols[:100]
+    elif exchange_id == 'mexc' and len(symbols) > 75:
         print(f"Capping MEXC scan to 75 pairs to prevent timeout...")
         scan_targets = symbols[:75]
         
