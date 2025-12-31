@@ -116,27 +116,27 @@ export default function ScannerDashboard() {
     const sentiment = totalActive === 0 ? 50 : Math.round((longCount / totalActive) * 100);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0f111a] text-gray-600 dark:text-gray-300 font-sans selection:bg-brand-glow selection:text-white transition-colors duration-200">
-            {/* Professional Navbar */}
-            <nav className="border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#0f111a]/80 backdrop-blur-md sticky top-0 z-50 transition-colors duration-200">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#0f111a] text-slate-600 dark:text-gray-300 font-sans selection:bg-indigo-500/30 selection:text-white transition-colors duration-500">
+            {/* Background Gradients (Aurora) */}
+            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-40 dark:opacity-30 animate-pulse-slow will-change-transform" />
+            {/* Professional Glass Navbar */}
+            <nav className="glass-card rounded-none border-x-0 border-t-0 sticky top-0 z-50 mb-8 bg-white/70 dark:bg-[#0f111a]/70">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-                        <div onClick={() => navigate('/')} className="cursor-pointer">
+                        <div onClick={() => navigate('/')} className="cursor-pointer hover:opacity-80 transition-opacity">
                             <Logo />
                         </div>
                         <div className="hidden md:flex gap-8 text-sm font-medium">
                             <button
                                 onClick={() => navigate('/')}
-                                className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"
+                                className="text-slate-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-white transition-colors flex items-center gap-2"
                             >
                                 <Layout size={14} /> Back to Home
                             </button>
-                            <a href="#" className="text-white flex items-center gap-2"><BarChart2 size={14} /> Dashboard</a>
-                            <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><BarChart2 size={14} /> Analysis</a>
-                            <a href="#" className="text-gray-500 hover:text-white transition-colors flex items-center gap-2"><Clock size={14} /> History</a>
+                            <span className="text-indigo-600 dark:text-white flex items-center gap-2 cursor-default font-bold"><BarChart2 size={14} /> Dashboard</span>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono flex items-center gap-2">
+                            <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-mono flex items-center gap-2 shadow-sm">
                                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                 SYSTEM ONLINE
                             </div>
@@ -164,8 +164,8 @@ export default function ScannerDashboard() {
                     {/* Sidebar Configuration */}
                     <div className="lg:col-span-3 space-y-6">
                         {/* Exchange Selector & Config */}
-                        <div className="bg-white dark:bg-[#161922] border border-gray-200 dark:border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden transition-colors duration-200">
-                            <div className="bg-gray-50 dark:bg-[#0f111a] rounded-xl border border-gray-200 dark:border-white/5 p-6 space-y-6 transition-colors duration-200">
+                        <div className="glass-card p-6 relative overflow-hidden">
+                            <div className="space-y-6 relative z-10">
                                 <div>
                                     <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 flex items-center gap-2 mb-4">
                                         <Settings size={20} className="text-indigo-400" />
@@ -215,6 +215,8 @@ export default function ScannerDashboard() {
                                     </div>
                                 </div>
                             </div>
+                            {/* Decorative background blob for "glass" feel */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
                         </div>
 
                         {/* Action Area */}
@@ -247,7 +249,7 @@ export default function ScannerDashboard() {
                     {/* Main Results Feed */}
                     <div className="lg:col-span-9 space-y-6">
                         {/* Header & Filters */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#161922] p-4 rounded-xl border border-gray-200 dark:border-white/5 shadow-sm transition-colors duration-200">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-4">
                             <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                 Live Signals
                                 <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
@@ -277,9 +279,13 @@ export default function ScannerDashboard() {
 
                         {/* Empty State */}
                         {results.length === 0 && !isScanning && !loading && !error && (
-                            <div className="h-64 flex flex-col items-center justify-center text-gray-600 border border-dashed border-gray-800 rounded-xl bg-[#161922]/50">
-                                <Activity size={48} className="mb-4 opacity-20" />
-                                <p className="text-sm">System Ready. Awaiting trigger.</p>
+                            <div className="h-64 flex flex-col items-center justify-center text-slate-400 dark:text-gray-600 glass-card border-dashed">
+                                <div className="relative mb-6">
+                                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
+                                    <Activity size={48} className="relative z-10 text-indigo-400/50" />
+                                </div>
+                                <p className="text-sm font-medium">System Ready. Awaiting trigger.</p>
+                                <p className="text-xs text-slate-400 mt-1">Configure your filters and press 'Run Scanner'</p>
                             </div>
                         )}
 
@@ -327,15 +333,15 @@ ScannerDashboard.propTypes = {
 
 function PulseCard({ label, value, subtext, icon }) {
     return (
-        <div className="bg-white dark:bg-[#161922] p-4 rounded-xl border border-gray-200 dark:border-white/5 flex items-center justify-between transition-colors duration-200">
+        <div className="glass-card p-4 flex items-center justify-between group hover:border-indigo-500/30 transition-colors">
             <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">{label}</p>
+                <p className="text-xs text-slate-500 dark:text-gray-500 uppercase tracking-wider font-medium">{label}</p>
                 <div className="flex items-baseline gap-2 mt-1">
-                    <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
+                    <p className="text-xl font-bold text-slate-900 dark:text-white">{value}</p>
                 </div>
-                {subtext && <p className="text-[10px] text-gray-500 mt-1 font-mono">{subtext}</p>}
+                {subtext && <p className="text-[10px] text-slate-400 dark:text-gray-500 mt-1 font-mono">{subtext}</p>}
             </div>
-            <div className="bg-gray-50 dark:bg-[#0f111a] p-2 rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
+            <div className="bg-indigo-50 dark:bg-white/5 p-2 rounded-lg group-hover:scale-110 transition-transform duration-300">
                 {icon}
             </div>
         </div>
@@ -426,8 +432,8 @@ const ResultTicket = ({ item, index, exchange }) => {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ delay: index * 0.03 }}
             className={`
-                p-4 rounded-xl border border-gray-200 dark:border-white/5 relative group overflow-hidden transition-colors duration-200
-                ${item.Side === 'LONG' ? 'bg-emerald-500/5 hover:bg-emerald-500/10' : 'bg-red-500/5 hover:bg-red-500/10'}
+                glass-card p-4 relative group overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300
+                ${item.Side === 'LONG' ? 'shadow-emerald-500/10 dark:shadow-none hover:shadow-emerald-500/20' : 'shadow-rose-500/10 dark:shadow-none hover:shadow-rose-500/20'}
             `}
         >
             <div className="flex justify-between items-start mb-2">
@@ -470,21 +476,21 @@ const ResultTicket = ({ item, index, exchange }) => {
 
             <div className="grid grid-cols-3 gap-2 mt-4 text-xs">
                 {/* Restored 24h Change */}
-                <div className="p-2 bg-white dark:bg-[#0f111a] rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
-                    <div className="text-gray-500 mb-1">24h Change</div>
+                <div className="p-2 bg-slate-50 dark:bg-black/20 rounded-lg border border-slate-100 dark:border-white/5">
+                    <div className="text-slate-500 dark:text-gray-500 mb-1">24h Change</div>
                     <div className={`${item['24h Change'] >= 0 ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'} font-bold`}>
                         {item['24h Change'] > 0 ? '+' : ''}{item['24h Change']}%
                     </div>
                 </div>
-                <div className="p-2 bg-white dark:bg-[#0f111a] rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
-                    <div className="text-gray-500 mb-1">RSI (15m)</div>
-                    <div className={item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? 'text-yellow-600 dark:text-yellow-400 font-bold' : 'text-gray-600 dark:text-gray-300'}>
+                <div className="p-2 bg-slate-50 dark:bg-black/20 rounded-lg border border-slate-100 dark:border-white/5">
+                    <div className="text-slate-500 dark:text-gray-500 mb-1">RSI (15m)</div>
+                    <div className={item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? 'text-yellow-600 dark:text-yellow-400 font-bold' : 'text-slate-700 dark:text-gray-300'}>
                         {item['RSI (15m)']}
                     </div>
                 </div>
-                <div className="p-2 bg-white dark:bg-[#0f111a] rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
-                    <div className="text-gray-500 mb-1">ADX Strength</div>
-                    <div className={item['ADX (15m)'] > 25 ? 'text-emerald-500 dark:text-emerald-400 font-bold' : 'text-gray-600 dark:text-gray-300'}>
+                <div className="p-2 bg-slate-50 dark:bg-black/20 rounded-lg border border-slate-100 dark:border-white/5">
+                    <div className="text-slate-500 dark:text-gray-500 mb-1">ADX Strength</div>
+                    <div className={item['ADX (15m)'] > 25 ? 'text-emerald-500 dark:text-emerald-400 font-bold' : 'text-slate-700 dark:text-gray-300'}>
                         {item['ADX (15m)']}
                     </div>
                 </div>

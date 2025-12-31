@@ -8,10 +8,8 @@ const LearnStrategy = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white selection:bg-indigo-500/30 transition-colors duration-200">
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-300/30 dark:bg-blue-600/10 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen transition-colors duration-200" />
-            </div>
+        <div className="min-h-screen bg-slate-50 dark:bg-[#0f111a] text-slate-800 dark:text-white selection:bg-indigo-500/30 transition-colors duration-500">
+            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-40 dark:opacity-30 animate-pulse-slow will-change-transform" />
 
             <div className="relative z-10 max-w-5xl mx-auto px-6 py-12">
                 {/* Header */}
@@ -26,8 +24,8 @@ const LearnStrategy = () => {
                         </button>
                         <ThemeToggle />
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
-                        The <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400">Algo Signal Pulse</span> Strategy
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white">
+                        The <span className="text-gradient-premium font-extrabold">Algo Signal Pulse</span> Strategy
                     </h1>
                     <p className="text-xl text-gray-600 dark:text-gray-400">
                         A systematic approach to capturing high-probability trend moves.
@@ -49,13 +47,13 @@ const LearnStrategy = () => {
                 {/* Section 1.5: Why We Are Different */}
                 <Section title="Why We Are Different" icon={<div className="w-6 h-6 text-amber-500 dark:text-amber-400 font-bold text-center">★</div>}>
                     <div className="grid md:grid-cols-2 gap-6">
-                        <div className="bg-white dark:bg-white/5 p-5 rounded-xl border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-200">
+                        <div className="glass-card p-6">
                             <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-300">Institutional Logic</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
                                 Most scanners look for random pumps. We strictly align with the <strong>21, 50, and 100 EMAs</strong>—the exact levels algorithmic funds use to define trends.
                             </p>
                         </div>
-                        <div className="bg-white dark:bg-white/5 p-5 rounded-xl border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-200">
+                        <div className="glass-card p-6">
                             <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-300">Trend Alignment, Not Prediction</h3>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
                                 We never guess tops or bottoms. We wait for the <strong>4H and 1H trends to agree</strong> before signaling a 15m entry. This filters out 80% of false signals.
@@ -67,7 +65,7 @@ const LearnStrategy = () => {
                 {/* Section 2: The Setup */}
                 <Section title="The Perfect Setup" icon={<TrendingUp className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />}>
                     <div className="grid md:grid-cols-2 gap-8">
-                        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/5 rounded-xl p-6 relative overflow-hidden shadow-sm dark:shadow-none transition-colors duration-200">
+                        <div className="glass-card p-6 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/10 rounded-bl-full pointer-events-none" />
                             <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5" /> Bullish (Long)
@@ -80,7 +78,7 @@ const LearnStrategy = () => {
                                 <li className="flex gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-white/10"><span className="text-yellow-600 dark:text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'>'} 50 confirms strength.</li>
                             </ul>
                         </div>
-                        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/5 rounded-xl p-6 relative overflow-hidden shadow-sm dark:shadow-none transition-colors duration-200">
+                        <div className="glass-card p-6 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-20 h-20 bg-rose-500/10 rounded-bl-full pointer-events-none" />
                             <h3 className="text-xl font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
                                 <TrendingDown className="w-5 h-5" /> Bearish (Short)
@@ -157,19 +155,19 @@ const Section = ({ title, icon, children }) => (
         className="mb-16"
     >
         <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-white dark:bg-white/5 rounded-lg border border-gray-200 dark:border-white/10 transition-colors duration-200">
+            <div className="p-2 bg-indigo-50 dark:bg-white/5 rounded-lg border border-indigo-100 dark:border-white/10 shadow-sm">
                 {icon}
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{title}</h2>
         </div>
         {children}
     </motion.section>
 );
 
 const EmaCard = ({ value, label, color }) => (
-    <div className="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-white/5 text-center shadow-sm dark:shadow-none transition-colors duration-200">
-        <div className={`text-2xl font-bold ${color} mb-1`}>EMA {value}</div>
-        <div className="text-xs text-gray-500 uppercase tracking-wider">{label}</div>
+    <div className="glass-card p-4 text-center hover:-translate-y-1 transition-transform duration-300">
+        <div className={`text-2xl font-bold ${color} mb-1 drop-shadow-sm`}>EMA {value}</div>
+        <div className="text-xs text-slate-500 dark:text-gray-400 uppercase tracking-wider">{label}</div>
     </div>
 );
 
@@ -186,9 +184,9 @@ EmaCard.propTypes = {
 };
 
 const ExchangeCard = ({ name, desc, color, border }) => (
-    <div className={`bg-white dark:bg-dark-800 p-4 rounded-xl border ${border} text-center group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors shadow-sm dark:shadow-none`}>
-        <div className={`text-lg font-bold ${color} mb-1 group-hover:scale-105 transition-transform`}>{name}</div>
-        <div className="text-xs text-gray-500">{desc}</div>
+    <div className={`glass-card p-4 text-center group hover:bg-white/60 dark:hover:bg-white/10`}>
+        <div className={`text-lg font-bold ${color} mb-1 group-hover:scale-105 transition-transform drop-shadow-sm`}>{name}</div>
+        <div className="text-xs text-slate-500 dark:text-gray-400">{desc}</div>
     </div>
 );
 

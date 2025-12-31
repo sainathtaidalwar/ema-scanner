@@ -7,17 +7,21 @@ const ThemeToggle = () => {
     return (
         <button
             onClick={toggleTheme}
-            className="p-2 rounded-full transition-colors duration-200
-                bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-yellow-400
-                hover:bg-gray-200 dark:hover:bg-gray-700
-                focus:outline-none focus:ring-2 focus:ring-brand"
+            className="group relative p-2 rounded-full transition-all duration-300
+                bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/20 
+                backdrop-blur-md border border-gray-200 dark:border-white/10
+                shadow-sm hover:shadow-md hover:shadow-indigo-500/20"
             aria-label="Toggle Theme"
         >
-            {theme === 'dark' ? (
-                <Moon size={20} className="text-brand-glow" />
-            ) : (
-                <Sun size={20} className="text-orange-500" />
-            )}
+            <div className="relative z-10">
+                {theme === 'dark' ? (
+                    <Moon size={20} className="text-indigo-300 transition-transform group-hover:-rotate-12" />
+                ) : (
+                    <Sun size={20} className="text-amber-500 transition-transform group-hover:rotate-45" />
+                )}
+            </div>
+            {/* Glow effect */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-indigo-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </button>
     );
 };

@@ -28,13 +28,13 @@ function StepCard({ icon, title, description, delay }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay, duration: 0.5 }}
-            className="bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 border border-gray-200 dark:border-white/5 rounded-2xl p-6 transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-indigo-500/10"
+            className="glass-card p-6 hover:scale-[1.02] hover:shadow-2xl hover:shadow-indigo-500/20"
         >
-            <div className="mb-4 bg-indigo-50 dark:bg-dark-800 w-14 h-14 rounded-xl flex items-center justify-center border border-indigo-100 dark:border-white/10 shadow-inner">
+            <div className="mb-4 bg-indigo-50/50 dark:bg-dark-800/80 w-14 h-14 rounded-2xl flex items-center justify-center border border-indigo-100 dark:border-white/10 shadow-sm">
                 {icon}
             </div>
             <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{title}</h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm">{description}</p>
         </motion.div>
     );
 }
@@ -50,12 +50,9 @@ function LandingPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white overflow-hidden selection:bg-indigo-500/30 transition-colors duration-200">
-            {/* Background Gradients */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-300/30 dark:bg-indigo-600/20 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen transition-colors duration-200" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-300/30 dark:bg-purple-600/20 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen transition-colors duration-200" />
-            </div>
+        <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white overflow-hidden selection:bg-indigo-500/30 transition-colors duration-500">
+            {/* Background Gradients (Aurora) */}
+            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-60 dark:opacity-40 animate-pulse-slow will-change-transform" />
 
             <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 lg:py-20">
 
@@ -80,9 +77,9 @@ function LandingPage() {
                         Live Market Analysis
                     </motion.div>
 
-                    <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+                    <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-bold mb-8 leading-tight tracking-tight">
                         Master the Trend with <br />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                        <span className="text-gradient-premium drop-shadow-sm">
                             Precision EMA Strategy
                         </span>
                     </motion.h1>
@@ -146,7 +143,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Institutional Momentum</h3>
-                                        <p className="text-gray-300 dark:text-gray-400">Large institutions trade with the trend. The 200 EMA acts as the "line in the sand" for long-term bias.</p>
+                                        <p className="text-slate-600 dark:text-gray-400">Large institutions trade with the trend. The 200 EMA acts as the "line in the sand" for long-term bias.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
@@ -155,7 +152,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Dynamic Support</h3>
-                                        <p className="text-gray-300 dark:text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
+                                        <p className="text-slate-600 dark:text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
                                     </div>
                                 </div>
                             </div>
@@ -179,8 +176,8 @@ function LandingPage() {
                                 <div className="w-4 h-24 bg-green-500/80 rounded-sm mb-20"></div>
                             </div>
 
-                            <div className="z-10 bg-dark-900/80 backdrop-blur border border-white/10 px-4 py-2 rounded-lg mb-8">
-                                <span className="flex items-center gap-2 text-green-400 font-mono text-sm">
+                            <div className="z-10 bg-white/10 dark:bg-dark-900/80 backdrop-blur border border-white/20 dark:border-white/10 px-4 py-2 rounded-lg mb-8 shadow-lg">
+                                <span className="flex items-center gap-2 text-green-600 dark:text-green-400 font-mono text-sm font-bold">
                                     <TrendingUp className="w-4 h-4" /> Strong Uptrend Detected
                                 </span>
                             </div>
