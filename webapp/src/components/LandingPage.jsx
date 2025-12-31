@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { Logo } from './Logo';
+import ThemeToggle from './ThemeToggle';
 import { MousePointer2, TrendingUp, ShieldCheck, Activity, ArrowRight } from 'lucide-react';
 
 // ... animations ...
@@ -27,13 +28,13 @@ function StepCard({ icon, title, description, delay }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay, duration: 0.5 }}
-            className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-6 transition-all hover:scale-[1.02] hover:shadow-2xl hover:shadow-indigo-500/10"
+            className="bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 border border-gray-200 dark:border-white/5 rounded-2xl p-6 transition-all hover:scale-[1.02] hover:shadow-xl hover:shadow-indigo-500/10"
         >
-            <div className="mb-4 bg-dark-800 w-14 h-14 rounded-xl flex items-center justify-center border border-white/10 shadow-inner">
+            <div className="mb-4 bg-indigo-50 dark:bg-dark-800 w-14 h-14 rounded-xl flex items-center justify-center border border-indigo-100 dark:border-white/10 shadow-inner">
                 {icon}
             </div>
-            <h3 className="text-xl font-bold mb-3">{title}</h3>
-            <p className="text-gray-400 leading-relaxed">{description}</p>
+            <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{title}</h3>
+            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{description}</p>
         </motion.div>
     );
 }
@@ -49,11 +50,11 @@ function LandingPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-dark-900 text-white overflow-hidden selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white overflow-hidden selection:bg-indigo-500/30 transition-colors duration-200">
             {/* Background Gradients */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/20 rounded-full blur-[120px] mix-blend-screen" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] mix-blend-screen" />
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-300/30 dark:bg-indigo-600/20 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen transition-colors duration-200" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-300/30 dark:bg-purple-600/20 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen transition-colors duration-200" />
             </div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 lg:py-20">
@@ -61,7 +62,7 @@ function LandingPage() {
                 {/* Navbar Placeholder */}
                 <nav className="flex justify-between items-center mb-20">
                     <Logo />
-                    {/* Redundant button removed as per user request */}
+                    <ThemeToggle />
                 </nav>
 
                 {/* Hero Section */}
@@ -86,7 +87,7 @@ function LandingPage() {
                         </span>
                     </motion.h1>
 
-                    <motion.p variants={fadeInUp} className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
                         Stop guessing. Start trading with a proven algorithmic approach.
                         Identify high-probability setups using multi-timeframe Exponential Moving Average alignment.
                     </motion.p>
@@ -102,7 +103,7 @@ function LandingPage() {
                         </button>
                         <button
                             onClick={() => navigate('/learn')}
-                            className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-lg transition-all"
+                            className="px-8 py-4 bg-white dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl font-bold text-lg text-gray-900 dark:text-white transition-all shadow-sm dark:shadow-none"
                         >
                             Learn the Strategy
                         </button>
@@ -145,7 +146,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Institutional Momentum</h3>
-                                        <p className="text-gray-400">Large institutions trade with the trend. The 200 EMA acts as the "line in the sand" for long-term bias.</p>
+                                        <p className="text-gray-300 dark:text-gray-400">Large institutions trade with the trend. The 200 EMA acts as the "line in the sand" for long-term bias.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
@@ -154,7 +155,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Dynamic Support</h3>
-                                        <p className="text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
+                                        <p className="text-gray-300 dark:text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
                                     </div>
                                 </div>
                             </div>
@@ -188,7 +189,7 @@ function LandingPage() {
                 </div>
 
                 {/* Footer */}
-                <footer className="text-center text-gray-600 py-12 border-t border-white/5">
+                <footer className="text-center text-gray-500 dark:text-gray-600 py-12 border-t border-gray-200 dark:border-white/5">
                     <p className="text-xl font-bold text-white mb-2">Algo Signal Pulse</p>
                     <p className="mb-4">&copy; {new Date().getFullYear()} Educational Tool. All rights reserved.</p>
                     <div className="max-w-2xl mx-auto p-4 bg-red-500/5 border border-red-500/10 rounded-lg text-[10px] leading-relaxed">

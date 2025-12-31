@@ -2,37 +2,41 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, TrendingDown, Layers, AlertTriangle } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 const LearnStrategy = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-dark-900 text-white selection:bg-indigo-500/30">
+        <div className="min-h-screen bg-gray-50 dark:bg-dark-900 text-gray-900 dark:text-white selection:bg-indigo-500/30 transition-colors duration-200">
             <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] mix-blend-screen" />
+                <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-300/30 dark:bg-blue-600/10 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen transition-colors duration-200" />
             </div>
 
             <div className="relative z-10 max-w-5xl mx-auto px-6 py-12">
                 {/* Header */}
                 <div className="mb-12">
-                    <button
-                        onClick={() => navigate('/')}
-                        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6 group"
-                    >
-                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                        Back to Home
-                    </button>
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        The <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Algo Signal Pulse</span> Strategy
+                    <div className="flex justify-between items-center mb-6">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-white transition-colors group"
+                        >
+                            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                            Back to Home
+                        </button>
+                        <ThemeToggle />
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+                        The <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-purple-400">Algo Signal Pulse</span> Strategy
                     </h1>
-                    <p className="text-xl text-gray-400">
+                    <p className="text-xl text-gray-600 dark:text-gray-400">
                         A systematic approach to capturing high-probability trend moves.
                     </p>
                 </div>
 
                 {/* Section 1: Core Concept */}
-                <Section title="The Philosophy" icon={<Layers className="w-6 h-6 text-indigo-400" />}>
-                    <p className="text-gray-300 mb-4 leading-relaxed">
+                <Section title="The Philosophy" icon={<Layers className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />}>
+                    <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
                         Markets trend. We don't predict; we react. By aligning Exponential Moving Averages (EMAs) across multiple timeframes, we identify where the "smart money" is pushing the price. Our strategy relies on the confluence of three specific institutional EMAs:
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -43,17 +47,17 @@ const LearnStrategy = () => {
                 </Section>
 
                 {/* Section 1.5: Why We Are Different */}
-                <Section title="Why We Are Different" icon={<div className="w-6 h-6 text-amber-400 font-bold text-center">★</div>}>
+                <Section title="Why We Are Different" icon={<div className="w-6 h-6 text-amber-500 dark:text-amber-400 font-bold text-center">★</div>}>
                     <div className="grid md:grid-cols-2 gap-6">
-                        <div className="bg-white/5 p-5 rounded-xl border border-white/5">
-                            <h3 className="font-bold text-lg mb-2 text-indigo-300">Institutional Logic</h3>
-                            <p className="text-sm text-gray-400">
+                        <div className="bg-white dark:bg-white/5 p-5 rounded-xl border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-200">
+                            <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-300">Institutional Logic</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
                                 Most scanners look for random pumps. We strictly align with the <strong>21, 50, and 100 EMAs</strong>—the exact levels algorithmic funds use to define trends.
                             </p>
                         </div>
-                        <div className="bg-white/5 p-5 rounded-xl border border-white/5">
-                            <h3 className="font-bold text-lg mb-2 text-indigo-300">Trend Alignment, Not Prediction</h3>
-                            <p className="text-sm text-gray-400">
+                        <div className="bg-white dark:bg-white/5 p-5 rounded-xl border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-colors duration-200">
+                            <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-300">Trend Alignment, Not Prediction</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
                                 We never guess tops or bottoms. We wait for the <strong>4H and 1H trends to agree</strong> before signaling a 15m entry. This filters out 80% of false signals.
                             </p>
                         </div>
@@ -61,32 +65,32 @@ const LearnStrategy = () => {
                 </Section>
 
                 {/* Section 2: The Setup */}
-                <Section title="The Perfect Setup" icon={<TrendingUp className="w-6 h-6 text-emerald-400" />}>
+                <Section title="The Perfect Setup" icon={<TrendingUp className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />}>
                     <div className="grid md:grid-cols-2 gap-8">
-                        <div className="bg-white/5 border border-white/5 rounded-xl p-6 relative overflow-hidden">
+                        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/5 rounded-xl p-6 relative overflow-hidden shadow-sm dark:shadow-none transition-colors duration-200">
                             <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/10 rounded-bl-full pointer-events-none" />
-                            <h3 className="text-xl font-bold text-emerald-400 mb-2 flex items-center gap-2">
+                            <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5" /> Bullish (Long)
                             </h3>
-                            <ul className="space-y-3 text-sm text-gray-300">
-                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">1.</span> Price is ABOVE the 21 EMA (Momentum is Up).</li>
-                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">2.</span> EMA 21 {'>'} EMA 50 {'>'} EMA 100 (Fan Shape).</li>
-                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bullish stack.</li>
-                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">4.</span> Trigger: 15m Price holds above EMA 50 support.</li>
-                                <li className="flex gap-2 mt-4 pt-4 border-t border-white/10"><span className="text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'>'} 50 confirms strength.</li>
+                            <ul className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                                <li className="flex gap-2"><span className="text-emerald-600 dark:text-emerald-500 font-bold">1.</span> Price is ABOVE the 21 EMA (Momentum is Up).</li>
+                                <li className="flex gap-2"><span className="text-emerald-600 dark:text-emerald-500 font-bold">2.</span> EMA 21 {'>'} EMA 50 {'>'} EMA 100 (Fan Shape).</li>
+                                <li className="flex gap-2"><span className="text-emerald-600 dark:text-emerald-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bullish stack.</li>
+                                <li className="flex gap-2"><span className="text-emerald-600 dark:text-emerald-500 font-bold">4.</span> Trigger: 15m Price holds above EMA 50 support.</li>
+                                <li className="flex gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-white/10"><span className="text-yellow-600 dark:text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'>'} 50 confirms strength.</li>
                             </ul>
                         </div>
-                        <div className="bg-white/5 border border-white/5 rounded-xl p-6 relative overflow-hidden">
+                        <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/5 rounded-xl p-6 relative overflow-hidden shadow-sm dark:shadow-none transition-colors duration-200">
                             <div className="absolute top-0 right-0 w-20 h-20 bg-rose-500/10 rounded-bl-full pointer-events-none" />
-                            <h3 className="text-xl font-bold text-rose-400 mb-2 flex items-center gap-2">
+                            <h3 className="text-xl font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
                                 <TrendingDown className="w-5 h-5" /> Bearish (Short)
                             </h3>
-                            <ul className="space-y-3 text-sm text-gray-300">
-                                <li className="flex gap-2"><span className="text-rose-500 font-bold">1.</span> Price is BELOW the 21 EMA (Momentum is Down).</li>
-                                <li className="flex gap-2"><span className="text-rose-500 font-bold">2.</span> EMA 21 {'<'} EMA 50 {'<'} EMA 100 (Fan Shape).</li>
-                                <li className="flex gap-2"><span className="text-rose-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bearish stack.</li>
-                                <li className="flex gap-2"><span className="text-rose-500 font-bold">4.</span> Trigger: 15m Price held below EMA 50 resistance.</li>
-                                <li className="flex gap-2 mt-4 pt-4 border-t border-white/10"><span className="text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'<'} 50 confirms weakness.</li>
+                            <ul className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                                <li className="flex gap-2"><span className="text-rose-600 dark:text-rose-500 font-bold">1.</span> Price is BELOW the 21 EMA (Momentum is Down).</li>
+                                <li className="flex gap-2"><span className="text-rose-600 dark:text-rose-500 font-bold">2.</span> EMA 21 {'<'} EMA 50 {'<'} EMA 100 (Fan Shape).</li>
+                                <li className="flex gap-2"><span className="text-rose-600 dark:text-rose-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bearish stack.</li>
+                                <li className="flex gap-2"><span className="text-rose-600 dark:text-rose-500 font-bold">4.</span> Trigger: 15m Price held below EMA 50 resistance.</li>
+                                <li className="flex gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-white/10"><span className="text-yellow-600 dark:text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'<'} 50 confirms weakness.</li>
                             </ul>
                         </div>
                     </div>
@@ -105,13 +109,13 @@ const LearnStrategy = () => {
                 </Section>
 
                 {/* Section 3: Risk Management */}
-                <Section title="Risk Management" icon={<AlertTriangle className="w-6 h-6 text-yellow-400" />}>
-                    <p className="text-gray-300 mb-4">
+                <Section title="Risk Management" icon={<AlertTriangle className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />}>
+                    <p className="text-gray-700 dark:text-gray-300 mb-4">
                         A good strategy without risk management is gambling. This scanner helps you identify setups, but you must execute with discipline.
                     </p>
                     <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-l-4 border-yellow-500 p-4">
-                        <h4 className="font-bold text-yellow-500 mb-1">Golden Rules</h4>
-                        <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
+                        <h4 className="font-bold text-yellow-600 dark:text-yellow-500 mb-1">Golden Rules</h4>
+                        <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
                             <li>Risk only 1-2% of your capital per trade.</li>
                             <li>Stop Loss should be placed below the recent swing low (Longs) or above swing high (Shorts).</li>
                             <li>Target a Risk:Reward ratio of at least 1:2.</li>
@@ -130,10 +134,10 @@ const LearnStrategy = () => {
                 </div>
             </div>
 
-            <footer className="text-center text-gray-500 text-sm border-t border-white/5 py-8 mt-12">
+            <footer className="text-center text-gray-500 dark:text-gray-500 text-sm border-t border-gray-200 dark:border-white/5 py-8 mt-12 transition-colors duration-200">
                 <p className="mb-4">© {new Date().getFullYear()} Algo Signal Pulse. Educational Tool.</p>
                 <div className="max-w-2xl mx-auto p-4 bg-red-500/5 border border-red-500/10 rounded-lg text-[10px] leading-relaxed">
-                    <p className="font-bold text-red-400 mb-1">EDUCATIONAL PURPOSE ONLY</p>
+                    <p className="font-bold text-red-600 dark:text-red-400 mb-1">EDUCATIONAL PURPOSE ONLY</p>
                     <p>
                         The strategies explained here are for theoretical understanding of technical analysis.
                         They represent model behaviors, not financial advice.
@@ -153,17 +157,17 @@ const Section = ({ title, icon, children }) => (
         className="mb-16"
     >
         <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-white/5 rounded-lg border border-white/10">
+            <div className="p-2 bg-white dark:bg-white/5 rounded-lg border border-gray-200 dark:border-white/10 transition-colors duration-200">
                 {icon}
             </div>
-            <h2 className="text-2xl font-bold">{title}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
         </div>
         {children}
     </motion.section>
 );
 
 const EmaCard = ({ value, label, color }) => (
-    <div className="bg-dark-800 p-4 rounded-xl border border-white/5 text-center">
+    <div className="bg-white dark:bg-dark-800 p-4 rounded-xl border border-gray-200 dark:border-white/5 text-center shadow-sm dark:shadow-none transition-colors duration-200">
         <div className={`text-2xl font-bold ${color} mb-1`}>EMA {value}</div>
         <div className="text-xs text-gray-500 uppercase tracking-wider">{label}</div>
     </div>
@@ -182,7 +186,7 @@ EmaCard.propTypes = {
 };
 
 const ExchangeCard = ({ name, desc, color, border }) => (
-    <div className={`bg-dark-800 p-4 rounded-xl border ${border} text-center group hover:bg-white/5 transition-colors`}>
+    <div className={`bg-white dark:bg-dark-800 p-4 rounded-xl border ${border} text-center group hover:bg-gray-50 dark:hover:bg-white/5 transition-colors shadow-sm dark:shadow-none`}>
         <div className={`text-lg font-bold ${color} mb-1 group-hover:scale-105 transition-transform`}>{name}</div>
         <div className="text-xs text-gray-500">{desc}</div>
     </div>

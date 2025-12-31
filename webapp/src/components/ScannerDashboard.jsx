@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Logo } from './Logo';
+import ThemeToggle from './ThemeToggle';
 import { useNavigate } from 'react-router-dom';
 import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -115,9 +116,9 @@ export default function ScannerDashboard() {
     const sentiment = totalActive === 0 ? 50 : Math.round((longCount / totalActive) * 100);
 
     return (
-        <div className="min-h-screen bg-[#0f111a] text-gray-300 font-sans selection:bg-brand-glow selection:text-white">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#0f111a] text-gray-600 dark:text-gray-300 font-sans selection:bg-brand-glow selection:text-white transition-colors duration-200">
             {/* Professional Navbar */}
-            <nav className="border-b border-white/5 bg-[#0f111a]/80 backdrop-blur-md sticky top-0 z-50">
+            <nav className="border-b border-gray-200 dark:border-white/5 bg-white/80 dark:bg-[#0f111a]/80 backdrop-blur-md sticky top-0 z-50 transition-colors duration-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div onClick={() => navigate('/')} className="cursor-pointer">
@@ -139,6 +140,7 @@ export default function ScannerDashboard() {
                                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                 SYSTEM ONLINE
                             </div>
+                            <ThemeToggle />
                         </div>
                     </div>
                 </div>
@@ -162,10 +164,10 @@ export default function ScannerDashboard() {
                     {/* Sidebar Configuration */}
                     <div className="lg:col-span-3 space-y-6">
                         {/* Exchange Selector & Config */}
-                        <div className="bg-[#161922] border border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden">
-                            <div className="bg-[#0f111a] rounded-xl border border-white/5 p-6 space-y-6">
+                        <div className="bg-white dark:bg-[#161922] border border-gray-200 dark:border-white/5 rounded-xl p-6 shadow-xl relative overflow-hidden transition-colors duration-200">
+                            <div className="bg-gray-50 dark:bg-[#0f111a] rounded-xl border border-gray-200 dark:border-white/5 p-6 space-y-6 transition-colors duration-200">
                                 <div>
-                                    <h2 className="text-lg font-bold text-gray-200 flex items-center gap-2 mb-4">
+                                    <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 flex items-center gap-2 mb-4">
                                         <Settings size={20} className="text-indigo-400" />
                                         Exchange
                                     </h2>
@@ -186,7 +188,7 @@ export default function ScannerDashboard() {
                                 </div>
 
                                 <div>
-                                    <h2 className="text-lg font-bold text-gray-200 flex items-center gap-2 mb-4">
+                                    <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 flex items-center gap-2 mb-4">
                                         <Settings size={20} className="text-indigo-400" />
                                         Strategy Config
                                     </h2>
@@ -216,7 +218,7 @@ export default function ScannerDashboard() {
                         </div>
 
                         {/* Action Area */}
-                        <div className="mt-8 pt-6 border-t border-white/5">
+                        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5">
                             {error && (
                                 <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs text-center font-medium">
                                     {error}
@@ -245,12 +247,12 @@ export default function ScannerDashboard() {
                     {/* Main Results Feed */}
                     <div className="lg:col-span-9 space-y-6">
                         {/* Header & Filters */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#161922] p-4 rounded-xl border border-white/5">
-                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#161922] p-4 rounded-xl border border-gray-200 dark:border-white/5 shadow-sm transition-colors duration-200">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                 Live Signals
                                 <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
                             </h2>
-                            <div className="flex bg-[#0f111a] p-1 rounded-lg border border-white/5">
+                            <div className="flex bg-gray-100 dark:bg-[#0f111a] p-1 rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
                                 <TabButton label="ALL" active={filterSide === 'ALL'} onClick={() => setFilterSide('ALL')} />
                                 <TabButton label="LONGS" active={filterSide === 'LONG'} onClick={() => setFilterSide('LONG')} />
                                 <TabButton label="SHORTS" active={filterSide === 'SHORT'} onClick={() => setFilterSide('SHORT')} />
@@ -306,7 +308,7 @@ export default function ScannerDashboard() {
                 </div>
             </main>
 
-            <footer className="border-t border-white/5 bg-[#161922] py-8 mt-12">
+            <footer className="border-t border-gray-200 dark:border-white/5 bg-white dark:bg-[#161922] py-8 mt-12 transition-colors duration-200">
                 <div className="max-w-7xl mx-auto px-8 text-center">
                     <p className="text-xs text-indigo-400 font-medium tracking-wide mb-2 uppercase">Multi-Indicator Algo Trading Signals</p>
                     <p className="text-[10px] text-gray-600">&copy; {new Date().getFullYear()} Algo Signal Pulse. All rights reserved.</p>
@@ -325,15 +327,15 @@ ScannerDashboard.propTypes = {
 
 function PulseCard({ label, value, subtext, icon }) {
     return (
-        <div className="bg-[#161922] p-4 rounded-xl border border-white/5 flex items-center justify-between">
+        <div className="bg-white dark:bg-[#161922] p-4 rounded-xl border border-gray-200 dark:border-white/5 flex items-center justify-between transition-colors duration-200">
             <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">{label}</p>
                 <div className="flex items-baseline gap-2 mt-1">
-                    <p className="text-xl font-bold text-white">{value}</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-white">{value}</p>
                 </div>
                 {subtext && <p className="text-[10px] text-gray-500 mt-1 font-mono">{subtext}</p>}
             </div>
-            <div className="bg-[#0f111a] p-2 rounded-lg border border-white/5">
+            <div className="bg-gray-50 dark:bg-[#0f111a] p-2 rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
                 {icon}
             </div>
         </div>
@@ -358,11 +360,11 @@ function FilterToggle({ label, active, desc, onClick }) {
             </div>
             <div className={clsx(
                 "w-10 h-5 rounded-full p-1 transition-colors relative",
-                active ? "bg-cyan-500/20" : "bg-gray-800"
+                active ? "bg-cyan-500/20" : "bg-gray-200 dark:bg-gray-800"
             )}>
                 <div className={clsx(
                     "w-3 h-3 rounded-full shadow-sm transition-all absolute top-1",
-                    active ? "bg-cyan-400 left-6" : "bg-gray-600 left-1"
+                    active ? "bg-cyan-400 left-6" : "bg-gray-400 dark:bg-gray-600 left-1"
                 )} />
             </div>
         </button>
@@ -424,7 +426,7 @@ const ResultTicket = ({ item, index, exchange }) => {
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ delay: index * 0.03 }}
             className={`
-                p-4 rounded-xl border border-white/5 relative group overflow-hidden
+                p-4 rounded-xl border border-gray-200 dark:border-white/5 relative group overflow-hidden transition-colors duration-200
                 ${item.Side === 'LONG' ? 'bg-emerald-500/5 hover:bg-emerald-500/10' : 'bg-red-500/5 hover:bg-red-500/10'}
             `}
         >
@@ -450,7 +452,7 @@ const ResultTicket = ({ item, index, exchange }) => {
                             {item.Exchange || exchange}
                         </div>
                     </div>
-                    <div className="text-xl font-mono text-white">
+                    <div className="text-xl font-mono text-gray-900 dark:text-white">
                         {item.Price}
                     </div>
                 </div>
@@ -468,21 +470,21 @@ const ResultTicket = ({ item, index, exchange }) => {
 
             <div className="grid grid-cols-3 gap-2 mt-4 text-xs">
                 {/* Restored 24h Change */}
-                <div className="p-2 bg-[#0f111a] rounded-lg border border-white/5">
+                <div className="p-2 bg-white dark:bg-[#0f111a] rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
                     <div className="text-gray-500 mb-1">24h Change</div>
-                    <div className={`${item['24h Change'] >= 0 ? 'text-emerald-400' : 'text-rose-400'} font-bold`}>
+                    <div className={`${item['24h Change'] >= 0 ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'} font-bold`}>
                         {item['24h Change'] > 0 ? '+' : ''}{item['24h Change']}%
                     </div>
                 </div>
-                <div className="p-2 bg-[#0f111a] rounded-lg border border-white/5">
+                <div className="p-2 bg-white dark:bg-[#0f111a] rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
                     <div className="text-gray-500 mb-1">RSI (15m)</div>
-                    <div className={item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? 'text-yellow-400 font-bold' : 'text-gray-300'}>
+                    <div className={item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? 'text-yellow-600 dark:text-yellow-400 font-bold' : 'text-gray-600 dark:text-gray-300'}>
                         {item['RSI (15m)']}
                     </div>
                 </div>
-                <div className="p-2 bg-[#0f111a] rounded-lg border border-white/5">
+                <div className="p-2 bg-white dark:bg-[#0f111a] rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
                     <div className="text-gray-500 mb-1">ADX Strength</div>
-                    <div className={item['ADX (15m)'] > 25 ? 'text-emerald-400 font-bold' : 'text-gray-300'}>
+                    <div className={item['ADX (15m)'] > 25 ? 'text-emerald-500 dark:text-emerald-400 font-bold' : 'text-gray-600 dark:text-gray-300'}>
                         {item['ADX (15m)']}
                     </div>
                 </div>
@@ -498,9 +500,9 @@ ResultTicket.propTypes = {
 };
 
 export const StatBox = ({ label, value, isPositive }) => (
-    <div className="bg-[#161922] p-4 rounded-xl border border-white/5">
+    <div className="bg-white dark:bg-[#161922] p-4 rounded-xl border border-gray-200 dark:border-white/5 transition-colors duration-200">
         <div className="text-gray-500 text-xs mb-1 uppercase tracking-wider">{label}</div>
-        <div className={`text-xl font-bold ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <div className={`text-xl font-bold ${isPositive ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}`}>
             {value}
         </div>
     </div>

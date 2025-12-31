@@ -12,7 +12,16 @@
             </feMerge>
         </filter>
     </defs>
+    <style>
+        @media (prefers-color-scheme: light) {
+            .pulse-path { stroke: #6366f1; }
+        }
+        @media (prefers-color-scheme: dark) {
+            .pulse-path { stroke: url(#logoGradient); }
+        }
+    </style>
     <path 
+        class="pulse-path"
         d="M10,50 L30,50 L45,20 L55,80 L70,50 L90,50" 
         fill="none" 
         stroke="url(#logoGradient)" 
