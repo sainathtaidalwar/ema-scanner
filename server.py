@@ -24,6 +24,19 @@ pairs_cache = {}
 def health_check():
     return jsonify({'status': 'ok', 'message': 'Server is running'})
 
+@app.before_request
+def log_request_info():
+    # Log every request to see if laptop hits are reaching us
+    print(f"REQ: {request.method} {request.url} from {request.remote_addr}")
+
+@app.after_request
+def add_cors_headers(response):
+    # Manually ensure headers are present even if flask-cors misses something
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,OPTIONS'
+    return response
+
 @app.route('/api/pairs', methods=['GET'])
 def get_pairs():
     """Fetch top volume pairs (cached every 1 hour per exchange)"""
