@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Logo } from './Logo';
-import ThemeToggle from './ThemeToggle';
+
 import { useNavigate } from 'react-router-dom';
 import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -116,11 +116,11 @@ export default function ScannerDashboard() {
     const sentiment = totalActive === 0 ? 50 : Math.round((longCount / totalActive) * 100);
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-[#0f111a] text-slate-600 dark:text-gray-300 font-sans selection:bg-indigo-500/30 selection:text-white transition-colors duration-500">
+        <div className="min-h-screen bg-[#0f111a] text-gray-300 font-sans selection:bg-indigo-500/30 selection:text-white">
             {/* Background Gradients (Aurora) */}
-            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-40 dark:opacity-30 animate-pulse-slow will-change-transform" />
+            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-30 animate-pulse-slow will-change-transform" />
             {/* Professional Glass Navbar */}
-            <nav className="glass-card rounded-none border-x-0 border-t-0 sticky top-0 z-50 mb-8 bg-white/70 dark:bg-[#0f111a]/70">
+            <nav className="glass-card rounded-none border-x-0 border-t-0 sticky top-0 z-50 mb-8 bg-[#0f111a]/70">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div onClick={() => navigate('/')} className="cursor-pointer hover:opacity-80 transition-opacity">
@@ -129,22 +129,22 @@ export default function ScannerDashboard() {
                         <div className="hidden md:flex gap-8 text-sm font-medium">
                             <button
                                 onClick={() => navigate('/')}
-                                className="text-slate-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-white transition-colors flex items-center gap-2"
+                                className="text-gray-400 hover:text-white transition-colors flex items-center gap-2"
                             >
                                 <Layout size={14} /> Back to Home
                             </button>
-                            <span className="text-indigo-600 dark:text-white flex items-center gap-2 cursor-default font-bold"><BarChart2 size={14} /> Dashboard</span>
+                            <span className="text-white flex items-center gap-2 cursor-default font-bold"><BarChart2 size={14} /> Dashboard</span>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-mono flex items-center gap-2 shadow-sm">
+                            <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono flex items-center gap-2 shadow-sm">
                                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                                 SYSTEM ONLINE
                             </div>
-                            <ThemeToggle />
                         </div>
                     </div>
                 </div>
-            </nav>
+        </div>
+            </nav >
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
                 {/* Market Pulse Bar */}
@@ -233,7 +233,7 @@ export default function ScannerDashboard() {
                                 className={clsx(
                                     "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
                                     (loading || isScanning)
-                                        ? "bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600"
+                                        ? "bg-slate-800 text-slate-600 cursor-not-allowed"
                                         : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/30 transition-transform active:scale-95"
                                 )}
                             >
@@ -321,7 +321,7 @@ export default function ScannerDashboard() {
                     <p className="mt-1 text-[10px] text-gray-700">Market data provided by Binance Futures. Trading involves risk.</p>
                 </div>
             </footer>
-        </div>
+        </div >
     );
 }
 
@@ -506,9 +506,9 @@ ResultTicket.propTypes = {
 };
 
 export const StatBox = ({ label, value, isPositive }) => (
-    <div className="bg-white dark:bg-[#161922] p-4 rounded-xl border border-gray-200 dark:border-white/5 transition-colors duration-200">
+    <div className="bg-[#161922] p-4 rounded-xl border border-white/5">
         <div className="text-gray-500 text-xs mb-1 uppercase tracking-wider">{label}</div>
-        <div className={`text-xl font-bold ${isPositive ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}`}>
+        <div className={`text-xl font-bold ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
             {value}
         </div>
     </div>

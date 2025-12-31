@@ -2,14 +2,12 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, TrendingDown, Layers, AlertTriangle } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
-
 const LearnStrategy = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-[#0f111a] text-slate-800 dark:text-white selection:bg-indigo-500/30 transition-colors duration-500">
-            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-40 dark:opacity-30 animate-pulse-slow will-change-transform" />
+        <div className="min-h-screen bg-[#0f111a] text-white selection:bg-indigo-500/30 transition-colors duration-500">
+            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-30 animate-pulse-slow will-change-transform" />
 
             <div className="relative z-10 max-w-5xl mx-auto px-6 py-12">
                 {/* Header */}
@@ -22,19 +20,18 @@ const LearnStrategy = () => {
                             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                             Back to Home
                         </button>
-                        <ThemeToggle />
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
                         The <span className="text-gradient-premium font-extrabold">Algo Signal Pulse</span> Strategy
                     </h1>
-                    <p className="text-xl text-gray-600 dark:text-gray-400">
+                    <p className="text-xl text-gray-400">
                         A systematic approach to capturing high-probability trend moves.
                     </p>
                 </div>
 
                 {/* Section 1: Core Concept */}
-                <Section title="The Philosophy" icon={<Layers className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />}>
-                    <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+                <Section title="The Philosophy" icon={<Layers className="w-6 h-6 text-indigo-400" />}>
+                    <p className="text-gray-300 mb-4 leading-relaxed">
                         Markets trend. We don't predict; we react. By aligning Exponential Moving Averages (EMAs) across multiple timeframes, we identify where the "smart money" is pushing the price. Our strategy relies on the confluence of three specific institutional EMAs:
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -48,14 +45,14 @@ const LearnStrategy = () => {
                 <Section title="Why We Are Different" icon={<div className="w-6 h-6 text-amber-500 dark:text-amber-400 font-bold text-center">★</div>}>
                     <div className="grid md:grid-cols-2 gap-6">
                         <div className="glass-card p-6">
-                            <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-300">Institutional Logic</h3>
-                            <p className="text-sm text-slate-600 dark:text-gray-400 leading-relaxed">
+                            <h3 className="font-bold text-lg mb-2 text-indigo-300">Institutional Logic</h3>
+                            <p className="text-sm text-gray-400 leading-relaxed">
                                 Most scanners look for random pumps. We strictly align with the <strong>21, 50, and 100 EMAs</strong>—the exact levels algorithmic funds use to define trends.
                             </p>
                         </div>
                         <div className="glass-card p-6">
-                            <h3 className="font-bold text-lg mb-2 text-indigo-600 dark:text-indigo-300">Trend Alignment, Not Prediction</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <h3 className="font-bold text-lg mb-2 text-indigo-300">Trend Alignment, Not Prediction</h3>
+                            <p className="text-sm text-gray-400">
                                 We never guess tops or bottoms. We wait for the <strong>4H and 1H trends to agree</strong> before signaling a 15m entry. This filters out 80% of false signals.
                             </p>
                         </div>
@@ -155,10 +152,10 @@ const Section = ({ title, icon, children }) => (
         className="mb-16"
     >
         <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-indigo-50 dark:bg-white/5 rounded-lg border border-indigo-100 dark:border-white/10 shadow-sm">
+            <div className="p-2 bg-white/5 rounded-lg border border-white/10 shadow-sm">
                 {icon}
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{title}</h2>
+            <h2 className="text-2xl font-bold text-white">{title}</h2>
         </div>
         {children}
     </motion.section>

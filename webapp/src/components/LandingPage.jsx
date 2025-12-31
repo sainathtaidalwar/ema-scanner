@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { Logo } from './Logo';
-import ThemeToggle from './ThemeToggle';
 import { MousePointer2, TrendingUp, ShieldCheck, Activity, ArrowRight } from 'lucide-react';
 
 // ... animations ...
@@ -30,11 +29,11 @@ function StepCard({ icon, title, description, delay }) {
             transition={{ delay, duration: 0.5 }}
             className="glass-card p-6 hover:scale-[1.02] hover:shadow-2xl hover:shadow-indigo-500/20"
         >
-            <div className="mb-4 bg-indigo-50/50 dark:bg-dark-800/80 w-14 h-14 rounded-2xl flex items-center justify-center border border-indigo-100 dark:border-white/10 shadow-sm">
+            <div className="mb-4 bg-dark-800/80 w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 shadow-sm">
                 {icon}
             </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{title}</h3>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm">{description}</p>
+            <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
+            <p className="text-gray-400 leading-relaxed text-sm">{description}</p>
         </motion.div>
     );
 }
@@ -50,16 +49,15 @@ function LandingPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-[#050505] text-slate-900 dark:text-white overflow-hidden selection:bg-indigo-500/30 transition-colors duration-500">
+        <div className="min-h-screen bg-[#0f172a] text-white overflow-hidden selection:bg-indigo-500/30 transition-colors duration-500">
             {/* Background Gradients (Aurora) */}
-            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-60 dark:opacity-40 animate-pulse-slow will-change-transform" />
+            <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-40 animate-pulse-slow will-change-transform" />
 
             <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 lg:py-20">
 
                 {/* Navbar Placeholder */}
                 <nav className="flex justify-between items-center mb-20">
                     <Logo />
-                    <ThemeToggle />
                 </nav>
 
                 {/* Hero Section */}
@@ -84,7 +82,7 @@ function LandingPage() {
                         </span>
                     </motion.h1>
 
-                    <motion.p variants={fadeInUp} className="text-xl text-slate-900 dark:text-slate-200 mb-10 max-w-2xl mx-auto leading-relaxed font-semibold">
+                    <motion.p variants={fadeInUp} className="text-xl text-slate-200 mb-10 max-w-2xl mx-auto leading-relaxed font-semibold">
                         Stop guessing. Start trading with a proven algorithmic approach.
                         Identify high-probability setups using multi-timeframe Exponential Moving Average alignment.
                     </motion.p>
@@ -100,7 +98,7 @@ function LandingPage() {
                         </button>
                         <button
                             onClick={() => navigate('/learn')}
-                            className="px-8 py-4 bg-white/80 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-xl font-bold text-lg text-slate-700 dark:text-milky transition-all shadow-sm hover:shadow-md"
+                            className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-lg text-white transition-all shadow-sm hover:shadow-md"
                         >
                             Learn the Strategy
                         </button>
@@ -130,7 +128,7 @@ function LandingPage() {
                 </div>
 
                 {/* Visual Strategy Explainer */}
-                <div className="glass-card p-8 md:p-12 mb-20 relative overflow-hidden bg-slate-900 text-white dark:bg-[#1e293b]/60">
+                <div className="glass-card p-8 md:p-12 mb-20 relative overflow-hidden bg-[#1e293b]/60 text-white">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]" />
 
                     <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -143,7 +141,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Institutional Momentum</h3>
-                                        <p className="text-slate-600 dark:text-gray-400">Large institutions trade with the trend. The 200 EMA acts as the "line in the sand" for long-term bias.</p>
+                                        <p className="text-gray-400">Large institutions trade with the trend. The 200 EMA acts as the "line in the sand" for long-term bias.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
@@ -152,7 +150,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Dynamic Support</h3>
-                                        <p className="text-slate-400 dark:text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
+                                        <p className="text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
                                     </div>
                                 </div>
                             </div>
