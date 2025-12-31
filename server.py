@@ -6,7 +6,9 @@ import sys
 import time
 
 app = Flask(__name__)
-CORS(app) # Enable CORS for all domains
+app = Flask(__name__)
+# Explicitly allow everything to prevent "Network Error" on strict browsers
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Fix for Windows AsyncIO Loop
 if sys.platform == 'win32':
