@@ -12,12 +12,11 @@
             </feMerge>
         </filter>
     </defs>
-    <rect width="100" height="100" rx="20" fill="#0f111a" />
     <path 
-        d="M20,50 L35,50 L45,30 L55,70 L65,50 L80,50" 
+        d="M10,50 L30,50 L45,20 L55,80 L70,50 L90,50" 
         fill="none" 
         stroke="url(#logoGradient)" 
-        stroke-width="8" 
+        stroke-width="12" 
         stroke-linecap="round" 
         stroke-linejoin="round"
         filter="url(#glow)"
