@@ -84,7 +84,7 @@ function LandingPage() {
                         </span>
                     </motion.h1>
 
-                    <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    <motion.p variants={fadeInUp} className="text-xl text-slate-700 dark:text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
                         Stop guessing. Start trading with a proven algorithmic approach.
                         Identify high-probability setups using multi-timeframe Exponential Moving Average alignment.
                     </motion.p>
@@ -92,15 +92,15 @@ function LandingPage() {
                     <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
                             onClick={() => navigate('/scanner')}
-                            className="group relative px-8 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-lg transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] flex items-center justify-between gap-3 overflow-hidden"
+                            className="group relative px-8 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-lg transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 flex items-center justify-between gap-3 overflow-hidden text-milky"
                         >
-                            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                             Start Scanning Now
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </button>
                         <button
                             onClick={() => navigate('/learn')}
-                            className="px-8 py-4 bg-white dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl font-bold text-lg text-gray-900 dark:text-white transition-all shadow-sm dark:shadow-none"
+                            className="px-8 py-4 bg-white/80 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-xl font-bold text-lg text-slate-700 dark:text-milky transition-all shadow-sm hover:shadow-md"
                         >
                             Learn the Strategy
                         </button>
@@ -186,8 +186,8 @@ function LandingPage() {
                 </div>
 
                 {/* Footer */}
-                <footer className="text-center text-gray-500 dark:text-gray-600 py-12 border-t border-gray-200 dark:border-white/5">
-                    <p className="text-xl font-bold text-white mb-2">Algo Signal Pulse</p>
+                <footer className="text-center text-slate-500 dark:text-gray-500 py-12 border-t border-slate-200 dark:border-white/5 glass-card rounded-none border-x-0 border-b-0 mt-32">
+                    <p className="text-xl font-bold text-slate-900 dark:text-white mb-2">Algo Signal Pulse</p>
                     <p className="mb-4">&copy; {new Date().getFullYear()} Educational Tool. All rights reserved.</p>
                     <div className="max-w-2xl mx-auto p-4 bg-red-500/5 border border-red-500/10 rounded-lg text-[10px] leading-relaxed">
                         <span className="font-bold text-red-400">DISCLAIMER:</span> This website is for <strong>EDUCATIONAL PURPOSES ONLY</strong>.

@@ -234,7 +234,7 @@ export default function ScannerDashboard() {
                                     "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
                                     (loading || isScanning)
                                         ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                                        : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-indigo-500/20 hover:shadow-indigo-500/30"
+                                        : "bg-gradient-to-r from-indigo-700 to-purple-700 hover:from-indigo-600 hover:to-purple-600 text-milky shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
                                 )}
                             >
                                 {(loading || isScanning) ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
@@ -250,7 +250,7 @@ export default function ScannerDashboard() {
                     <div className="lg:col-span-9 space-y-6">
                         {/* Header & Filters */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-4">
-                            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 Live Signals
                                 <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
                             </h2>
@@ -448,8 +448,8 @@ const ResultTicket = ({ item, index, exchange }) => {
                         </div>
                         {/* Setup Type Badge */}
                         <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${item.Type === 'PULSE'
-                            ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-                            : 'bg-gray-700/30 text-gray-400 border-transparent'
+                            ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-500/30'
+                            : 'bg-slate-200 dark:bg-gray-700/30 text-slate-600 dark:text-gray-400 border-transparent'
                             }`}>
                             {item.Type === 'PULSE' ? 'SNIPER' : 'MOMENTUM'}
                         </div>
@@ -458,7 +458,7 @@ const ResultTicket = ({ item, index, exchange }) => {
                             {item.Exchange || exchange}
                         </div>
                     </div>
-                    <div className="text-xl font-mono text-gray-900 dark:text-white">
+                    <div className="text-xl font-mono font-bold text-slate-900 dark:text-white">
                         {item.Price}
                     </div>
                 </div>
