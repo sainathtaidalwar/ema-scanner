@@ -141,7 +141,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Institutional Momentum</h3>
-                                        <p className="text-gray-400">Large institutions trade with the trend. The 200 EMA acts as the "line in the sand" for long-term bias.</p>
+                                        <p className="text-gray-400">Large institutions trade with the trend. The 100 EMA acts as the "line in the sand" for long-term bias.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
@@ -150,7 +150,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Dynamic Support</h3>
-                                        <p className="text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
+                                        <p className="text-gray-400">In strong trends, the 21 and 50 EMAs act as dynamic support zones where buyers step back in.</p>
                                     </div>
                                 </div>
                             </div>
