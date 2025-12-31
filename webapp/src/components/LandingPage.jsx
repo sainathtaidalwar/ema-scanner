@@ -87,20 +87,29 @@ function LandingPage() {
                         Identify high-probability setups using multi-timeframe Exponential Moving Average alignment.
                     </motion.p>
 
-                    <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <button
-                            onClick={() => navigate('/scanner')}
-                            className="group relative px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold text-lg text-white transition-all shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/40 flex items-center justify-between gap-3 overflow-hidden active:scale-95"
+                            onClick={() => navigate('/scanner?market=crypto')}
+                            className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-lg text-white transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 active:scale-95"
                         >
-                            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                            Start Scanning Now
-                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            <Activity className="w-5 h-5" />
+                            Scan Crypto Futures
                         </button>
                         <button
-                            onClick={() => navigate('/learn')}
-                            className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-lg text-white transition-all shadow-sm hover:shadow-md"
+                            onClick={() => navigate('/scanner?market=stocks')}
+                            className="w-full sm:w-auto px-8 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-xl font-bold text-lg text-white transition-all shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 active:scale-95"
                         >
-                            Learn the Strategy
+                            <TrendingUp className="w-5 h-5" />
+                            Scan Indian Stocks
+                        </button>
+                    </motion.div>
+
+                    <motion.div variants={fadeInUp} className="mt-6 flex justify-center">
+                        <button
+                            onClick={() => navigate('/learn')}
+                            className="px-6 py-2 text-gray-400 hover:text-white text-sm font-medium transition-colors flex items-center gap-2"
+                        >
+                            How does this strategy work? <ArrowRight className="w-4 h-4" />
                         </button>
                     </motion.div>
                 </motion.div>

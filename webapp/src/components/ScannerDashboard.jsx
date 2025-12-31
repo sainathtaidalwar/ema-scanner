@@ -3,7 +3,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Logo } from './Logo';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
@@ -27,11 +27,26 @@ export default function ScannerDashboard() {
         only_pulse: false // New Filter: Only Sniper/Pulse entries
     });
 
-    const EXCHANGES = [
+    const [searchParams] = useSearchParams();
+    const marketMode = searchParams.get('market') || 'crypto';
+    const isStock = marketMode === 'stocks';
+
+    const EXCHANGES = isStock ? [
+        { id: 'nse', name: 'NSE Nifty 50', color: 'text-blue-500', url: 'https://www.nseindia.com/' }
+    ] : [
         { id: 'binance', name: 'Binance', color: 'text-yellow-400', url: 'https://www.binance.com/en/futures/' },
         { id: 'bybit', name: 'Bybit', color: 'text-orange-400', url: 'https://www.bybit.com/trade/' },
         { id: 'mexc', name: 'MEXC', color: 'text-green-400', url: 'https://www.mexc.com/exchange/' }
     ];
+
+    // Force exchange selection if handling stocks
+    useEffect(() => {
+        if (isStock) {
+            setSelectedExchange('nse');
+        } else if (selectedExchange === 'nse') {
+            setSelectedExchange('binance');
+        }
+    }, [isStock, selectedExchange]);
 
     const fetchTopPairs = async () => {
         try {

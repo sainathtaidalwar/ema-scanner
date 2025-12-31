@@ -3,8 +3,9 @@ import pandas as pd
 import numpy as np
 import time
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 import asyncio
+import yfinance as yf
 
 # --- Configuration ---
 TOP_N_COINS = 75  # Scan top volume coins
@@ -12,6 +13,19 @@ TIMEFRAMES = {'4h': '4h', '1h': '1h', '15m': '15m'}
 EMA_PERIODS = [21, 50, 100]
 RSI_PERIOD = 14
 ADX_PERIOD = 14
+
+NIFTY_50 = [
+    'RELIANCE.NS', 'TCS.NS', 'HDFCBANK.NS', 'INFY.NS', 'ICICIBANK.NS',
+    'HINDUNILVR.NS', 'SBIN.NS', 'BHARTIARTL.NS', 'ITC.NS', 'KOTAKBANK.NS',
+    'LICI.NS', 'LT.NS', 'AXISBANK.NS', 'HCLTECH.NS', 'BAJFINANCE.NS',
+    'MARUTI.NS', 'ASIANPAINT.NS', 'SUNPHARMA.NS', 'TITAN.NS', 'ULTRACEMCO.NS',
+    'TATASTEEL.NS', 'NTPC.NS', 'POWERGRID.NS', 'M&M.NS', 'TATAMOTORS.NS',
+    'ADANIENT.NS', 'BAJAJFINSV.NS', 'ADANIPORTS.NS', 'JSWSTEEL.NS', 'COALINDIA.NS',
+    'HDFCLIFE.NS', 'ONGC.NS', 'GRASIM.NS', 'BAJAJ-AUTO.NS', 'TECHM.NS',
+    'BRITANNIA.NS', 'WIPRO.NS', 'HEROMOTOCO.NS', 'HINDALCO.NS', 'DRREDDY.NS',
+    'CIPLA.NS', 'TATACONSUM.NS', 'BPCL.NS', 'DIVISLAB.NS', 'EICHERMOT.NS',
+    'APOLLOHOSP.NS', 'SBILIFE.NS', 'UPL.NS', 'INDUSINDBK.NS'
+]
 
 # --- Exchange Configuration ---
 EXCHANGE_CONFIG = {
@@ -26,6 +40,10 @@ EXCHANGE_CONFIG = {
     'mexc': {
         'type': 'swap',
         'options': {'defaultType': 'swap'} 
+    },
+    'nse': {
+        'type': 'stock',
+        'options': {}
     }
 }
 
@@ -37,6 +55,11 @@ def get_exchange_client_sync(exchange_id):
         raise ValueError(f"Unsupported exchange: {exchange_id}")
         
     config = EXCHANGE_CONFIG[exchange_id]
+    
+    # Stocks don't use CCXT
+    if exchange_id == 'nse':
+        return None
+
     exchange_class = getattr(ccxt, exchange_id)
     
     return exchange_class({
@@ -46,6 +69,9 @@ def get_exchange_client_sync(exchange_id):
 
 def fetch_top_volume_pairs_sync(exchange_id='binance', limit=TOP_N_COINS):
     """Fetches top pairs for specific exchange"""
+    if exchange_id == 'nse':
+        return NIFTY_50[:limit]
+
     print(f"DEBUG: Starting fetch_top_volume_pairs_sync for {exchange_id}") # DEBUG
     try:
         client = get_exchange_client_sync(exchange_id)
@@ -118,21 +144,80 @@ def calculate_adx(df, period=14):
     adx = dx.ewm(alpha=1/period, adjust=False).mean()
     return adx, plus_di, minus_di
 
-async def fetch_ohlcv_async(client, symbol, timeframe, limit=150):
+def fetch_stock_ohlcv(symbol, timeframe):
+    """Fetch Stock Data using yfinance with resampling"""
     try:
-        ohlcv = await client.fetch_ohlcv(symbol, timeframe, limit=limit)
+        # Map timeframe to yfinance arguments
+        # yfinance intervals: 1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 1d, 5d, 1wk, 1mo, 3mo
+        period = "5d" # Default small period for speed
+        interval = "15m"
+        
+        if timeframe == '4h':
+            interval = "1h"
+            period = "1mo" # Need more data to resample 4h
+        elif timeframe == '1h':
+            interval = "1h"
+            period = "1mo"
+        elif timeframe == '15m':
+            interval = "15m"
+            period = "1wk" # 1 week of 15m data is enough
+            
+        ticker = yf.Ticker(symbol)
+        df = ticker.history(period=period, interval=interval)
+        
+        if df.empty:
+            return None
+            
+        # Clean headers (lowercase)
+        df.reset_index(inplace=True)
+        df.columns = df.columns.str.lower()
+        
+        # Ensure UTC timezone naive for consistency or just drop Timezone
+        if 'date' in df.columns:
+            df.rename(columns={'date': 'timestamp'}, inplace=True)
+        elif 'datetime' in df.columns:
+             df.rename(columns={'datetime': 'timestamp'}, inplace=True)
+             
+        # Remove timezone if present
+        if pd.api.types.is_datetime64_any_dtype(df['timestamp']):
+            df['timestamp'] = df['timestamp'].dt.tz_localize(None)
+
+        # Resample for 4H logic
+        if timeframe == '4h':
+            # Resample 1H to 4H
+            df.set_index('timestamp', inplace=True)
+            logic = {'open': 'first', 'high': 'max', 'low': 'min', 'close': 'last', 'volume': 'sum'}
+            df = df.resample('4h').agg(logic)
+            df.dropna(inplace=True)
+            df.reset_index(inplace=True)
+            
+        return df[['timestamp', 'open', 'high', 'low', 'close', 'volume']]
+        
+    except Exception as e:
+        print(f"YFinance Error {symbol} {timeframe}: {e}")
+        return None
+
+async def fetch_ohlcv_async(client, symbol, timeframe, is_stock=False):
+    if is_stock:
+        # Run blocking yfinance in a thread
+        return await asyncio.to_thread(fetch_stock_ohlcv, symbol, timeframe)
+        
+    # Crypto Logic
+    try:
+        ohlcv = await client.fetch_ohlcv(symbol, timeframe, limit=150)
         df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
         return df
     except Exception as e:
-        print(f"Error fetching {timeframe} for {symbol}: {e}")
+        # print(f"Error fetching {timeframe} for {symbol}: {e}")
         return None
 
 async def check_conditions_async(client, symbol, config, exchange_id='binance'):
     # print(f"Checking {symbol}...") # Debug
+    is_stock = (exchange_id == 'nse')
     
     result = {
-        'Symbol': symbol,
+        'Symbol': symbol.replace('.NS', ''), # Clean up for UI
         'Exchange': exchange_id, # Source Verification
         'Side': 'NEUTRAL',
         '4H EMA Stack': 'FAIL',
@@ -142,13 +227,11 @@ async def check_conditions_async(client, symbol, config, exchange_id='binance'):
     }
 
     # --- STEP 1: 4H Timeframe (Fail Fast) ---
-    df_4h = await fetch_ohlcv_async(client, symbol, '4h')
-    if df_4h is None: 
-        # print(f"{symbol} 4H fetch failed")
+    df_4h = await fetch_ohlcv_async(client, symbol, '4h', is_stock)
+    if df_4h is None or len(df_4h) < 20: 
+        # print(f"{symbol} 4H fetch failed or not enough data")
         return None
     
-    # ... rest of logic ...
-
     df_4h['ema21'] = calculate_ema(df_4h['close'], 21)
     df_4h['ema50'] = calculate_ema(df_4h['close'], 50)
     df_4h['ema100'] = calculate_ema(df_4h['close'], 100)
@@ -170,7 +253,7 @@ async def check_conditions_async(client, symbol, config, exchange_id='binance'):
 
 
     # --- STEP 2: 1H Timeframe (Fail Fast) ---
-    df_1h = await fetch_ohlcv_async(client, symbol, '1h')
+    df_1h = await fetch_ohlcv_async(client, symbol, '1h', is_stock)
     if df_1h is None: return None
 
     df_1h['ema21'] = calculate_ema(df_1h['close'], 21)
@@ -186,7 +269,7 @@ async def check_conditions_async(client, symbol, config, exchange_id='binance'):
 
 
     # --- STEP 3: 15m Timeframe (Final Check) ---
-    df_15m = await fetch_ohlcv_async(client, symbol, '15m')
+    df_15m = await fetch_ohlcv_async(client, symbol, '15m', is_stock)
     if df_15m is None: return None
 
     df_15m['ema21'] = calculate_ema(df_15m['close'], 21)
@@ -211,9 +294,6 @@ async def check_conditions_async(client, symbol, config, exchange_id='binance'):
     result['15m EMA Stack'] = 'PASS'
 
     # --- Setup Type Classification ---
-    # "PULSE" (Sniper/Pullback) = Price is inside the 21-50 EMA Zone
-    # "MOMENTUM" (Breakout) = Price is leading the 21 EMA
-    
     setup_type = 'MOMENTUM'
     if result['Side'] == 'LONG':
         if curr_15m['close'] < curr_15m['ema21']:
@@ -227,19 +307,11 @@ async def check_conditions_async(client, symbol, config, exchange_id='binance'):
     # --- Optional Filters ---
     result['RSI (15m)'] = round(curr_15m['rsi'], 2)
     result['ADX (15m)'] = round(curr_15m['adx'], 2)
-    result['Price'] = curr_15m['close']
+    result['Price'] = round(curr_15m['close'], 2)
     
-    # Calculate 24h Change (comparing current close to 4h candle 6 periods ago -> 24h close approx or use distinct call)
-    # For speed, we can approx 24h change using the 4h timeframe data we already have? 
-    # Or just fetch ticker data? Let's use the ticker data already if possible? 
-    # Actually, let's keep it simple and just use the 4H data for a "Trend Strength" or just fetch ticker batch?
-    # Simpler: The frontend logic expects "24h Change".
-    # Since we are in an async generic function, let's just calculate it from the daily close if we had it.
-    # But we only have 4h.
-    # Best correct way: Price vs Price 24h ago.
-    # 24h ago = 6 bars of 4h.
+    # Calculate 24h Change
     if len(df_4h) > 6:
-        price_24h_ago = df_4h['close'].iloc[-7] # 6 bars ago is start of 24h... roughly
+        price_24h_ago = df_4h['close'].iloc[-7] 
         change = ((curr_15m['close'] - price_24h_ago) / price_24h_ago) * 100
         result['24h Change'] = round(change, 2)
     else:
@@ -267,42 +339,43 @@ async def scan_market_async(exchange_id, symbols, config=None):
         print(f"Invalid exchange: {exchange_id}")
         return []
 
-    ex_config = EXCHANGE_CONFIG[exchange_id]
-    
-    # Initialize Async Client Dynamically
-    exchange_class = getattr(ccxt, exchange_id)
-    client = exchange_class({
-        'enableRateLimit': True, 
-        'options': ex_config['options']
-    })
+    client = None
+    if exchange_id != 'nse':
+        ex_config = EXCHANGE_CONFIG[exchange_id]
+        exchange_class = getattr(ccxt, exchange_id)
+        client = exchange_class({
+            'enableRateLimit': True, 
+            'options': ex_config['options']
+        })
     
     # Concurrency Control
-    # Binance is robust (12), but MEXC/Bybit can be strict.
-    concurrency_limit = 20 # Boosted for Binance
+    concurrency_limit = 20
     if exchange_id == 'mexc':
-        concurrency_limit = 6 # Tuned by user request
+        concurrency_limit = 6
     elif exchange_id == 'bybit':
         concurrency_limit = 5
+    elif exchange_id == 'nse':
+        concurrency_limit = 10 # Yahoo can be rate limited
         
     sem = asyncio.Semaphore(concurrency_limit) 
 
     async def protected_check(sym):
         async with sem:
-            # Add small sleep for MEXC to be safe
             if exchange_id == 'mexc':
                 await asyncio.sleep(0.5)
+            # Add small delay for NSE to avoid Yahoo rate limits?
+            if exchange_id == 'nse':
+                await asyncio.sleep(0.1)
+                
             return await check_conditions_async(client, sym, config, exchange_id)
 
     tasks = []
-    # Hard cap limit for MEXC to prevent timeouts
     scan_targets = symbols
     
-    # Cap Binance to 100 to prevent 30s timeout issues if Procfile is ignored
+    # Cap Binance/MEXC for safer demo
     if exchange_id == 'binance' and len(symbols) > 100:
-        print(f"Capping Binance scan to 100 pairs for safety...")
         scan_targets = symbols[:100]
     elif exchange_id == 'mexc' and len(symbols) > 75:
-        print(f"Capping MEXC scan to 75 pairs to prevent timeout...")
         scan_targets = symbols[:75]
         
     for sym in scan_targets:
@@ -317,8 +390,9 @@ async def scan_market_async(exchange_id, symbols, config=None):
         if isinstance(res, dict) and res.get('Pass'):
             results.append(res)
             
-    # Explicit close for MEXC
-    await client.close()
+    if client:
+        await client.close()
+        
     return results
 
 def main():
@@ -328,14 +402,14 @@ def main():
 
     print("Initializing Client (Test Mode)...")
     try:
-        pairs = fetch_top_volume_pairs_sync('binance')
-        print(f"Fetched {len(pairs)} pairs.")
+        # Test NSE
+        pairs = fetch_top_volume_pairs_sync('nse', limit=10)
+        print(f"Fetched {len(pairs)} stock tickers: {pairs}")
         
         config = {'use_rsi': False, 'use_adx': False}
         
         start = time.time()
-        # Run Async Loop
-        results = asyncio.run(scan_market_async('binance', pairs, config))
+        results = asyncio.run(scan_market_async('nse', pairs, config))
     except Exception as e:
         print(e)
         return
