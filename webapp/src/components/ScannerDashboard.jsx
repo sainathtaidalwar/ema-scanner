@@ -233,8 +233,8 @@ export default function ScannerDashboard() {
                                 className={clsx(
                                     "w-full py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
                                     (loading || isScanning)
-                                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                                        : "bg-gradient-to-r from-indigo-700 to-purple-700 hover:from-indigo-600 hover:to-purple-600 text-milky shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
+                                        ? "bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600"
+                                        : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/30 transition-transform active:scale-95"
                                 )}
                             >
                                 {(loading || isScanning) ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
@@ -279,13 +279,13 @@ export default function ScannerDashboard() {
 
                         {/* Empty State */}
                         {results.length === 0 && !isScanning && !loading && !error && (
-                            <div className="h-64 flex flex-col items-center justify-center text-slate-400 dark:text-gray-600 glass-card border-dashed">
+                            <div className="h-64 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 glass-card border-dashed border-2 border-slate-200 dark:border-slate-700">
                                 <div className="relative mb-6">
-                                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
-                                    <Activity size={48} className="relative z-10 text-indigo-400/50" />
+                                    <div className="absolute inset-0 bg-indigo-500/10 rounded-full blur-xl animate-pulse" />
+                                    <Activity size={48} className="relative z-10 text-indigo-500/50" />
                                 </div>
-                                <p className="text-sm font-medium">System Ready. Awaiting trigger.</p>
-                                <p className="text-xs text-slate-400 mt-1">Configure your filters and press 'Run Scanner'</p>
+                                <p className="text-sm font-bold text-slate-600 dark:text-slate-400">System Ready. Awaiting trigger.</p>
+                                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Configure your filters and press 'Run Scanner'</p>
                             </div>
                         )}
 

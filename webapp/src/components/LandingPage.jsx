@@ -79,12 +79,12 @@ function LandingPage() {
 
                     <motion.h1 variants={fadeInUp} className="text-5xl md:text-7xl font-bold mb-8 leading-tight tracking-tight">
                         Master the Trend with <br />
-                        <span className="text-gradient-premium drop-shadow-sm">
+                        <span className="text-gradient-premium drop-shadow-sm font-extrabold block mt-2">
                             Precision EMA Strategy
                         </span>
                     </motion.h1>
 
-                    <motion.p variants={fadeInUp} className="text-xl text-slate-700 dark:text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
+                    <motion.p variants={fadeInUp} className="text-xl text-slate-900 dark:text-slate-200 mb-10 max-w-2xl mx-auto leading-relaxed font-semibold">
                         Stop guessing. Start trading with a proven algorithmic approach.
                         Identify high-probability setups using multi-timeframe Exponential Moving Average alignment.
                     </motion.p>
@@ -92,7 +92,7 @@ function LandingPage() {
                     <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
                             onClick={() => navigate('/scanner')}
-                            className="group relative px-8 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold text-lg transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 flex items-center justify-between gap-3 overflow-hidden text-milky"
+                            className="group relative px-8 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold text-lg text-white transition-all shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/40 flex items-center justify-between gap-3 overflow-hidden active:scale-95"
                         >
                             <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                             Start Scanning Now
@@ -130,7 +130,7 @@ function LandingPage() {
                 </div>
 
                 {/* Visual Strategy Explainer */}
-                <div className="bg-gradient-to-b from-dark-800/50 to-dark-900/50 rounded-3xl p-8 md:p-12 border border-white/5 mb-20 relative overflow-hidden">
+                <div className="glass-card p-8 md:p-12 mb-20 relative overflow-hidden bg-slate-900 text-white dark:bg-[#1e293b]/60">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]" />
 
                     <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -152,7 +152,7 @@ function LandingPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-semibold mb-2">Dynamic Support</h3>
-                                        <p className="text-slate-600 dark:text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
+                                        <p className="text-slate-400 dark:text-gray-400">In strong trends, the 21 and 55 EMAs act as dynamic support zones where buyers step back in.</p>
                                     </div>
                                 </div>
                             </div>
