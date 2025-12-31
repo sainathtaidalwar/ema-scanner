@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export const useTheme = () => {
+const ThemeContext = createContext();
+
+export const ThemeProvider = ({ children }) => {
     // Initialize state from local storage or system preference
     const [theme, setTheme] = useState(() => {
         if (typeof window !== 'undefined' && localStorage.getItem('theme')) {
@@ -32,14 +34,15 @@ export const useTheme = () => {
 
     }, [theme]);
 
-    // Listener for system concept change if user wants 'system' mode? 
-    // For simplicity, we just toggle Light/Dark. If users want fully robust 'system' syncing we can add it later.
-    // But the requirement says: "if his mobile or laptop set dark mode by default our page should also change" 
-    // This is handled by the initial state check.
-
     const toggleTheme = () => {
         setTheme(prev => prev === 'dark' ? 'light' : 'dark');
     };
 
-    return { theme, toggleTheme };
+    return (
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+            {children}
+        </ThemeContext.Provider>
+    );
 };
+
+export const useTheme = () => useContext(ThemeContext);
