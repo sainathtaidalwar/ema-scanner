@@ -166,7 +166,7 @@ export default function ScannerDashboard() {
                         <div className="glass-card p-6 relative overflow-hidden">
                             <div className="space-y-6 relative z-10">
                                 <div>
-                                    <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 flex items-center gap-2 mb-4">
+                                    <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
                                         <Settings size={20} className="text-indigo-400" />
                                         Exchange
                                     </h2>
@@ -187,7 +187,7 @@ export default function ScannerDashboard() {
                                 </div>
 
                                 <div>
-                                    <h2 className="text-lg font-bold text-gray-900 dark:text-gray-200 flex items-center gap-2 mb-4">
+                                    <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
                                         <Settings size={20} className="text-indigo-400" />
                                         Strategy Config
                                     </h2>
@@ -239,7 +239,7 @@ export default function ScannerDashboard() {
                                 {(loading || isScanning) ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
                                 {isScanning ? 'ANALYZING MARKET...' : loading ? 'FETCHING ASSETS...' : 'RUN SCANNER'}
                             </button>
-                            <p className="text-center text-[10px] text-gray-600 mt-3 uppercase tracking-wider font-mono">
+                            <p className="text-center text-[10px] text-gray-500 mt-3 uppercase tracking-wider font-mono">
                                 {pairs.length > 0 ? `Ready to Scan ${pairs.length} Assets` : 'System Standby'}
                             </p>
                         </div>
