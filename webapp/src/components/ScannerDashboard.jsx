@@ -219,7 +219,7 @@ export default function ScannerDashboard() {
                         </div>
 
                         {/* Action Area */}
-                        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5">
+                        <div className="mt-8 pt-6 border-t border-white/5">
                             {error && (
                                 <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs text-center font-medium">
                                     {error}
@@ -249,11 +249,11 @@ export default function ScannerDashboard() {
                     <div className="lg:col-span-9 space-y-6">
                         {/* Header & Filters */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-4">
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
                                 Live Signals
                                 <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
                             </h2>
-                            <div className="flex bg-gray-100 dark:bg-[#0f111a] p-1 rounded-lg border border-gray-200 dark:border-white/5 transition-colors duration-200">
+                            <div className="flex bg-[#0f111a] p-1 rounded-lg border border-white/5 transition-colors duration-200">
                                 <TabButton label="ALL" active={filterSide === 'ALL'} onClick={() => setFilterSide('ALL')} />
                                 <TabButton label="LONGS" active={filterSide === 'LONG'} onClick={() => setFilterSide('LONG')} />
                                 <TabButton label="SHORTS" active={filterSide === 'SHORT'} onClick={() => setFilterSide('SHORT')} />
@@ -278,13 +278,13 @@ export default function ScannerDashboard() {
 
                         {/* Empty State */}
                         {results.length === 0 && !isScanning && !loading && !error && (
-                            <div className="h-64 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 glass-card border-dashed border-2 border-slate-200 dark:border-slate-700">
+                            <div className="h-64 flex flex-col items-center justify-center text-slate-500 glass-card border-dashed border-2 border-white/10">
                                 <div className="relative mb-6">
                                     <div className="absolute inset-0 bg-indigo-500/10 rounded-full blur-xl animate-pulse" />
                                     <Activity size={48} className="relative z-10 text-indigo-500/50" />
                                 </div>
-                                <p className="text-sm font-bold text-slate-600 dark:text-slate-400">System Ready. Awaiting trigger.</p>
-                                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Configure your filters and press 'Run Scanner'</p>
+                                <p className="text-sm font-bold text-slate-400">System Ready. Awaiting trigger.</p>
+                                <p className="text-xs text-slate-500 mt-1">Configure your filters and press 'Run Scanner'</p>
                             </div>
                         )}
 
@@ -313,7 +313,7 @@ export default function ScannerDashboard() {
                 </div>
             </main>
 
-            <footer className="border-t border-gray-200 dark:border-white/5 bg-white dark:bg-[#161922] py-8 mt-12 transition-colors duration-200">
+            <footer className="border-t border-white/5 bg-[#161922] py-8 mt-12 transition-colors duration-200">
                 <div className="max-w-7xl mx-auto px-8 text-center">
                     <p className="text-xs text-indigo-400 font-medium tracking-wide mb-2 uppercase">Multi-Indicator Algo Trading Signals</p>
                     <p className="text-[10px] text-gray-600">&copy; {new Date().getFullYear()} Algo Signal Pulse. All rights reserved.</p>
@@ -336,9 +336,9 @@ function PulseCard({ label, value, subtext, icon }) {
             <div>
                 <p className="text-xs text-slate-500 dark:text-gray-500 uppercase tracking-wider font-medium">{label}</p>
                 <div className="flex items-baseline gap-2 mt-1">
-                    <p className="text-xl font-bold text-slate-900 dark:text-white">{value}</p>
+                    <p className="text-xl font-bold text-white">{value}</p>
                 </div>
-                {subtext && <p className="text-[10px] text-slate-400 dark:text-gray-500 mt-1 font-mono">{subtext}</p>}
+                {subtext && <p className="text-[10px] text-gray-500 mt-1 font-mono">{subtext}</p>}
             </div>
             <div className="bg-indigo-50 dark:bg-white/5 p-2 rounded-lg group-hover:scale-110 transition-transform duration-300">
                 {icon}
@@ -432,7 +432,7 @@ const ResultTicket = ({ item, index, exchange }) => {
             transition={{ delay: index * 0.03 }}
             className={`
                 glass-card p-4 relative group overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300
-                ${item.Side === 'LONG' ? 'shadow-emerald-500/10 dark:shadow-none hover:shadow-emerald-500/20' : 'shadow-rose-500/10 dark:shadow-none hover:shadow-rose-500/20'}
+                ${item.Side === 'LONG' ? 'shadow-none hover:shadow-emerald-500/20' : 'shadow-none hover:shadow-rose-500/20'}
             `}
         >
             <div className="flex justify-between items-start mb-2">
@@ -445,10 +445,9 @@ const ResultTicket = ({ item, index, exchange }) => {
                             }`}>
                             {item.Side}
                         </div>
-                        {/* Setup Type Badge */}
                         <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${item.Type === 'PULSE'
-                            ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 border-indigo-500/30'
-                            : 'bg-slate-200 dark:bg-gray-700/30 text-slate-600 dark:text-gray-400 border-transparent'
+                            ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30'
+                            : 'bg-white/5 text-gray-400 border-transparent'
                             }`}>
                             {item.Type === 'PULSE' ? 'SNIPER' : 'MOMENTUM'}
                         </div>
@@ -457,7 +456,7 @@ const ResultTicket = ({ item, index, exchange }) => {
                             {item.Exchange || exchange}
                         </div>
                     </div>
-                    <div className="text-xl font-mono font-bold text-slate-900 dark:text-white">
+                    <div className="text-xl font-mono font-bold text-white">
                         {item.Price}
                     </div>
                 </div>
@@ -475,21 +474,21 @@ const ResultTicket = ({ item, index, exchange }) => {
 
             <div className="grid grid-cols-3 gap-2 mt-4 text-xs">
                 {/* Restored 24h Change */}
-                <div className="p-2 bg-slate-50 dark:bg-black/20 rounded-lg border border-slate-100 dark:border-white/5">
-                    <div className="text-slate-500 dark:text-gray-500 mb-1">24h Change</div>
-                    <div className={`${item['24h Change'] >= 0 ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'} font-bold`}>
+                <div className="p-2 bg-black/20 rounded-lg border border-white/5">
+                    <div className="text-gray-500 mb-1">24h Change</div>
+                    <div className={`${item['24h Change'] >= 0 ? 'text-emerald-400' : 'text-rose-400'} font-bold`}>
                         {item['24h Change'] > 0 ? '+' : ''}{item['24h Change']}%
                     </div>
                 </div>
-                <div className="p-2 bg-slate-50 dark:bg-black/20 rounded-lg border border-slate-100 dark:border-white/5">
-                    <div className="text-slate-500 dark:text-gray-500 mb-1">RSI (15m)</div>
-                    <div className={item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? 'text-yellow-600 dark:text-yellow-400 font-bold' : 'text-slate-700 dark:text-gray-300'}>
+                <div className="p-2 bg-black/20 rounded-lg border border-white/5">
+                    <div className="text-gray-500 mb-1">RSI (15m)</div>
+                    <div className={item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30 ? 'text-yellow-400 font-bold' : 'text-gray-300'}>
                         {item['RSI (15m)']}
                     </div>
                 </div>
-                <div className="p-2 bg-slate-50 dark:bg-black/20 rounded-lg border border-slate-100 dark:border-white/5">
-                    <div className="text-slate-500 dark:text-gray-500 mb-1">ADX Strength</div>
-                    <div className={item['ADX (15m)'] > 25 ? 'text-emerald-500 dark:text-emerald-400 font-bold' : 'text-slate-700 dark:text-gray-300'}>
+                <div className="p-2 bg-black/20 rounded-lg border border-white/5">
+                    <div className="text-gray-500 mb-1">ADX Strength</div>
+                    <div className={item['ADX (15m)'] > 25 ? 'text-emerald-400 font-bold' : 'text-gray-300'}>
                         {item['ADX (15m)']}
                     </div>
                 </div>

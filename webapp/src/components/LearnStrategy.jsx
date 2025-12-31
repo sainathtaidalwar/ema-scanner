@@ -15,7 +15,7 @@ const LearnStrategy = () => {
                     <div className="flex justify-between items-center mb-6">
                         <button
                             onClick={() => navigate('/')}
-                            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-white transition-colors group"
+                            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors group"
                         >
                             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                             Back to Home
@@ -67,12 +67,12 @@ const LearnStrategy = () => {
                             <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5" /> Bullish (Long)
                             </h3>
-                            <ul className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
-                                <li className="flex gap-2"><span className="text-emerald-600 dark:text-emerald-500 font-bold">1.</span> Price is ABOVE the 21 EMA (Momentum is Up).</li>
-                                <li className="flex gap-2"><span className="text-emerald-600 dark:text-emerald-500 font-bold">2.</span> EMA 21 {'>'} EMA 50 {'>'} EMA 100 (Fan Shape).</li>
-                                <li className="flex gap-2"><span className="text-emerald-600 dark:text-emerald-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bullish stack.</li>
-                                <li className="flex gap-2"><span className="text-emerald-600 dark:text-emerald-500 font-bold">4.</span> Trigger: 15m Price holds above EMA 50 support.</li>
-                                <li className="flex gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-white/10"><span className="text-yellow-600 dark:text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'>'} 50 confirms strength.</li>
+                            <ul className="space-y-3 text-sm text-gray-300">
+                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">1.</span> Price is ABOVE the 21 EMA (Momentum is Up).</li>
+                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">2.</span> EMA 21 {'>'} EMA 50 {'>'} EMA 100 (Fan Shape).</li>
+                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bullish stack.</li>
+                                <li className="flex gap-2"><span className="text-emerald-500 font-bold">4.</span> Trigger: 15m Price holds above EMA 50 support.</li>
+                                <li className="flex gap-2 mt-4 pt-4 border-t border-white/10"><span className="text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'>'} 50 confirms strength.</li>
                             </ul>
                         </div>
                         <div className="glass-card p-6 relative overflow-hidden">
@@ -80,12 +80,12 @@ const LearnStrategy = () => {
                             <h3 className="text-xl font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
                                 <TrendingDown className="w-5 h-5" /> Bearish (Short)
                             </h3>
-                            <ul className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
-                                <li className="flex gap-2"><span className="text-rose-600 dark:text-rose-500 font-bold">1.</span> Price is BELOW the 21 EMA (Momentum is Down).</li>
-                                <li className="flex gap-2"><span className="text-rose-600 dark:text-rose-500 font-bold">2.</span> EMA 21 {'<'} EMA 50 {'<'} EMA 100 (Fan Shape).</li>
-                                <li className="flex gap-2"><span className="text-rose-600 dark:text-rose-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bearish stack.</li>
-                                <li className="flex gap-2"><span className="text-rose-600 dark:text-rose-500 font-bold">4.</span> Trigger: 15m Price held below EMA 50 resistance.</li>
-                                <li className="flex gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-white/10"><span className="text-yellow-600 dark:text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'<'} 50 confirms weakness.</li>
+                            <ul className="space-y-3 text-sm text-gray-300">
+                                <li className="flex gap-2"><span className="text-rose-500 font-bold">1.</span> Price is BELOW the 21 EMA (Momentum is Down).</li>
+                                <li className="flex gap-2"><span className="text-rose-500 font-bold">2.</span> EMA 21 {'<'} EMA 50 {'<'} EMA 100 (Fan Shape).</li>
+                                <li className="flex gap-2"><span className="text-rose-500 font-bold">3.</span> Trend Check: 4H and 1H must confirm bearish stack.</li>
+                                <li className="flex gap-2"><span className="text-rose-500 font-bold">4.</span> Trigger: 15m Price held below EMA 50 resistance.</li>
+                                <li className="flex gap-2 mt-4 pt-4 border-t border-white/10"><span className="text-yellow-500 font-bold">★ Bonus:</span> ADX {'>'} 25 & RSI {'<'} 50 confirms weakness.</li>
                             </ul>
                         </div>
                     </div>
@@ -104,13 +104,13 @@ const LearnStrategy = () => {
                 </Section>
 
                 {/* Section 3: Risk Management */}
-                <Section title="Risk Management" icon={<AlertTriangle className="w-6 h-6 text-yellow-500 dark:text-yellow-400" />}>
-                    <p className="text-gray-700 dark:text-gray-300 mb-4">
+                <Section title="Risk Management" icon={<AlertTriangle className="w-6 h-6 text-yellow-400" />}>
+                    <p className="text-gray-300 mb-4">
                         A good strategy without risk management is gambling. This scanner helps you identify setups, but you must execute with discipline.
                     </p>
                     <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-l-4 border-yellow-500 p-4">
-                        <h4 className="font-bold text-yellow-600 dark:text-yellow-500 mb-1">Golden Rules</h4>
-                        <ul className="list-disc list-inside text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                        <h4 className="font-bold text-yellow-500 mb-1">Golden Rules</h4>
+                        <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
                             <li>Risk only 1-2% of your capital per trade.</li>
                             <li>Stop Loss should be placed below the recent swing low (Longs) or above swing high (Shorts).</li>
                             <li>Target a Risk:Reward ratio of at least 1:2.</li>
@@ -129,10 +129,10 @@ const LearnStrategy = () => {
                 </div>
             </div>
 
-            <footer className="text-center text-gray-500 dark:text-gray-500 text-sm border-t border-gray-200 dark:border-white/5 py-8 mt-12 transition-colors duration-200">
+            <footer className="text-center text-gray-500 text-sm border-t border-white/5 py-8 mt-12 transition-colors duration-200">
                 <p className="mb-4">© {new Date().getFullYear()} Algo Signal Pulse. Educational Tool.</p>
                 <div className="max-w-2xl mx-auto p-4 bg-red-500/5 border border-red-500/10 rounded-lg text-[10px] leading-relaxed">
-                    <p className="font-bold text-red-600 dark:text-red-400 mb-1">EDUCATIONAL PURPOSE ONLY</p>
+                    <p className="font-bold text-red-400 mb-1">EDUCATIONAL PURPOSE ONLY</p>
                     <p>
                         The strategies explained here are for theoretical understanding of technical analysis.
                         They represent model behaviors, not financial advice.
@@ -164,7 +164,7 @@ const Section = ({ title, icon, children }) => (
 const EmaCard = ({ value, label, color }) => (
     <div className="glass-card p-4 text-center hover:-translate-y-1 transition-transform duration-300">
         <div className={`text-2xl font-bold ${color} mb-1 drop-shadow-sm`}>EMA {value}</div>
-        <div className="text-xs text-slate-500 dark:text-gray-400 uppercase tracking-wider">{label}</div>
+        <div className="text-xs text-gray-400 uppercase tracking-wider">{label}</div>
     </div>
 );
 
@@ -181,9 +181,9 @@ EmaCard.propTypes = {
 };
 
 const ExchangeCard = ({ name, desc, color, border }) => (
-    <div className={`glass-card p-4 text-center group hover:bg-white/60 dark:hover:bg-white/10`}>
+    <div className={`glass-card p-4 text-center group hover:bg-white/10`}>
         <div className={`text-lg font-bold ${color} mb-1 group-hover:scale-105 transition-transform drop-shadow-sm`}>{name}</div>
-        <div className="text-xs text-slate-500 dark:text-gray-400">{desc}</div>
+        <div className="text-xs text-gray-400">{desc}</div>
     </div>
 );
 

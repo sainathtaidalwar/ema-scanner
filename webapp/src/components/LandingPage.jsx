@@ -29,7 +29,7 @@ function StepCard({ icon, title, description, delay }) {
             transition={{ delay, duration: 0.5 }}
             className="glass-card p-6 hover:scale-[1.02] hover:shadow-2xl hover:shadow-indigo-500/20"
         >
-            <div className="mb-4 bg-dark-800/80 w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 shadow-sm">
+            <div className="mb-4 bg-white/5 w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 shadow-sm">
                 {icon}
             </div>
             <h3 className="text-xl font-bold mb-3 text-white">{title}</h3>
@@ -174,8 +174,8 @@ function LandingPage() {
                                 <div className="w-4 h-24 bg-green-500/80 rounded-sm mb-20"></div>
                             </div>
 
-                            <div className="z-10 bg-white/10 dark:bg-dark-900/80 backdrop-blur border border-white/20 dark:border-white/10 px-4 py-2 rounded-lg mb-8 shadow-lg">
-                                <span className="flex items-center gap-2 text-green-600 dark:text-green-400 font-mono text-sm font-bold">
+                            <div className="z-10 bg-[#161922]/80 backdrop-blur border border-white/10 px-4 py-2 rounded-lg mb-8 shadow-lg">
+                                <span className="flex items-center gap-2 text-green-400 font-mono text-sm font-bold">
                                     <TrendingUp className="w-4 h-4" /> Strong Uptrend Detected
                                 </span>
                             </div>
@@ -184,8 +184,8 @@ function LandingPage() {
                 </div>
 
                 {/* Footer */}
-                <footer className="text-center text-slate-500 dark:text-gray-500 py-12 border-t border-slate-200 dark:border-white/5 glass-card rounded-none border-x-0 border-b-0 mt-32">
-                    <p className="text-xl font-bold text-slate-900 dark:text-white mb-2">Algo Signal Pulse</p>
+                <footer className="text-center text-gray-500 py-12 border-t border-white/5 glass-card rounded-none border-x-0 border-b-0 mt-32">
+                    <p className="text-xl font-bold text-white mb-2">Algo Signal Pulse</p>
                     <p className="mb-4">&copy; {new Date().getFullYear()} Educational Tool. All rights reserved.</p>
                     <div className="max-w-2xl mx-auto p-4 bg-red-500/5 border border-red-500/10 rounded-lg text-[10px] leading-relaxed">
                         <span className="font-bold text-red-400">DISCLAIMER:</span> This website is for <strong>EDUCATIONAL PURPOSES ONLY</strong>.
