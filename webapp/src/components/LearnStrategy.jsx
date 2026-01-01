@@ -2,14 +2,17 @@ import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, TrendingDown, Layers, AlertTriangle } from 'lucide-react';
+import { Navbar } from './Navbar';
+
 const LearnStrategy = () => {
     const navigate = useNavigate();
 
     return (
         <div className="min-h-screen bg-[#0f111a] text-white selection:bg-indigo-500/30 transition-colors duration-500">
+            <Navbar />
             <div className="fixed inset-0 z-0 pointer-events-none aurora-bg opacity-30 animate-pulse-slow will-change-transform" />
 
-            <div className="relative z-10 max-w-5xl mx-auto px-6 py-12">
+            <div className="relative z-10 max-w-5xl mx-auto px-6 pt-32 pb-12">
                 {/* Header */}
                 <div className="mb-12">
                     <div className="flex justify-between items-center mb-6">
