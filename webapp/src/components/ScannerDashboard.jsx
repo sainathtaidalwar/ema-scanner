@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Logo } from './Logo';
 
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock, HelpCircle } from 'lucide-react';
+import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock, HelpCircle, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
@@ -26,6 +26,8 @@ export default function ScannerDashboard() {
         use_adx: false, // Default disabled as requested
         only_pulse: false // New Filter: Only Sniper/Pulse entries
     });
+
+    const [searchQuery, setSearchQuery] = useState(''); // Symbol Search State
 
     const [searchParams] = useSearchParams();
     const marketMode = searchParams.get('market') || 'crypto';
@@ -264,10 +266,23 @@ export default function ScannerDashboard() {
                     <div className="lg:col-span-9 space-y-6">
                         {/* Header & Filters */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-card p-4">
-                            <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                                Live Signals
-                                <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
-                            </h2>
+                            <div className="flex items-center gap-4">
+                                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                                    Live Signals
+                                    <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
+                                </h2>
+                                {/* Search Bar */}
+                                <div className="relative group">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-indigo-400 w-4 h-4 transition-colors" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search symbol..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="bg-[#0f111a] border border-white/10 rounded-lg pl-9 pr-4 py-1.5 text-sm text-gray-300 focus:outline-none focus:border-indigo-500/50 focus:bg-white/5 transition-all w-40 focus:w-64"
+                                    />
+                                </div>
+                            </div>
                             <div className="flex bg-[#0f111a] p-1 rounded-lg border border-white/5 transition-colors duration-200">
                                 <TabButton label="ALL" active={filterSide === 'ALL'} onClick={() => setFilterSide('ALL')} />
                                 <TabButton label="LONGS" active={filterSide === 'LONG'} onClick={() => setFilterSide('LONG')} />
@@ -312,7 +327,8 @@ export default function ScannerDashboard() {
                                         const typeMatch = !config.only_pulse || item.Type === 'PULSE';
                                         const adxMatch = !config.use_adx || (item['ADX (15m)'] > 25);
                                         const rsiMatch = !config.use_rsi || (item['RSI (15m)'] > 70 || item['RSI (15m)'] < 30);
-                                        return sideMatch && typeMatch && adxMatch && rsiMatch;
+                                        const searchMatch = item.Symbol.toLowerCase().includes(searchQuery.toLowerCase());
+                                        return sideMatch && typeMatch && adxMatch && rsiMatch && searchMatch;
                                     })
                                     .map((item, idx) => (
                                         <ResultTicket

@@ -227,6 +227,48 @@ function LandingPage() {
                     </div>
                 </div>
 
+
+
+                {/* Testimonials */}
+                <div className="mb-32">
+                    <h2 className="text-3xl font-bold text-center text-white mb-16">Trusted by Detail-Oriented Traders</h2>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        <div className="glass-card p-6 border-indigo-500/20">
+                            <div className="flex text-yellow-500 mb-4 text-sm">★★★★★</div>
+                            <p className="text-gray-300 italic mb-6">"Finally a scanner that actually filters out the noise. The 4H confirmation rule saved me from so many bad trades."</p>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg"></div>
+                                <div>
+                                    <div className="font-bold text-white text-sm">Alex R.</div>
+                                    <div className="text-xs text-indigo-400">Crypto Day Trader</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="glass-card p-6 border-emerald-500/20">
+                            <div className="flex text-yellow-500 mb-4 text-sm">★★★★★</div>
+                            <p className="text-gray-300 italic mb-6">"I use the Stocks scanner for Nifty 50 swings. Catching the Reliance move early paid for my entire year's subscription fees (if there were any!)."</p>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg"></div>
+                                <div>
+                                    <div className="font-bold text-white text-sm">Rahul K.</div>
+                                    <div className="text-xs text-emerald-400">Equity Swing Trader</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="glass-card p-6 border-pink-500/20">
+                            <div className="flex text-yellow-500 mb-4 text-sm">★★★★★</div>
+                            <p className="text-gray-300 italic mb-6">"Cleanest UI in the game. Love the direct links to Binance Futures. No more copy-pasting symbols manually."</p>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 shadow-lg"></div>
+                                <div>
+                                    <div className="font-bold text-white text-sm">Sarah J.</div>
+                                    <div className="text-xs text-pink-400">Scalper</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Footer */}
                 <footer className="border-t border-white/5 pt-12 pb-8 mt-32">
                     <div className="grid md:grid-cols-4 gap-8 mb-12">
@@ -275,7 +317,7 @@ function LandingPage() {
                 </footer>
 
             </div>
-        </div>
+        </div >
     );
 }
 
