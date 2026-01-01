@@ -237,10 +237,11 @@ function LandingPage() {
                             <div className="flex text-yellow-500 mb-4 text-sm">★★★★★</div>
                             <p className="text-gray-300 italic mb-6">"Finally a scanner that actually filters out the noise. The 4H confirmation rule saved me from so many bad trades."</p>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg"></div>
+                                <img src="https://ui-avatars.com/api/?name=Alex+R&background=6366f1&color=fff" className="w-10 h-10 rounded-full shadow-lg" alt="Alex R" />
                                 <div>
                                     <div className="font-bold text-white text-sm">Alex R.</div>
-                                    <div className="text-xs text-indigo-400">Crypto Day Trader</div>
+                                    <div className="text-xs text-indigo-400 mb-0.5">Crypto Day Trader</div>
+                                    <a href="#" className="text-[10px] text-gray-500 hover:text-indigo-300 transition-colors">@alex_trades</a>
                                 </div>
                             </div>
                         </div>
@@ -248,10 +249,11 @@ function LandingPage() {
                             <div className="flex text-yellow-500 mb-4 text-sm">★★★★★</div>
                             <p className="text-gray-300 italic mb-6">"I use the Stocks scanner for Nifty 50 swings. Catching the Reliance move early paid for my entire year's subscription fees (if there were any!)."</p>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg"></div>
+                                <img src="https://ui-avatars.com/api/?name=Rahul+K&background=10b981&color=fff" className="w-10 h-10 rounded-full shadow-lg" alt="Rahul K" />
                                 <div>
                                     <div className="font-bold text-white text-sm">Rahul K.</div>
-                                    <div className="text-xs text-emerald-400">Equity Swing Trader</div>
+                                    <div className="text-xs text-emerald-400 mb-0.5">Equity Swing Trader</div>
+                                    <a href="#" className="text-[10px] text-gray-500 hover:text-emerald-300 transition-colors">@rahul_invests</a>
                                 </div>
                             </div>
                         </div>
@@ -259,10 +261,11 @@ function LandingPage() {
                             <div className="flex text-yellow-500 mb-4 text-sm">★★★★★</div>
                             <p className="text-gray-300 italic mb-6">"Cleanest UI in the game. Love the direct links to Binance Futures. No more copy-pasting symbols manually."</p>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 shadow-lg"></div>
+                                <img src="https://ui-avatars.com/api/?name=Sarah+J&background=ec4899&color=fff" className="w-10 h-10 rounded-full shadow-lg" alt="Sarah J" />
                                 <div>
                                     <div className="font-bold text-white text-sm">Sarah J.</div>
-                                    <div className="text-xs text-pink-400">Scalper</div>
+                                    <div className="text-xs text-pink-400 mb-0.5">Scalper</div>
+                                    <a href="#" className="text-[10px] text-gray-500 hover:text-pink-300 transition-colors">@sarah_scalps</a>
                                 </div>
                             </div>
                         </div>

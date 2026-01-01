@@ -15,6 +15,7 @@ export default function ScannerDashboard() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false); // General loading (fetching pairs)
     const [isScanning, setIsScanning] = useState(false); // Specific to analysis
+    const [isDemo, setIsDemo] = useState(false); // Demo Mode State
     const [results, setResults] = useState([]);
     const [pairs, setPairs] = useState([]);
     const [error, setError] = useState(null);
@@ -105,6 +106,7 @@ export default function ScannerDashboard() {
             setLoading(false);
         }
 
+        setIsDemo(false);
         setIsScanning(true);
         setResults([]);
         setError(null);
@@ -127,6 +129,7 @@ export default function ScannerDashboard() {
     };
 
     const handleDemoScan = () => {
+        setIsDemo(true);
         setIsScanning(true);
         setTimeout(() => {
             setResults([
@@ -294,6 +297,11 @@ export default function ScannerDashboard() {
                                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
                                     Live Signals
                                     <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
+                                    {isDemo && (
+                                        <span className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-xs px-2 py-0.5 rounded font-bold animate-pulse">
+                                            DEMO MODE
+                                        </span>
+                                    )}
                                 </h2>
                                 {/* Search Bar */}
                                 <div className="relative group">
