@@ -108,6 +108,31 @@ function LandingPage() {
                     </motion.div>
                 </motion.div>
 
+                {/* Social Proof / Stats Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-32 border-y border-white/5 py-12 bg-white/[0.02]"
+                >
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-white mb-1">24/7</div>
+                        <div className="text-sm text-gray-500 font-medium">Market Surveillance</div>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-indigo-400 mb-1">150+</div>
+                        <div className="text-sm text-gray-500 font-medium">Assets Monitored</div>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-emerald-400 mb-1">3x</div>
+                        <div className="text-sm text-gray-500 font-medium">Conf. Factors</div>
+                    </div>
+                    <div className="text-center">
+                        <div className="text-3xl font-bold text-pink-400 mb-1">100%</div>
+                        <div className="text-sm text-gray-500 font-medium">Automated</div>
+                    </div>
+                </motion.div>
+
                 {/* Features / Strategy Section */}
                 <div id="features" className="mb-32">
                     <div className="text-center mb-16">

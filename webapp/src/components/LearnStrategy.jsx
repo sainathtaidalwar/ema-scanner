@@ -1,8 +1,48 @@
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, TrendingUp, TrendingDown, Layers, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Layers, AlertTriangle, Eye } from 'lucide-react';
 import { Navbar } from './Navbar';
+
+const SetupVisualizer = ({ type }) => {
+    const isBullish = type === 'BULLISH';
+    return (
+        <div className="h-40 w-full bg-[#0a0c10] rounded-xl mb-6 relative overflow-hidden border border-white/5 shadow-inner">
+            {/* Grid Lines */}
+            <div className="absolute inset-0 grid grid-cols-6 grid-rows-4 gap-4 opacity-10 pointer-events-none">
+                {[...Array(24)].map((_, i) => <div key={i} className="border-r border-b border-gray-400/20" />)}
+            </div>
+
+            {/* EMA Lines (Abstract) */}
+            <div className={`absolute left-0 right-0 h-[2px] bg-purple-500/50 transform ${isBullish ? 'bottom-8 rotate-[-10deg]' : 'top-8 rotate-[10deg]'} origin-left blur-[1px]`} />
+            <div className={`absolute left-0 right-0 h-[2px] bg-indigo-500/80 transform ${isBullish ? 'bottom-12 rotate-[-10deg]' : 'top-12 rotate-[10deg]'} origin-left`} />
+            <div className={`absolute left-0 right-0 h-[2px] bg-cyan-400 transform ${isBullish ? 'bottom-16 rotate-[-10deg]' : 'top-16 rotate-[10deg]'} origin-left shadow-[0_0_10px_rgba(34,211,238,0.5)]`} />
+
+            {/* Candles */}
+            <div className="absolute inset-0 p-8 flex items-center justify-around">
+                {isBullish ? (
+                    <>
+                        <div className="w-3 h-12 bg-green-500/20 rounded-sm mt-8" />
+                        <div className="w-3 h-16 bg-green-500/40 rounded-sm mt-4" />
+                        <div className="w-3 h-8 bg-red-500/40 rounded-sm mt-2" />
+                        <div className="w-3 h-24 bg-green-500 rounded-sm mb-4 shadow-[0_0_15px_rgba(34,197,94,0.4)] animate-pulse" />
+                    </>
+                ) : (
+                    <>
+                        <div className="w-3 h-12 bg-red-500/20 rounded-sm mb-8" />
+                        <div className="w-3 h-16 bg-red-500/40 rounded-sm mb-4" />
+                        <div className="w-3 h-8 bg-green-500/40 rounded-sm mb-2" />
+                        <div className="w-3 h-24 bg-red-500 rounded-sm mt-4 shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-pulse" />
+                    </>
+                )}
+            </div>
+
+            <div className={`absolute ${isBullish ? 'bottom-2 right-2' : 'top-2 right-2'} px-2 py-1 bg-black/50 rounded text-[10px] font-mono text-gray-400 border border-white/10`}>
+                {isBullish ? 'UPTREND DETECTED' : 'DOWNTREND DETECTED'}
+            </div>
+        </div>
+    );
+};
 
 const LearnStrategy = () => {
     const navigate = useNavigate();
@@ -66,6 +106,7 @@ const LearnStrategy = () => {
                 <Section title="The Perfect Setup" icon={<TrendingUp className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />}>
                     <div className="grid md:grid-cols-2 gap-8">
                         <div className="glass-card p-6 relative overflow-hidden">
+                            <SetupVisualizer type="BULLISH" />
                             <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/10 rounded-bl-full pointer-events-none" />
                             <h3 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5" /> Bullish (Long)
@@ -79,6 +120,7 @@ const LearnStrategy = () => {
                             </ul>
                         </div>
                         <div className="glass-card p-6 relative overflow-hidden">
+                            <SetupVisualizer type="BEARISH" />
                             <div className="absolute top-0 right-0 w-20 h-20 bg-rose-500/10 rounded-bl-full pointer-events-none" />
                             <h3 className="text-xl font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
                                 <TrendingDown className="w-5 h-5" /> Bearish (Short)

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Logo } from './Logo';
 
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock } from 'lucide-react';
+import { Activity, ArrowDown, ArrowUp, RefreshCw, Settings, Play, ExternalLink, BarChart2, Zap, Layout, Clock, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
@@ -373,8 +373,9 @@ function FilterToggle({ label, active, desc, onClick }) {
     return (
         <button onClick={onClick} className="w-full flex items-start justify-between group text-left">
             <div>
-                <p className={clsx("font-medium transition-colors", active ? "text-cyan-400" : "text-gray-400 group-hover:text-gray-300")}>
+                <p className={clsx("font-medium transition-colors flex items-center gap-2", active ? "text-cyan-400" : "text-gray-400 group-hover:text-gray-300")}>
                     {label}
+                    <HelpCircle size={12} className="text-gray-500 hover:text-gray-300" />
                 </p>
                 <p className="text-[10px] text-gray-600 mt-0.5">{desc}</p>
             </div>
