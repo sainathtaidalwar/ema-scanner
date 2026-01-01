@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ScannerDashboard from './components/ScannerDashboard';
 import LandingPage from './components/LandingPage';
 import LearnStrategy from './components/LearnStrategy';
+import Backtests from './components/Backtests';
 
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/scanner" element={<ScannerDashboard />} />
           <Route path="/learn" element={<LearnStrategy />} />
+          <Route path="/backtests" element={<Backtests />} />
           {/* Redirect unknown routes to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

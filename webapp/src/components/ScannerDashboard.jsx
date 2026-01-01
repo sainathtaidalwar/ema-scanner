@@ -296,7 +296,15 @@ export default function ScannerDashboard() {
                             <div className="flex items-center gap-4">
                                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
                                     Live Signals
-                                    <span className="bg-gray-800 text-gray-400 text-xs px-2 py-0.5 rounded-full font-mono">{results.length}</span>
+                                    {isScanning ? (
+                                        <span className="text-xs text-rose-500 animate-pulse ml-2 font-mono flex items-center gap-1">
+                                            <span className="w-2 h-2 rounded-full bg-rose-500"></span> SEARCHING
+                                        </span>
+                                    ) : (
+                                        <span className={`text-xs px-2 py-0.5 rounded-full font-mono font-bold ${results.length > 0 ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-gray-800 text-gray-400'}`}>
+                                            {results.length} {results.length > 0 && '✅'}
+                                        </span>
+                                    )}
                                     {isDemo && (
                                         <span className="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-xs px-2 py-0.5 rounded font-bold animate-pulse">
                                             DEMO MODE

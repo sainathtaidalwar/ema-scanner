@@ -272,6 +272,28 @@ function LandingPage() {
                     </div>
                 </div>
 
+
+
+                {/* FAQ Section */}
+                <div className="mb-32">
+                    <h2 className="text-3xl font-bold text-center text-white mb-16">Frequently Asked Questions</h2>
+                    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        {[
+                            { q: "Is this guaranteed profit?", a: "No. It is a scanning tool that identifies high-probability setups. You must manage your own risk." },
+                            { q: "Which markets are supported?", a: "We currently support Crypto Futures (Binance, Bybit, MEXC) and Indian Stocks (NSE Nifty 50 & Midcaps)." },
+                            { q: "How accurate are the signals?", a: "Backtests show ~70% win rate when all 3 timeframes align, but past performance does not guarantee future results." },
+                            { q: "How often does it scan?", a: "The scanner runs in real-time. You can trigger a new scan manually every few seconds." },
+                            { q: "Can I use this on mobile?", a: "Yes! The entire platform is fully responsive and works great on iOS and Android browsers." },
+                            { q: "Why use 4H/1H/15m EMAs?", a: "This 'Triple Screen' approach ensures you are trading WITH the trend (4H), entering on momentum (1H), and timing the entry (15m)." }
+                        ].map((faq, i) => (
+                            <div key={i} className="bg-white/5 border border-white/5 p-6 rounded-xl hover:bg-white/10 transition-colors">
+                                <h4 className="font-bold text-white mb-2">{faq.q}</h4>
+                                <p className="text-sm text-gray-400 leading-relaxed">{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                 {/* Footer */}
                 <footer className="border-t border-white/5 pt-12 pb-8 mt-32">
                     <div className="grid md:grid-cols-4 gap-8 mb-12">

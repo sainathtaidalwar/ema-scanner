@@ -22,6 +22,7 @@ export const Navbar = () => {
     const navLinks = [
         { name: 'Features', path: '/#features' },
         { name: 'Strategy', path: '/learn' },
+        { name: 'Performance', path: '/backtests' },
         { name: 'Markets', path: '/#markets' },
     ];
 
