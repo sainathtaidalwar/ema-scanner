@@ -126,6 +126,20 @@ export default function ScannerDashboard() {
         }
     };
 
+    const handleDemoScan = () => {
+        setIsScanning(true);
+        setTimeout(() => {
+            setResults([
+                { Symbol: 'BTC/USDT', Price: '94,500.20', Side: 'LONG', Type: 'PULSE', 'RSI (15m)': 45, 'ADX (15m)': 32, Exchange: 'Binance' },
+                { Symbol: 'ETH/USDT', Price: '3,240.50', Side: 'SHORT', Type: 'MOMENTUM', 'RSI (15m)': 30, 'ADX (15m)': 28, Exchange: 'Binance' },
+                { Symbol: 'SOL/USDT', Price: '145.20', Side: 'LONG', Type: 'PULSE', 'RSI (15m)': 55, 'ADX (15m)': 41, Exchange: 'BiBit' },
+                { Symbol: 'RELIANCE.NS', Price: '2,850.00', Side: 'LONG', Type: 'PULSE', 'RSI (15m)': 60, 'ADX (15m)': 29, Exchange: 'NSE' },
+                { Symbol: 'ADANIENT.NS', Price: '3,100.00', Side: 'SHORT', Type: 'MOMENTUM', 'RSI (15m)': 40, 'ADX (15m)': 45, Exchange: 'NSE' },
+            ]);
+            setIsScanning(false);
+        }, 1200);
+    };
+
     // Calculate Market Sentiment
     const longCount = results.filter(r => r.Side === 'LONG').length;
     const shortCount = results.filter(r => r.Side === 'SHORT').length;
@@ -256,6 +270,16 @@ export default function ScannerDashboard() {
                                 {(loading || isScanning) ? <RefreshCw className="animate-spin" size={20} /> : <Play size={20} fill="currentColor" />}
                                 {isScanning ? 'ANALYZING MARKET...' : loading ? 'FETCHING ASSETS...' : 'RUN SCANNER'}
                             </button>
+
+                            {/* Demo Button */}
+                            <button
+                                onClick={handleDemoScan}
+                                disabled={loading || isScanning}
+                                className="w-full mt-3 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-all border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 text-xs uppercase tracking-widest"
+                            >
+                                <Zap size={14} /> Simulate Demo Data
+                            </button>
+
                             <p className="text-center text-[10px] text-gray-500 mt-3 uppercase tracking-wider font-mono">
                                 {pairs.length > 0 ? `Ready to Scan ${pairs.length} Assets` : 'System Standby'}
                             </p>
